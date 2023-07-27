@@ -28,6 +28,8 @@ const App = () => {
 
   // Create a state for the playing status
   const [playing, setPlaying] = useState(false);
+  const [stopped, setStopped] = useState(true);
+  const [globalSeek, setGlobalSeek] = useState(0);
 
   // Create a function to play all the audio elements
   const play = () => {
@@ -47,8 +49,10 @@ const App = () => {
       ref.current.pause();
       ref.current.currentTime = 0;
     });
+    setGlobalSeek(0);
     setPlaying(false);
   };
+
 
   // Use the useEffect hook to sync the playing status of all the audio elements
   useEffect(() => {
@@ -76,28 +80,20 @@ const App = () => {
       </div>
       <div className="tracks">
         {sources.map((source, index) => (
-          <div key={index} className="track">
-            <h2>{source.name}</h2>
-            <audio ref={refs[index]} src={source.src} preload="auto" />
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={refs[index].current?.volume || 1}
-              onChange={(e) => (refs[index].current.volume = e.target.value)}
-            />
-            <input
-              type="range"
-              min="0"
-              max={refs[index].current?.duration || 0}
-              value={refs[index].current?.currentTime || 0}
-              onChange={(e) =>
-                (refs[index].current.currentTime = e.target.value)
-              }
-            />
-          </div>
+          <Channel source={source} index={index} refs={refs} globalSeek={globalSeek} /> 
         ))}
+      </div>
+      <div className="globalSeek">
+        <h3>Global Seek</h3>
+      <input
+      type="range"
+      min="0"
+      max={refs[0].current?.duration}
+      value={globalSeek}
+      onChange={(e) =>
+        {setGlobalSeek(e.target.value)}
+      }
+    />
       </div>
     </div>
   );
