@@ -25,6 +25,9 @@ const Lyrics = ({sounds, selectedTrack, setLrcContent, lrcContent, setLoading, l
     }
 
     useEffect(() => {
+        if(globalSeek == 0){
+            setDisplayedLyrics("")
+        }
         if(!loading){
             displayCurrentLyrics();
         } return

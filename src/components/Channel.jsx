@@ -1,13 +1,13 @@
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useEffect, useCallback, useState, } from 'react'
 import {Howl} from "howler"
 
-const Channel = ({index, refs, source, globalSeek}) => {
+const Channel = ({index, refs, source, globalSeek, handleTimeUpdate, userSeek}) => {
 const [channelVolume, setChannelVolume] = useState(refs[index].current?.volume)
 const [seek, setSeek] = useState(refs[index].current?.currentTime)
 useEffect(() => {
   refs[index].current.currentTime = globalSeek
-}, [globalSeek])
-console.log(refs)
+}, [userSeek])
+// console.log(refs)
   return (
     <div key={index} className="track">
     <h2>{source.name}</h2>

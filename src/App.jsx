@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import PlayPauseStop from './components/PlayPauseStop'
 import { emBlock_14_01_Klavier, emBlock_14_01_Theo } from '../src/lib/sounds';
 import sounds from "./lib/sounds.json";
-import { parseLyrics, syncLyrics } from '../utils/lrcParser'
+import { formatTime} from '../utils/lrcParser'
 import Lyrics from './components/Lyrics'
 
 const App = () => {
@@ -14,11 +14,12 @@ const App = () => {
   const [lrcFile, setLrcFile] = useState(null)
   const [lrcContent, setLrcContent] = useState(null)
   const [loading, setLoading] = useState(true);
+  const [userSeek, setUserSeek] = useState(false);
   // useEffect(setSelectedTrack("emBlock_14_01"), [])
-  console.log(selectedTrack)
-  console.log(sounds[selectedTrack][0].lrc)
+  // console.log(selectedTrack)
+  // console.log(sounds[selectedTrack][0].lrc)
 
-  console.log(lrcContent);
+  // console.log(lrcContent);
 
   // Create an array of refs for each audio element
   const refs = sounds[selectedTrack].map(() => useRef(null));
@@ -56,9 +57,17 @@ const App = () => {
     refs.forEach((ref) => {
       ref.current.onplay = () => setPlaying(true);
       ref.current.onpause = () => setPlaying(false);
-      ref.current.onended = () => setPlaying(false);
+      ref.current.onended = () => {
+        setPlaying(false);
+        setGlobalSeek(0);
+        };
     });
   }, [refs]);
+
+  const handleTimeUpdate = () => {
+    setGlobalSeek(refs[0].current?.currentTime)
+    // console.log("Global Seek: ", globalSeek)
+  }
 
   // Render the audio mixer component
   return (
@@ -77,7 +86,7 @@ const App = () => {
       </div>
       <div className="tracks">
         {sounds[selectedTrack].map((source, index) => (
-          <Channel source={source} index={index} refs={refs} globalSeek={globalSeek} /> 
+          <Channel key={index} source={source} index={index} refs={refs} globalSeek={globalSeek} handleTimeUpdate={handleTimeUpdate} userSeek={userSeek}/> 
         ))}
       </div>
       <div className="globalSeek">
@@ -90,7 +99,16 @@ const App = () => {
       onChange={(e) =>
         {setGlobalSeek(e.target.value)}
       }
+      onInput={() => setUserSeek(!userSeek)}
     />
+    <div>{formatTime(globalSeek)}</div>
+    <div className='refAudio'>
+      <audio
+      ref={refs[0]}
+      src={sounds[selectedTrack][0].src}
+      onTimeUpdate={handleTimeUpdate}>
+      </audio>
+    </div>
       </div>
       <div className="lyrics">
         <Lyrics sounds={sounds} setLrcContent={setLrcContent} lrcContent={lrcContent} setLoading={setLoading} loading={loading} globalSeek={globalSeek} selectedTrack={selectedTrack}/>
