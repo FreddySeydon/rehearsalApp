@@ -2,7 +2,8 @@
 [
     {"id" : 1,
     "src": "../../public/sounds/14_Emotionale-Blockade_Klavier.mp3",
-    "name" : "Klavier"},
+    "name" : "Klavier",
+    "lrc" : "../../public/lrc/14_Emotionale-Blockade_Theo.lrc"},
     {"id" : 2,
     "src": "../../public/sounds/14_Emotionale-Blockade_Theo.mp3",
     "name" : "Theo"},

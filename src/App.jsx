@@ -5,27 +5,20 @@ import { useState, useEffect, useRef } from 'react'
 import PlayPauseStop from './components/PlayPauseStop'
 import { emBlock_14_01_Klavier, emBlock_14_01_Theo } from '../src/lib/sounds';
 import sounds from "./lib/sounds.json";
+import { parseLyrics, syncLyrics } from '../utils/lrcParser'
+import Lyrics from './components/Lyrics'
 
 const App = () => {
   
-  // Create an array of audio sources
-  // const sources = [
-  //   {
-  //     src: emBlock_14_01_Klavier.src,
-  //     name: emBlock_14_01_Klavier.name,
-  //   },
-  //   {
-  //     src: emBlock_14_01_Theo.src,
-  //     name: emBlock_14_01_Theo.name,
-  //   },
-  //   {
-  //     src: "sound3.mp3",
-  //     name: "Sound 3",
-  //   },
-  // ];
   const [selectedTrack, setSelectedTrack] = useState("emBlock_14_01")
+  const [lrcFile, setLrcFile] = useState(null)
+  const [lrcContent, setLrcContent] = useState(null)
+  const [loading, setLoading] = useState(true);
   // useEffect(setSelectedTrack("emBlock_14_01"), [])
   console.log(selectedTrack)
+  console.log(sounds[selectedTrack][0].lrc)
+
+  console.log(lrcContent);
 
   // Create an array of refs for each audio element
   const refs = sounds[selectedTrack].map(() => useRef(null));
@@ -98,6 +91,10 @@ const App = () => {
         {setGlobalSeek(e.target.value)}
       }
     />
+      </div>
+      <div className="lyrics">
+        <Lyrics sounds={sounds} setLrcContent={setLrcContent} lrcContent={lrcContent} setLoading={setLoading} loading={loading} globalSeek={globalSeek} selectedTrack={selectedTrack}/>
+        
       </div>
     </div>
   );

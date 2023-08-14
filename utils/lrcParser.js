@@ -30,3 +30,22 @@ export function parseLyrics(lrc) {
     }
     return output;
 }
+
+export function syncLyrics(lyrics, time) {
+    const scores = [];
+
+    lyrics.forEach(lyric => {
+        //get the gap between the actual time and the existing lyric time of that line
+        const score = time - lyric.time;
+
+        //only accept positive values to make sure it's the next text
+        if(score >= 0) scores.push(score);
+    });
+
+    if (scores.length == 0) return null;
+
+    //get the smallest value from scores
+    const closest = Math.min(...scores);
+
+    return scores.indexOf(closest);
+}
