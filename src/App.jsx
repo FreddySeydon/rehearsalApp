@@ -72,9 +72,16 @@ const App = () => {
   // Render the audio mixer component
   return (
     <div>
-      <h1>Audio Mixer</h1>
+      <h1 style={{fontSize:"2rem"}}>Rehearsal App</h1>
     <div className="audio-mixer">
       <div className="controlsWrapper">
+      <div className="tracks">
+        {sounds[selectedTrack].map((source, index) => (
+          <div className='singleTrack'>
+          <Channel key={index} source={source} index={index} refs={refs} globalSeek={globalSeek} handleTimeUpdate={handleTimeUpdate} userSeek={userSeek}/> 
+          </div>
+        ))}
+      </div>
       <div className="controls">
         <button onClick={play} disabled={playing}>
           Play
@@ -86,15 +93,7 @@ const App = () => {
           Stop
         </button>
       </div>
-      <div className="tracks">
-        {sounds[selectedTrack].map((source, index) => (
-          <div className='singleTrack'>
-          <Channel key={index} source={source} index={index} refs={refs} globalSeek={globalSeek} handleTimeUpdate={handleTimeUpdate} userSeek={userSeek}/> 
-          </div>
-        ))}
-      </div>
       <div className="globalSeek">
-        <h3>Global Seek</h3>
       <input
       type="range"
       min="0"

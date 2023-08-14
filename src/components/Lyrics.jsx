@@ -39,7 +39,7 @@ const Lyrics = ({sounds, selectedTrack, setLrcContent, lrcContent, setLoading, l
             displayCurrentLyrics();
         } return
         
-    }, [globalSeek]);
+    }, [globalSeek, loading]);
 
 
     const goToLyricsPosition = (position) => {
@@ -48,15 +48,18 @@ const Lyrics = ({sounds, selectedTrack, setLrcContent, lrcContent, setLoading, l
     }
  
   return (
+    <>
+        {/* <h4>Lyrics</h4> */}
     <div className="lyricsWrapper">
+        <h3>Lyrics</h3>
         {loading ? <div>Loading...</div> : <div style={{display: 'none'}}>{displayedLyrics}</div>}
         <div className="lyricsdisplay">
-            Full Lyrics
             {currentLyrics.map((line, index) => {
                 return <div> <OneLine line={line} index={index} goToLyricsPosition={goToLyricsPosition} displayedLyricsIndex={displayedLyricsIndex} /> </div>
             })}
         </div>
     </div>
+    </>
   )
 }
 

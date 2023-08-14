@@ -34,3 +34,11 @@
   justify-content: space-evenly;
   /* background-color: black; */
 }
+
+.controls{
+  margin-top: 2rem;
+}
+
+.globalSeek{
+  margin-top: 1rem;
+}

@@ -4,9 +4,9 @@ import { useState, useEffect, forwardRef } from 'react';
 const OneLine = ({line, index, displayedLyricsIndex, goToLyricsPosition}) => {
     const testbool = true;
     const [lineActive, setLineActive] = useState(false);
-    console.log(displayedLyricsIndex)
-    console.log(index)
-    console.log(lineActive)
+    // console.log(displayedLyricsIndex)
+    // console.log(index)
+    // console.log(lineActive)
 
     useEffect(() => {
         if(displayedLyricsIndex == null) {
