@@ -1,0 +1,7 @@
+.volumeSlider {
+    width: 2px;
+    height: 175px;
+    -webkit-appearance: slider-vertical;
+    /* -webkit-appearance: none; */
+    writing-mode: bt-lr;
+}

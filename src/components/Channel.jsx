@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useState, } from 'react'
 import {Howl} from "howler"
+import "./Channel.css"
 
 const Channel = ({index, refs, source, globalSeek, handleTimeUpdate, userSeek}) => {
 const [channelVolume, setChannelVolume] = useState(refs[index].current?.volume)
@@ -10,13 +11,15 @@ useEffect(() => {
 // console.log(refs)
   return (
     <div key={index} className="track">
-    <h2>{source.name}</h2>
+    <h3>{source.name}</h3>
     <audio ref={refs[index]} src={source.src} preload="auto" />
     <input
+      className='volumeSlider'
       type="range"
       min="0"
       max="1"
       step="0.01"
+      orient="vertical"
       value={channelVolume}
       onChange={(e) => (refs[index].current.volume = e.target.value)}
     />

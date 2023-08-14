@@ -71,8 +71,10 @@ const App = () => {
 
   // Render the audio mixer component
   return (
-    <div className="audio-mixer">
+    <div>
       <h1>Audio Mixer</h1>
+    <div className="audio-mixer">
+      <div className="controlsWrapper">
       <div className="controls">
         <button onClick={play} disabled={playing}>
           Play
@@ -86,7 +88,9 @@ const App = () => {
       </div>
       <div className="tracks">
         {sounds[selectedTrack].map((source, index) => (
+          <div className='singleTrack'>
           <Channel key={index} source={source} index={index} refs={refs} globalSeek={globalSeek} handleTimeUpdate={handleTimeUpdate} userSeek={userSeek}/> 
+          </div>
         ))}
       </div>
       <div className="globalSeek">
@@ -102,6 +106,7 @@ const App = () => {
       onInput={() => setUserSeek(!userSeek)}
     />
     <div>{formatTime(globalSeek)}</div>
+    </div>
     <div className='refAudio'>
       <audio
       ref={refs[0]}
@@ -111,9 +116,10 @@ const App = () => {
     </div>
       </div>
       <div className="lyrics">
-        <Lyrics sounds={sounds} setLrcContent={setLrcContent} lrcContent={lrcContent} setLoading={setLoading} loading={loading} globalSeek={globalSeek} selectedTrack={selectedTrack}/>
+        <Lyrics sounds={sounds} setLrcContent={setLrcContent} lrcContent={lrcContent} setLoading={setLoading} loading={loading} globalSeek={globalSeek} selectedTrack={selectedTrack} setGlobalSeek={setGlobalSeek} setUserSeek={setUserSeek} userSeek={userSeek}/>
         
       </div>
+    </div>
     </div>
   );
 };

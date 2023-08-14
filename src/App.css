@@ -4,3 +4,33 @@
   padding: 2rem;
   text-align: center;
 }
+
+.tracks {
+  display: flex;
+  justify-content: center;
+}
+
+.singleTrack {
+  margin-right: 1rem;
+  margin-left: 1rem;
+}
+
+.audio-mixer {
+  width: 100%;
+  display: flex
+}
+.globalSeek input {
+  width: 100%
+
+}
+
+.controls-wrapper {
+  width: 100%
+}
+.tracks{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-evenly;
+  /* background-color: black; */
+}
