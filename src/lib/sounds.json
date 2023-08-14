@@ -1,0 +1,19 @@
+{"emBlock_14_01":
+[
+    {"id" : 1,
+    "src": "../../public/sounds/14_Emotionale-Blockade_Klavier.mp3",
+    "name" : "Klavier"},
+    {"id" : 2,
+    "src": "../../public/sounds/14_Emotionale-Blockade_Theo.mp3",
+    "name" : "Theo"},
+    {"id" : 3,
+    "src": "../../public/sounds/14_Emotionale-Blockade_Sophia.mp3",
+    "name" : "Sophia"},
+    {"id" : 4,
+    "src": "../../public/sounds/14_Emotionale-Blockade_Tess_Helena.mp3",
+    "name" : "Tess + Helena"},
+    {"id" : 5,
+    "src": "../../public/sounds/14_Emotionale-Blockade_Jürgen_Boris.mp3",
+    "name" : "Jürgen + Boris"}
+
+]}
