@@ -19,7 +19,7 @@ const Lyrics = ({sounds, selectedSong, setLrcContent, lrcContent, setLoading, lo
           setLoading(false)
         }
         loadLrc();
-      }, [])
+      }, [selectedSong])
 
     const displayCurrentLyrics = () => {
         const lyrics = parseLyrics(lrcContent);

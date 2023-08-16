@@ -6,8 +6,9 @@ import sounds from "./lib/sounds.json";
 import { formatTime } from '../utils/lrcParser'
 import Lyrics from './components/Lyrics'
 
+
 const App = () => {
-  
+
   const [selectedSong, setSelectedSong] = useState("emBlock_14_01")
   const [lrcFile, setLrcFile] = useState(null)
   const [lrcContent, setLrcContent] = useState(null)
@@ -21,7 +22,7 @@ const App = () => {
 
   // Create a state for the playing status
   const [playing, setPlaying] = useState(false);
-  const [stopped, setStopped] = useState(true);
+  // const [stopped, setStopped] = useState(true);
   const [globalSeek, setGlobalSeek] = useState(0);
 
   // Create a function to play all the audio elements

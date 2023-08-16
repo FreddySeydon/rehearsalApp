@@ -7,7 +7,7 @@ const [seek, setSeek] = useState(refs[index]?.current?.currentTime)
 useEffect(() => {
   refs[index].current.currentTime = globalSeek
 }, [userSeek])
-console.log(source.src)
+// console.log(source.src)
   return (
     <div key={index} className="track">
     <h3>{source.name}</h3>
@@ -20,7 +20,9 @@ console.log(source.src)
       step="0.01"
       orient="vertical"
       value={channelVolume}
-      onChange={(e) => (refs[index].current.volume = e.target.value)}
+      onChange={(e) => {
+        refs[index].current.volume = e.target.value
+      setChannelVolume(refs[index].current?.volume)}}
     />
     {/* <input
       type="range"
