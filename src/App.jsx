@@ -16,7 +16,12 @@ const App = () => {
   const [userSeek, setUserSeek] = useState(false);
 
   // Create an array of refs for each audio element
-  const refs = sounds[selectedSong]?.tracks?.map(() => useRef(null));
+  // const refs = useRef([]);
+  const maxTracks = 10;
+  // const refs = sounds[selectedSong]?.tracks?.map(() => useRef(null));
+  // console.log("Array from:", Array.from({length: maxTracks}))
+  const refs = Array.from({length: maxTracks}).map(() => useRef(null));
+  console.log(refs)
 
   // console.log("REFS: ", refs)
 
@@ -51,12 +56,13 @@ const App = () => {
   // Use the useEffect hook to sync the playing status of all the audio elements
   useEffect(() => {
     refs.forEach((ref) => {
+      if(ref.current) {
       ref.current.onplay = () => setPlaying(true);
       ref.current.onpause = () => setPlaying(false);
       ref.current.onended = () => {
         setPlaying(false);
         setGlobalSeek(0);
-        };
+        };}
     });
   }, [refs]);
 
