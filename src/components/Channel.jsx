@@ -3,11 +3,11 @@ import "./Channel.css"
 
 const Channel = ({index, refs, source, globalSeek, handleTimeUpdate, userSeek}) => {
 const [channelVolume, setChannelVolume] = useState(1)
-const [seek, setSeek] = useState(refs[index]?.current?.currentTime)
+
 useEffect(() => {
   refs[index].current.currentTime = globalSeek
 }, [userSeek])
-// console.log(source.src)
+
   return (
     <div key={index} className="track">
     <h3>{source.name}</h3>
