@@ -4,7 +4,7 @@ import { parseLyrics, syncLyrics } from '../../utils/lrcParser';
 import OneLine from './OneLine';
 import "./Lyrics.css"
 
-const Lyrics = ({sounds, selectedTrack, setLrcContent, lrcContent, setLoading, loading, globalSeek, setGlobalSeek, setUserSeek, userSeek}) => {
+const Lyrics = ({sounds, selectedSong, setLrcContent, lrcContent, setLoading, loading, globalSeek, setGlobalSeek, setUserSeek, userSeek}) => {
     const [displayedLyrics, setDisplayedLyrics] = useState("")
     const [currentLyrics, setCurrentLyrics] = useState([])
     const [displayedLyricsIndex, setDisplayedLyricsIndex] = useState(0);
@@ -12,7 +12,7 @@ const Lyrics = ({sounds, selectedTrack, setLrcContent, lrcContent, setLoading, l
     useEffect(() => {
         const loadLrc = async () => {
           setLoading(true)
-          const lrcLocation = sounds[selectedTrack][0].lrc
+          const lrcLocation = sounds[selectedSong].tracks[0].lrc
           const res = await fetch(lrcLocation);
           const lrc = await res.text();
           setLrcContent(lrc);
@@ -26,7 +26,7 @@ const Lyrics = ({sounds, selectedTrack, setLrcContent, lrcContent, setLoading, l
         setCurrentLyrics(lyrics);
         const index = syncLyrics(lyrics, globalSeek);
         setDisplayedLyricsIndex(index);
-        if(index == null) return;
+        if(index === null) return;
         setDisplayedLyrics(lyrics[index].text);
 
     }
@@ -55,7 +55,7 @@ const Lyrics = ({sounds, selectedTrack, setLrcContent, lrcContent, setLoading, l
         {loading ? <div>Loading...</div> : <div style={{display: 'none'}}>{displayedLyrics}</div>}
         <div className="lyricsdisplay">
             {currentLyrics.map((line, index) => {
-                return <div> <OneLine line={line} index={index} goToLyricsPosition={goToLyricsPosition} displayedLyricsIndex={displayedLyricsIndex} /> </div>
+                return <div key={index}> <OneLine line={line} key={index} index={index} goToLyricsPosition={goToLyricsPosition} displayedLyricsIndex={displayedLyricsIndex} /> </div>
             })}
         </div>
     </div>

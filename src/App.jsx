@@ -2,27 +2,22 @@ import React from 'react'
 import "./App.css"
 import Channel from './components/Channel'
 import { useState, useEffect, useRef } from 'react'
-import PlayPauseStop from './components/PlayPauseStop'
-import { emBlock_14_01_Klavier, emBlock_14_01_Theo } from '../src/lib/sounds';
 import sounds from "./lib/sounds.json";
-import { formatTime} from '../utils/lrcParser'
+import { formatTime } from '../utils/lrcParser'
 import Lyrics from './components/Lyrics'
 
 const App = () => {
   
-  const [selectedTrack, setSelectedTrack] = useState("emBlock_14_01")
+  const [selectedSong, setSelectedSong] = useState("emBlock_14_01")
   const [lrcFile, setLrcFile] = useState(null)
   const [lrcContent, setLrcContent] = useState(null)
   const [loading, setLoading] = useState(true);
   const [userSeek, setUserSeek] = useState(false);
-  // useEffect(setSelectedTrack("emBlock_14_01"), [])
-  // console.log(selectedTrack)
-  // console.log(sounds[selectedTrack][0].lrc)
-
-  // console.log(lrcContent);
 
   // Create an array of refs for each audio element
-  const refs = sounds[selectedTrack].map(() => useRef(null));
+  const refs = sounds[selectedSong]?.tracks?.map(() => useRef(null));
+
+  // console.log("REFS: ", refs)
 
   // Create a state for the playing status
   const [playing, setPlaying] = useState(false);
@@ -65,8 +60,7 @@ const App = () => {
   }, [refs]);
 
   const handleTimeUpdate = () => {
-    setGlobalSeek(refs[0].current?.currentTime)
-    // console.log("Global Seek: ", globalSeek)
+    setGlobalSeek(refs[0]?.current?.currentTime)
   }
 
   // Render the audio mixer component
@@ -76,11 +70,20 @@ const App = () => {
     <div className="audio-mixer">
       <div className="controlsWrapper">
       <div className="tracks">
-        {sounds[selectedTrack].map((source, index) => (
-          <div className='singleTrack'>
-          <Channel key={index} source={source} index={index} refs={refs} globalSeek={globalSeek} handleTimeUpdate={handleTimeUpdate} userSeek={userSeek}/> 
+        {sounds[selectedSong]?.tracks?.map((source, index) => (
+          <div key={index} className='singleTrack'>
+          <Channel key={index} source={source} index={index} refs={refs} globalSeek={globalSeek} handleTimeUpdate={handleTimeUpdate} userSeek={userSeek} selectedSong={selectedSong}/> 
           </div>
         ))}
+      </div>
+      <div className="selectBox">
+      <select value={selectedSong} onChange={(e) => setSelectedSong(e.target.value)}>
+        {Object.keys(sounds).map(key => (
+        <option key={key} value={key}>
+            {sounds[key].songname}
+        </option>
+        ))}
+      </select>
       </div>
       <div className="controls">
         <button onClick={play} disabled={playing}>
@@ -97,7 +100,7 @@ const App = () => {
       <input
       type="range"
       min="0"
-      max={refs[0].current?.duration}
+      max={refs[0].current?.duration || 0}
       value={globalSeek}
       onChange={(e) =>
         {setGlobalSeek(e.target.value)}
@@ -109,13 +112,13 @@ const App = () => {
     <div className='refAudio'>
       <audio
       ref={refs[0]}
-      src={sounds[selectedTrack][0].src}
+      src={sounds[selectedSong]?.tracks[0]?.src}
       onTimeUpdate={handleTimeUpdate}>
       </audio>
     </div>
       </div>
       <div className="lyrics">
-        <Lyrics sounds={sounds} setLrcContent={setLrcContent} lrcContent={lrcContent} setLoading={setLoading} loading={loading} globalSeek={globalSeek} selectedTrack={selectedTrack} setGlobalSeek={setGlobalSeek} setUserSeek={setUserSeek} userSeek={userSeek}/>
+        <Lyrics sounds={sounds} setLrcContent={setLrcContent} lrcContent={lrcContent} setLoading={setLoading} loading={loading} globalSeek={globalSeek} selectedSong={selectedSong} setGlobalSeek={setGlobalSeek} setUserSeek={setUserSeek} userSeek={userSeek}/>
         
       </div>
     </div>
