@@ -21,18 +21,27 @@
         "name" : "Jürgen + Boris"}
     ]
 },
-"emBlock_14_02": 
+"hoerIhm_18": 
     {
-    "selectvalue":"emBlock_14_02",
-    "songname":"Emotionale Mlockade",
+    "selectvalue":"hoerIhm_18",
+    "songname":"18 - Hör ihm zu",
     "tracks": [
         {"id" : 1,
-        "src": "sounds/14_Emotionale-Blockade_Klavier.mp3",
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_klavier.mp3",
         "name" : "Klavier",
-        "lrc" : "lrc/14_Emotionale-Blockade_Theo.lrc"},
+        "lrc" : "lrc/18_hoer-ihm-zu_helena-sophia.lrc"},
         {"id" : 2,
-        "src": "sounds/14_Emotionale-Blockade_Theo.mp3",
-        "name" : "Theo"}
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_helena-sophia.mp3",
+        "name" : "Helena + Sophia"},
+        {"id" : 3,
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_tess.mp3",
+        "name" : "Tess"},
+        {"id" : 4,
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_theo-fine.mp3",
+        "name" : "Theo + Fine"},
+        {"id" : 5,
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_boris-juergen-ben.mp3",
+        "name" : "Jürgen + Boris"}
     ]
 }
 }
