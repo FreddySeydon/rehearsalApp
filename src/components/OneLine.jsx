@@ -28,7 +28,7 @@ const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition, isBigS
           cursor: "pointer",
           fontSize: isTabletOrMobile ? "2rem" : "1.5rem",
           fontWeight: lineActive ? "bold" : "normal",
-          color: lineActive ? "#fdc873" : "white"
+          color: lineActive ? "#fdc873" : "white",
         }}
       >
         {line.text}

@@ -21,6 +21,20 @@
         "name" : "Jürgen + Boris"}
     ]
 },
+"horrorMassaker_17a": 
+    {
+    "selectvalue":"horrorMassaker_17a",
+    "songname":"17a - Horror - Massaker",
+    "tracks": [
+        {"id" : 1,
+        "src": "sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "lrc/17a_der-horrortrip_das-massaker_alle.lrc"},
+        {"id" : 2,
+        "src": "sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-alle.mp3",
+        "name" : "Alle"}
+    ]
+},
 "hoerIhm_18": 
     {
     "selectvalue":"hoerIhm_18",
