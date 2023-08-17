@@ -18,13 +18,17 @@ const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition }) => {
   }, [displayedLyricsIndex]);
 
   return (
-    <div>
+    <div style={{width:"20rem"}}>
       <a
         onClick={() => goToLyricsPosition(line.time)}
         style={{
+          // paddingRight: "1rem",
+          // paddingLeft: "1rem",
+          margin: "1rem",
           cursor: "pointer",
           fontSize: "1.5rem",
           fontWeight: lineActive ? "bold" : "normal",
+          color: lineActive ? "#fdc873" : "white"
         }}
       >
         {line.text}

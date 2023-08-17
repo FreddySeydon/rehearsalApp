@@ -6,6 +6,10 @@ import sounds from "./lib/sounds.json";
 import { formatTime } from "../utils/lrcParser";
 import Lyrics from "./components/Lyrics";
 
+import iconPlay from "./lib/img/play.png"
+import iconPause from "./lib/img/pause.png"
+import iconStop from "./lib/img/stop.png"
+
 const App = () => {
   const [selectedSong, setSelectedSong] = useState("emBlock_14_01");
   const [lrcContent, setLrcContent] = useState(null);
@@ -33,7 +37,7 @@ const App = () => {
   };
 
   // Create a function to stop all the audio elements
-  const stop = () => {
+  const stop = (e) => {
     refs.forEach((ref) => {
       ref.current.pause();
       ref.current.currentTime = 0;
@@ -56,13 +60,23 @@ const App = () => {
     });
   }, [refs]);
 
+  useEffect(() => {
+    if(playing){
+      stop();
+    }
+  }, [selectedSong])
+
   const handleTimeUpdate = () => {
     setGlobalSeek(refs[0]?.current?.currentTime);
   };
 
+  const handleSongChange = (e) => {
+    setSelectedSong(e.target.value);
+  }
+
   // Render the audio mixer component
   return (
-    <div>
+    <div className="appWrapper">
       <h1 style={{ fontSize: "2rem" }}>Rehearsal App</h1>
       <div className="audio-mixer">
         <div className="controlsWrapper">
@@ -85,7 +99,9 @@ const App = () => {
           <div className="selectBox">
             <select
               value={selectedSong}
-              onChange={(e) => setSelectedSong(e.target.value)}
+              onChange={(e) => {handleSongChange(e)}}
+              onClick={stop}
+              style={{minWidth: "10rem", minHeight: "2.5rem", textAlign:"center", fontSize:"1.2rem", fontWeight:"bold"}}
             >
               {Object.keys(sounds).map((key) => (
                 <option key={key} value={key}>
@@ -95,14 +111,11 @@ const App = () => {
             </select>
           </div>
           <div className="controls">
-            <button onClick={play} disabled={playing}>
-              Play
+            <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={playing ? pause : play} >
+              <img style={{width:"4rem"}} src={playing ? iconPause : iconPlay} alt="Play Button" />
             </button>
-            <button onClick={pause} disabled={!playing}>
-              Pause
-            </button>
-            <button onClick={stop} disabled={!playing}>
-              Stop
+            <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={stop} disabled={!playing}>
+            <img style={{width:"4rem", opacity: playing ? 1 : 0.5}} src={iconStop} alt="Stop Button" />
             </button>
           </div>
           <div className="globalSeek">

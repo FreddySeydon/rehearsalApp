@@ -5,3 +5,48 @@
     /* -webkit-appearance: none; */
     writing-mode: bt-lr;
 }
+
+/* .volumeSlider {
+    -webkit-appearance: slider-vertical;
+    appearance: none; 
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.volumeSlider::-webkit-slider-runnable-track {
+    height: 15px;
+    border-radius: 16px;
+  }
+
+  .volumeSlider::-moz-range-track {
+        height: 15px;
+        background: #ccc;
+        border-radius: 16px;
+      }
+    .volumeSlider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none; 
+        height: 15px;
+        width: 15px;
+        background-color: #fff;
+        border-radius: 50%;
+        border: 2px solid #f50;
+        box-shadow: -407px 0 0 400px #f50;
+      }
+      .volumeSlider::-moz-range-thumb {
+        height: 15px;
+        width: 15px;
+        background-color: #fff;
+        border-radius: 50%;
+        border: 1px solid #f50;
+        box-shadow: -407px 0 0 400px #f50;
+      } */
+  
+ .track h3 {
+    display: flex;
+    align-content: baseline;
+    justify-content: flex-end;
+  }
