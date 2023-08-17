@@ -3,7 +3,7 @@ import "./Channel.css"
 import iconMuted from "../lib/img/muted.png"
 import iconUnmuted from "../lib/img/unmuted.png"
 
-const Channel = ({index, refs, source, globalSeek, handleTimeUpdate, userSeek}) => {
+const Channel = ({index, refs, source, globalSeek, handleTimeUpdate, userSeek, isBigScreen, isTabletOrMobile, isDesktopOrLaptop}) => {
 const [channelVolume, setChannelVolume] = useState(1)
 const [isMuted, setIsMuted] = useState(false)
 const [isFirst, setIsFirst] = useState(false)
@@ -22,7 +22,9 @@ useEffect(() => {
 
   return (
     <div key={index} className="track">
+    <div className="sourceName">
     <h3>{source.name}</h3>
+    </div>
     <audio ref={refs[index]} src={source.src} preload="auto" muted={isMuted ? true : false} />
     <input
       className='volumeSlider'
@@ -32,7 +34,7 @@ useEffect(() => {
       step="0.01"
       orient="vertical"
       value={channelVolume}
-      style={{background: sliderColor}}
+      style={{background: sliderColor, width: isTabletOrMobile ? "0.4rem" : null}}
       // onTimeUpdate={() => handleTimeUpdate()}
       onChange={(e) => {
         refs[index].current.volume = e.target.value
@@ -41,7 +43,7 @@ useEffect(() => {
       <div className="muteBox" style={{opacity: isFirst ? 0 : 1, display:"flex", alignItems:"center", justifyContent:"center"}}>
       {/* <p>Mute</p> */}
       {/* <img src={isMuted ? iconMuted : iconUnmuted} alt="" style={{width: "1.5rem"} } /> */}
-      <button style={{backgroundColor:"transparent", padding: "0.5rem"}} onClick={() => setIsMuted(!isMuted)}><img src={isMuted ? iconMuted : iconUnmuted} alt="" style={{width: "1.5rem"} } /></button>
+      <button style={{backgroundColor:"transparent", padding: "0.5rem"}} onClick={() => setIsMuted(!isMuted)}><img src={isMuted ? iconMuted : iconUnmuted} alt="" style={{width: isTabletOrMobile? "2rem" : "1.5rem"} } /></button>
       {/* <input type='checkbox' onClick={() => setIsMuted(!isMuted)} /> */}
       </div>
 

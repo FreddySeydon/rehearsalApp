@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import sounds from "./lib/sounds.json";
 import { formatTime } from "../utils/lrcParser";
 import Lyrics from "./components/Lyrics";
+import { useMediaQuery } from "react-responsive";
 
 import iconPlay from "./lib/img/play.png"
 import iconPause from "./lib/img/pause.png"
@@ -15,6 +16,15 @@ const App = () => {
   const [lrcContent, setLrcContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userSeek, setUserSeek] = useState(false);
+
+  // Media Queries via react-responsive
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1224px)'
+  })
+  const isBigScreen = useMediaQuery({ query: '(min-width: 1824px)' })
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+  const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
+  const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
   // Create an array of 10 refs to keep the order of hook calls. Not all refs are being used.
   const maxTracks = 10;
@@ -76,9 +86,9 @@ const App = () => {
 
   // Render the audio mixer component
   return (
-    <div className="appWrapper">
+    <div className="appWrapper" style={{padding: isTabletOrMobile ? "1rem" : "5rem"}}>
       <h1 style={{ fontSize: "2rem" }}>Rehearsal App</h1>
-      <div className="audio-mixer">
+      <div className="audio-mixer" style={{flexDirection: isTabletOrMobile ? "column" : "row"}} >
         <div className="controlsWrapper">
           <div className="tracks">
             {sounds[selectedSong]?.tracks?.map((source, index) => (
@@ -92,6 +102,9 @@ const App = () => {
                   handleTimeUpdate={handleTimeUpdate}
                   userSeek={userSeek}
                   selectedSong={selectedSong}
+                  isBigScreen={isBigScreen}
+                  isDesktopOrLaptop={isDesktopOrLaptop}
+                  isTabletOrMobile={isTabletOrMobile}
                 />
               </div>
             ))}
@@ -112,10 +125,10 @@ const App = () => {
           </div>
           <div className="controls">
             <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={playing ? pause : play} >
-              <img style={{width:"4rem"}} src={playing ? iconPause : iconPlay} alt="Play Button" />
+              <img style={{width:"3rem"}} src={playing ? iconPause : iconPlay} alt="Play Button" />
             </button>
             <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={stop} disabled={!playing}>
-            <img style={{width:"4rem", opacity: playing ? 1 : 0.5}} src={iconStop} alt="Stop Button" />
+            <img style={{width:"3rem", opacity: playing ? 1 : 0.5}} src={iconStop} alt="Stop Button" />
             </button>
           </div>
           <div className="globalSeek">
@@ -151,6 +164,9 @@ const App = () => {
             setGlobalSeek={setGlobalSeek}
             setUserSeek={setUserSeek}
             userSeek={userSeek}
+            isBigScreen={isBigScreen}
+            isDesktopOrLaptop={isDesktopOrLaptop}
+            isTabletOrMobile={isTabletOrMobile}
           />
         </div>
       </div>

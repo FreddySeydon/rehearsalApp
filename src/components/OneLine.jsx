@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition }) => {
+const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition, isBigScreen, isDesktopOrLaptop, isTabletOrMobile}) => {
   const testbool = true;
   const [lineActive, setLineActive] = useState(false);
 
@@ -18,7 +18,7 @@ const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition }) => {
   }, [displayedLyricsIndex]);
 
   return (
-    <div style={{width:"20rem"}}>
+    <div style={{width: isTabletOrMobile ? "100%" : "25rem" }}>
       <a
         onClick={() => goToLyricsPosition(line.time)}
         style={{
@@ -26,7 +26,7 @@ const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition }) => {
           // paddingLeft: "1rem",
           margin: "1rem",
           cursor: "pointer",
-          fontSize: "1.5rem",
+          fontSize: isTabletOrMobile ? "2rem" : "1.5rem",
           fontWeight: lineActive ? "bold" : "normal",
           color: lineActive ? "#fdc873" : "white"
         }}

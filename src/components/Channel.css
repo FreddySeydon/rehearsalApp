@@ -50,3 +50,10 @@
     align-content: baseline;
     justify-content: flex-end;
   }
+
+  .sourceName{
+    min-height: 5rem;
+    /* display: flex;
+    align-items: center;
+    align-content: center; */
+  }

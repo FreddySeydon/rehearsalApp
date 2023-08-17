@@ -15,6 +15,9 @@ const Lyrics = ({
   setGlobalSeek,
   setUserSeek,
   userSeek,
+  isBigScreen,
+  isDesktopOrLaptop,
+  isTabletOrMobile
 }) => {
   const [displayedLyrics, setDisplayedLyrics] = useState("");
   const [currentLyrics, setCurrentLyrics] = useState([]);
@@ -59,7 +62,7 @@ const Lyrics = ({
   return (
     <>
       {/* <h4>Lyrics</h4> */}
-      <div className="lyricsWrapper">
+      <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}>
         <h3>Lyrics</h3>
         {loading ? (
           <div>Loading...</div>
@@ -69,7 +72,7 @@ const Lyrics = ({
         <div className="lyricsdisplay">
           {currentLyrics.map((line, index) => {
             return (
-              <div key={index}>
+              <div key={index} style={{width: isTabletOrMobile ? "100%" : "25rem"}}>
                 {" "}
                 <OneLine
                   line={line}
@@ -77,6 +80,9 @@ const Lyrics = ({
                   index={index}
                   goToLyricsPosition={goToLyricsPosition}
                   displayedLyricsIndex={displayedLyricsIndex}
+                  isBigScreen={isBigScreen}
+                  isDesktopOrLaptop={isDesktopOrLaptop}
+                  isTabletOrMobile={isTabletOrMobile}
                 />{" "}
               </div>
             );
