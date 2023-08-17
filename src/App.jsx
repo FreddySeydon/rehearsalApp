@@ -87,7 +87,7 @@ const App = () => {
   // Render the audio mixer component
   return (
     <div className="appWrapper" style={{padding: isTabletOrMobile ? "1rem" : "5rem"}}>
-      <h1 style={{ fontSize: "2rem" }}>Rehearsal App</h1>
+      <h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal App</h1>
       <div className="audio-mixer" style={{flexDirection: isTabletOrMobile ? "column" : "row"}} >
         <div className="controlsWrapper">
           <div className="tracks">
