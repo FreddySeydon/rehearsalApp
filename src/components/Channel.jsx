@@ -2,22 +2,62 @@ import React, { useEffect, useState, } from 'react'
 import "./Channel.css"
 import iconMuted from "../lib/img/muted.png"
 import iconUnmuted from "../lib/img/unmuted.png"
+import { Howl, Howler } from "howler";
 
-const Channel = ({index, refs, source, globalSeek, handleTimeUpdate, userSeek, isBigScreen, isTabletOrMobile, isDesktopOrLaptop}) => {
-const [channelVolume, setChannelVolume] = useState(1)
+const Channel = ({index, refs, source, globalSeek, playPressed, setPlayPressed, handleTimeUpdate, userSeek, handlePlayPause, stopPressed, isBigScreen, isTabletOrMobile, isDesktopOrLaptop, playing}) => {
+const [channelVolume, setChannelVolume] = useState(0.5)
 const [isMuted, setIsMuted] = useState(false)
 const [isFirst, setIsFirst] = useState(false)
+const [soundId, setSoundId] = useState(null)
+
 
 const sliderColor = "#FFCC70"
+
+const sound = new Howl({
+  src: [source.src],
+  volume: 0.5,
+  autoplay: false
+})
 
 useEffect(() => {
   if(index === 0) {
     setIsFirst(true)
   }
+  // sound.on('loaded', sound.stop())
 }, [])
+console.log(Object.keys(sound))
+const playPause = () => {
+  if(playing) {
+    sound.pause();
+  } else {
+    if(!soundId){
+      setSoundId(sound.play())
+      console.log("SoundID:", soundId)
+    } else {
+      sound.play();
+    }
+  }
+  // setPlaying(!playing)
+}
 
 useEffect(() => {
-  refs[index].current.currentTime = globalSeek
+  sound.stop();
+}, [stopPressed])
+
+useEffect(() => {
+  console.log(playPressed)
+  if(playPressed){
+    playPause()
+    setPlayPressed(false)
+  }
+}, [playPressed])
+
+useEffect(() => {
+  isMuted ? sound.mute(true) : sound.mute(false)
+}, [isMuted])
+
+useEffect(() => {
+  sound.seek(globalSeek, soundId);
 }, [userSeek])
 
   return (
@@ -25,7 +65,7 @@ useEffect(() => {
     <div className="sourceName">
     <h3>{source.name}</h3>
     </div>
-    <audio ref={refs[index]} src={source.src} preload="auto" muted={isMuted ? true : false} />
+    {/* <audio ref={refs[index]} src={source.src} preload="auto" muted={isMuted ? true : false} /> */}
     <input
       className='volumeSlider'
       type="range"
@@ -37,8 +77,8 @@ useEffect(() => {
       style={{background: sliderColor, width: isTabletOrMobile ? "0.4rem" : null}}
       // onTimeUpdate={() => handleTimeUpdate()}
       onChange={(e) => {
-        refs[index].current.volume = e.target.value
-      setChannelVolume(refs[index].current?.volume)}}
+        sound.volume(e.target.value)
+      setChannelVolume(sound.volume(soundId))}}
     />
       <div className="muteBox" style={{opacity: isFirst ? 0 : 1, display:"flex", alignItems:"center", justifyContent:"center"}}>
       {/* <p>Mute</p> */}

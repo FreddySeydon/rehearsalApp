@@ -4,20 +4,20 @@
     "songname":"14 - Emotionale Blockade",
     "tracks": [
         {"id" : 1,
-        "src": "http://songs.renja.cc/sounds/14_emotionale-blockade/14_emotionale-blockade_klavier.mp3",
+        "src": "sounds/14_emotionale-blockade/14_emotionale-blockade_klavier.mp3",
         "name" : "Klavier",
-        "lrc" : "http://songs.renja.cc/lrc/14_Emotionale-Blockade_Theo.lrc"},
+        "lrc" : "lrc/14_Emotionale-Blockade_Theo.lrc"},
         {"id" : 2,
-        "src": "http://songs.renja.cc/sounds/14_emotionale-blockade/14_emotionale-blockade_theo.mp3",
+        "src": "sounds/14_emotionale-blockade/14_emotionale-blockade_theo.mp3",
         "name" : "Theo"},
         {"id" : 3,
-        "src": "http://songs.renja.cc/sounds/14_emotionale-blockade/14_emotionale-blockade_sophia.mp3",
+        "src": "sounds/14_emotionale-blockade/14_emotionale-blockade_sophia.mp3",
         "name" : "Sophia"},
         {"id" : 4,
-        "src": "http://songs.renja.cc/sounds/14_emotionale-blockade/14_emotionale-blockade_tess-helena.mp3",
+        "src": "sounds/14_emotionale-blockade/14_emotionale-blockade_tess-helena.mp3",
         "name" : "Tess + Helena"},
         {"id" : 5,
-        "src": "http://songs.renja.cc/sounds/14_emotionale-blockade/14_emotionale-blockade_juergen-boris.mp3",
+        "src": "sounds/14_emotionale-blockade/14_emotionale-blockade_juergen-boris.mp3",
         "name" : "Jürgen + Boris"}
     ]
 },
@@ -27,11 +27,11 @@
     "songname":"17a - Horror - Massaker",
     "tracks": [
         {"id" : 1,
-        "src": "http://songs.renja.cc/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-klavier.mp3",
+        "src": "sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-klavier.mp3",
         "name" : "Klavier",
-        "lrc" : "http://songs.renja.cc/lrc/17a_der-horrortrip_das-massaker_alle.lrc"},
+        "lrc" : "lrc/17a_der-horrortrip_das-massaker_alle.lrc"},
         {"id" : 2,
-        "src": "http://songs.renja.cc/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-alle.mp3",
+        "src": "sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-alle.mp3",
         "name" : "Alle"}
     ]
 },
@@ -41,20 +41,20 @@
     "songname":"18 - Hör ihm zu",
     "tracks": [
         {"id" : 1,
-        "src": "http://songs.renja.cc/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_klavier.mp3",
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_klavier.mp3",
         "name" : "Klavier",
-        "lrc" : "http://songs.renja.cc/lrc/18_hoer-ihm-zu_helena-sophia.lrc"},
+        "lrc" : "lrc/18_hoer-ihm-zu_helena-sophia.lrc"},
         {"id" : 2,
-        "src": "http://songs.renja.cc/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_helena-sophia.mp3",
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_helena-sophia.mp3",
         "name" : "Helena + Sophia"},
         {"id" : 3,
-        "src": "http://songs.renja.cc/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_tess.mp3",
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_tess.mp3",
         "name" : "Tess"},
         {"id" : 4,
-        "src": "http://songs.renja.cc/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_theo-fine.mp3",
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_theo-fine.mp3",
         "name" : "Theo + Fine"},
         {"id" : 5,
-        "src": "http://songs.renja.cc/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_boris-juergen-ben.mp3",
+        "src": "sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_boris-juergen-ben.mp3",
         "name" : "Jürgen + Boris"}
     ]
 }
