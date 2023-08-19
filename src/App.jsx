@@ -19,6 +19,7 @@ const App = () => {
   const [lrcContent, setLrcContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userSeek, setUserSeek] = useState(false);
+  const [trackDuration, setTrackDuration] = useState(0);
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({query: '(min-width: 1224px)'})
@@ -144,14 +145,13 @@ console.log(sound.seek())
       <div className="audio-mixer" style={{flexDirection: isTabletOrMobile ? "column" : "row"}} >
         <div className="controlsWrapper">
           <div className="tracks">
-            {sounds[selectedSong]?.tracks?.map((source, index) => (
-              <div key={index} className="singleTrack">
+            
+              <div className="singleTrack">
                 <Channel
-                  key={index}
-                  source={source}
-                  index={index}
+                  sources={sounds[selectedSong]?.tracks}
                   refs={refs}
                   globalSeek={globalSeek}
+                  setGlobalSeek={setGlobalSeek}
                   handleTimeUpdate={handleTimeUpdate}
                   userSeek={userSeek}
                   selectedSong={selectedSong}
@@ -163,9 +163,10 @@ console.log(sound.seek())
                   playing={playing}
                   playPressed={playPressed}
                   setPlayPressed={setPlayPressed}
+                  setTrackDuration={setTrackDuration}
                 />
               </div>
-            ))}
+
           </div>
           <div className="selectBox">
             <select
@@ -183,7 +184,7 @@ console.log(sound.seek())
           </div>
           <div className="controls">
             <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={handlePlayPause} >
-              <img style={{width:"3rem"}} src={sound.playing() ? iconPause : iconPlay} alt="Play Button" />
+              <img style={{width:"3rem"}} src={playing ? iconPause : iconPlay} alt="Play Button" />
             </button>
             <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={handleStop} disabled={!sound.playing()}>
             <img style={{width:"3rem", opacity: sound.playing() ? 1 : 0.5}} src={iconStop} alt="Stop Button" />
@@ -193,7 +194,7 @@ console.log(sound.seek())
             <input
               type="range"
               min="0"
-              max={sound.duration() || 0}
+              max={trackDuration || 0}
               value={globalSeek}
               onChange={(e) => {
                 setGlobalSeek(e.target.value);

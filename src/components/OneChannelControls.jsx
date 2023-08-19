@@ -1,11 +1,37 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import iconMuted from "../lib/img/muted.png"
+import iconUnmuted from "../lib/img/unmuted.png"
+import "./Channel.css"
 
-const OneChannelControls = () => {
+const OneChannelControls = ({sound, soundIds, id, index, sources, isTabletOrMobile}) => {
+
+  const [channelVolume, setChannelVolume] = useState();
+  const [isFirst, setIsFirst] = useState();
+  const [isMuted, setIsMuted] = useState(false);
+  console.log("OneCahnnel: ", sources)
+
+  useEffect(() => {
+  if(index === 0) {
+    setIsFirst(true)
+  }
+}, [])
+
+const handleMute = () => {
+  if(!isMuted){
+    sound.mute(true, id);
+    setIsMuted(true);
+  } else {
+    sound.mute(false, id)
+    setIsMuted(false);
+  }
+}
+
   return (
-    <div>
+    <div style={{display: "flex"}}>
       <div key={index} className="track">
         <div className="sourceName">
-          <h3>{source.name}</h3>
+          <h3>{sources[index].name}</h3>
         </div>
         {/* <audio ref={refs[index]} src={source.src} preload="auto" muted={isMuted ? true : false} /> */}
         <input
@@ -17,13 +43,12 @@ const OneChannelControls = () => {
           orient="vertical"
           value={channelVolume}
           style={{
-            background: sliderColor,
             width: isTabletOrMobile ? "0.4rem" : null,
           }}
           // onTimeUpdate={() => handleTimeUpdate()}
           onChange={(e) => {
-            sound.volume(e.target.value);
-            setChannelVolume(sound.volume(soundId));
+            sound.volume(e.target.value, id);
+            setChannelVolume(sound.volume(id));
           }}
         />
         <div
@@ -39,7 +64,7 @@ const OneChannelControls = () => {
           {/* <img src={isMuted ? iconMuted : iconUnmuted} alt="" style={{width: "1.5rem"} } /> */}
           <button
             style={{ backgroundColor: "transparent", padding: "0.5rem" }}
-            onClick={() => setIsMuted(!isMuted)}
+            onClick={handleMute}
           >
             <img
               src={isMuted ? iconMuted : iconUnmuted}
