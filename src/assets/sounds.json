@@ -21,6 +21,26 @@
         "name" : "Jürgen + Boris"}
     ]
 },
+"theoPetzt_16": 
+    {
+    "selectvalue":"theoPetzt_16",
+    "songname":"16 - Theo petzt",
+    "tracks": [
+        {"id" : 1,
+        "src": "http://songs.renja.cc/sounds/16_theo-petzt/16_theo-petzt_klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "http://songs.renja.cc/lrc/16_theo-petzt-lyrics.lrc"},
+        {"id" : 2,
+        "src": "http://songs.renja.cc/sounds/16_theo-petzt/16_theo-petzt_theo.mp3",
+        "name" : "Theo"},
+        {"id" : 3,
+        "src": "http://songs.renja.cc/sounds/16_theo-petzt/16_theo-petzt_lennard.mp3",
+        "name" : "Lennard"},
+        {"id" : 4,
+        "src": "http://songs.renja.cc/sounds/16_theo-petzt/16_theo-petzt_lennard+klavier.mp3",
+        "name" : "Lennard + Klavier"}
+    ]
+},
 "horrorMassaker_17a": 
     {
     "selectvalue":"horrorMassaker_17a",

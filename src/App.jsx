@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import Channel from "./components/Channel";
 import { useState, useEffect, useRef } from "react";
-import sounds from "./lib/sounds.json";
+import sounds from "./assets/sounds.json";
 import { formatTime } from "../utils/lrcParser";
 import Lyrics from "./components/Lyrics";
 import { useMediaQuery } from "react-responsive";
