@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { parseLyrics, syncLyrics } from "../../utils/lrcParser";
 import OneLine from "./OneLine";
 import "./Lyrics.css";
+import { Transport } from "tone";
 
 const Lyrics = ({
   sounds,
@@ -55,13 +56,22 @@ const Lyrics = ({
   }, [globalSeek, loading]);
 
   const goToLyricsPosition = (position) => {
-    setGlobalSeek(position);
-    setUserSeek(!userSeek);
+    if(Transport.state === "started"){
+
+      Transport.pause();
+      Transport.seconds = position;
+      setGlobalSeek(position);
+      setUserSeek(!userSeek);
+      Transport.start();
+    } else {
+      Transport.seconds = position;
+      setGlobalSeek(position);
+      setUserSeek(!userSeek);
+    }
   };
 
   return (
     <>
-      {/* <h4>Lyrics</h4> */}
       <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}>
         <h3>Lyrics</h3>
         {loading ? (

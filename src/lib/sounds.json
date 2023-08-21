@@ -1,0 +1,121 @@
+{"emBlock_14_01": 
+    {
+    "selectvalue":"emBlock_14_01",
+    "songname":"14 - Emotionale Blockade",
+    "tracks": [
+        {"id" : 1,
+        "src": "/sounds/14_emotionale-blockade/14_emotionale-blockade_klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "/lrc/14_Emotionale-Blockade_Theo.lrc"},
+        {"id" : 2,
+        "src": "/sounds/14_emotionale-blockade/14_emotionale-blockade_theo.mp3",
+        "name" : "Theo"},
+        {"id" : 3,
+        "src": "/sounds/14_emotionale-blockade/14_emotionale-blockade_sophia.mp3",
+        "name" : "Sophia"},
+        {"id" : 4,
+        "src": "/sounds/14_emotionale-blockade/14_emotionale-blockade_tess-helena.mp3",
+        "name" : "Tess + Helena"},
+        {"id" : 5,
+        "src": "/sounds/14_emotionale-blockade/14_emotionale-blockade_juergen-boris.mp3",
+        "name" : "Jürgen + Boris"}
+    ]
+},
+"angstUmsicht_15": 
+    {
+    "selectvalue":"angstUmsicht_15",
+    "songname":"15 - Angst und Umsicht",
+    "tracks": [
+        {"id" : 1,
+        "src": "/sounds/15_angst-und-umsicht/15_angst-und-umsicht_klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "/lrc/15_angst-und-umsicht_tutti.lrc"},
+        {"id" : 2,
+        "src": "/sounds/15_angst-und-umsicht/15_angst-und-umsicht_juergen.mp3",
+        "name" : "Jürgen"},
+        {"id" : 3,
+        "src": "/sounds/15_angst-und-umsicht/15_angst-und-umsicht_sophia.mp3",
+        "name" : "Sophia"},
+        {"id" : 4,
+        "src": "/sounds/15_angst-und-umsicht/15_angst-und-umsicht_tutti.mp3",
+        "name" : "Tutti"}
+    ]
+},
+"theoPetzt_16": 
+    {
+    "selectvalue":"theoPetzt_16",
+    "songname":"16 - Theo petzt",
+    "tracks": [
+        {"id" : 1,
+        "src": "/sounds/16_theo-petzt/16_theo-petzt_klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "/lrc/16_theo-petzt-lyrics.lrc"},
+        {"id" : 2,
+        "src": "/sounds/16_theo-petzt/16_theo-petzt_theo.mp3",
+        "name" : "Theo"},
+        {"id" : 3,
+        "src": "/sounds/16_theo-petzt/16_theo-petzt_lennard.mp3",
+        "name" : "Lennard"},
+        {"id" : 4,
+        "src": "/sounds/16_theo-petzt/16_theo-petzt_lennard+klavier.mp3",
+        "name" : "Lennard + Klavier"}
+    ]
+},
+"horrorMassaker_17a": 
+    {
+    "selectvalue":"horrorMassaker_17a",
+    "songname":"17a - Horror - Massaker",
+    "tracks": [
+        {"id" : 1,
+        "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "/lrc/17a_der-horrortrip_das-massaker_alle.lrc"},
+        {"id" : 2,
+        "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-alle.mp3",
+        "name" : "Alle"},
+        {"id" : 3,
+        "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-tutti.mp3",
+        "name" : "Tutti + Klavier"}
+    ]
+},
+"horrorBeerd_17b": 
+    {
+    "selectvalue":"horrorBeerd_17b",
+    "songname":"17b - Horror - Versager",
+    "tracks": [
+        {"id" : 1,
+        "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "/lrc/17b_horrortrip_versager_sven+klavier.lrc"},
+        {"id" : 2,
+        "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_sven.mp3",
+        "name" : "Sven"},
+        {"id" : 3,
+        "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_sven+klavier.mp3",
+        "name" : "Sven + Klavier"}
+    ]
+},
+"hoerIhm_18": 
+    {
+    "selectvalue":"hoerIhm_18",
+    "songname":"18 - Hör ihm zu",
+    "tracks": [
+        {"id" : 1,
+        "src": "/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "/lrc/18_hoer-ihm-zu_helena-sophia.lrc"},
+        {"id" : 2,
+        "src": "/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_helena-sophia.mp3",
+        "name" : "Helena + Sophia"},
+        {"id" : 3,
+        "src": "/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_tess.mp3",
+        "name" : "Tess"},
+        {"id" : 4,
+        "src": "/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_theo-fine.mp3",
+        "name" : "Theo + Fine"},
+        {"id" : 5,
+        "src": "/sounds/18_hoer-ihm-zu/18_hoer-ihm-zu_boris-juergen-ben.mp3",
+        "name" : "Jürgen + Boris"}
+    ]
+}
+}

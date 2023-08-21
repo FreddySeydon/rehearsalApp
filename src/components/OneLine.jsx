@@ -2,7 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition, isBigScreen, isDesktopOrLaptop, isTabletOrMobile}) => {
-  const testbool = true;
   const [lineActive, setLineActive] = useState(false);
 
   useEffect(() => {

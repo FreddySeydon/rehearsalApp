@@ -50,6 +50,27 @@
     align-content: baseline;
     justify-content: flex-end;
   }
+  .track {
+    margin-right: 1rem;
+    margin-left: 1rem;
+  }
+
+  .trackControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .globalControls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1rem
+  }
+
+  .controls {
+   margin-top:1rem
+  }
 
   .sourceName{
     min-height: 5rem;
