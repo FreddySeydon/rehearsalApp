@@ -26,7 +26,7 @@ const Channel = ({
   isDesktopOrLaptop,
   playing,
   setPlaying,
-  sounds
+  sounds,
 }) => {
   useEffect(() => {
     const players = new Tone.Players().toDestination();
@@ -38,7 +38,6 @@ const Channel = ({
   }, [selectedSong]);
 
   const loadTracks = (players) => {
-    // setLoading(true)
     if (players._players.size === 0) {
       console.log("Adding Players");
       sources.map((track, index) => {
@@ -50,7 +49,6 @@ const Channel = ({
         players.player(`${index}`).sync().start(0);
       });
       setStatePlayers(players);
-      // setLoading(false)
     }
   };
 
@@ -76,11 +74,14 @@ const Channel = ({
     }
   },[globalSeek])
 
+  console.log(trackDuration)
+
   const handlePlay = () => {
-    // await Tone.start()
     const interval = setInterval(() => {
-      // console.log(Tone.Transport.seconds);
       setGlobalSeek(Tone.Transport.seconds);
+      if(Tone.Transport.seconds >= trackDuration){
+        Tone.Transport.stop()
+      }
     }, 10);
     Tone.Transport.start();
   };
@@ -91,14 +92,17 @@ const Channel = ({
     } else {
       await Tone.start();
       handlePlay();
+      setPlaying(true);
     }
   };
   const handlePause = () => {
     Tone.Transport.pause();
+    setPlaying(false);
   };
   const handleStop = () => {
     Tone.Transport.stop();
     setGlobalSeek(0);
+    setPlaying(false)
   };
 
   const handleSongChange = (e) => {
@@ -161,10 +165,10 @@ const Channel = ({
               backgroundColor: "transparent",
             }}
             onClick={handleStop}
-            disabled={playing ? false : true}
+            // disabled={isStopped ? false : true}
           >
             <img
-              style={{ width: "3rem", opacity: Tone.Transport.state ? 1 : 0.5 }}
+              style={{ width: "3rem", opacity: 1 }}
               src={iconStop}
               alt="Stop Button"
             />
@@ -179,7 +183,7 @@ const Channel = ({
             onChange={(e) => {
               handleGlobalSeek(e.target.value);
             }}
-            onInput={() => setUserSeek(!userSeek)}
+            // onInput={() => setUserSeek(!userSeek)}
           />
           <div>{formatTime(globalSeek)}</div>
         </div>

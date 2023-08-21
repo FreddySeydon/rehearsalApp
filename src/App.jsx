@@ -15,6 +15,7 @@ const App = () => {
   const [userSeek, setUserSeek] = useState(false);
   const [trackDuration, setTrackDuration] = useState(0);
   const [statePlayers, setStatePlayers] = useState(null)
+  const [isStopped, setIsStopped] = useState(true)
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({query: '(min-width: 1224px)'})
@@ -57,6 +58,8 @@ const App = () => {
                   setLoading={setLoading}
                   loading={loading}
                   sounds={sounds}
+                  isStopped={isStopped}
+                  setIsStopped={setIsStopped}
                 />
               </div>
 

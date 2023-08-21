@@ -8,7 +8,7 @@
     /* background-color: black; */
     scrollbar-width: thin;
     /* overflow: hidden; */
-    mask-image: linear-gradient(to bottom, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%);
+    mask-image: linear-gradient(to top, transparent 0%, black 48px, black calc(100% - 5px), transparent 100%);
 }
 
 /* .lyricsdisplay::after {

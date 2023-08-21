@@ -28,10 +28,8 @@ const Lyrics = ({
     const loadLrc = async () => {
       setLoading(true);
       const lrcLocation = sounds[selectedSong].tracks[0].lrc;
-      // console.log(lrcLocation)
       const res = await fetch(lrcLocation);
       const lrc = await res.text();
-      // console.log(lrc)
       setLrcContent(lrc);
       setLoading(false);
     };
@@ -69,13 +67,11 @@ const Lyrics = ({
       Transport.seconds = position;
       setGlobalSeek(position);
       setUserSeek(!userSeek);
-      // Transport.start();
     }
   };
 
   return (
     <>
-      {/* <h4>Lyrics</h4> */}
       <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}>
         <h3>Lyrics</h3>
         {loading ? (
