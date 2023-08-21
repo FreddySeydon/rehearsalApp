@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { parseLyrics, syncLyrics } from "../../utils/lrcParser";
 import OneLine from "./OneLine";
 import "./Lyrics.css";
+import { Transport } from "tone";
 
 const Lyrics = ({
   sounds,
@@ -27,8 +28,10 @@ const Lyrics = ({
     const loadLrc = async () => {
       setLoading(true);
       const lrcLocation = sounds[selectedSong].tracks[0].lrc;
+      // console.log(lrcLocation)
       const res = await fetch(lrcLocation);
       const lrc = await res.text();
+      // console.log(lrc)
       setLrcContent(lrc);
       setLoading(false);
     };
@@ -55,8 +58,19 @@ const Lyrics = ({
   }, [globalSeek, loading]);
 
   const goToLyricsPosition = (position) => {
-    setGlobalSeek(position);
-    setUserSeek(!userSeek);
+    if(Transport.state === "started"){
+
+      Transport.pause();
+      Transport.seconds = position;
+      setGlobalSeek(position);
+      setUserSeek(!userSeek);
+      Transport.start();
+    } else {
+      Transport.seconds = position;
+      setGlobalSeek(position);
+      setUserSeek(!userSeek);
+      // Transport.start();
+    }
   };
 
   return (
