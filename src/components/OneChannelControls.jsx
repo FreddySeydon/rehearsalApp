@@ -4,9 +4,9 @@ import iconMuted from "../lib/img/muted.png"
 import iconUnmuted from "../lib/img/unmuted.png"
 import "./Channel.css"
 
-const OneChannelControls = ({sound, soundIds, id, index, sources, isTabletOrMobile}) => {
+const OneChannelControls = ({track, players, sound, soundIds, id, index, sources, isTabletOrMobile}) => {
 
-  const [channelVolume, setChannelVolume] = useState();
+  const [channelVolume, setChannelVolume] = useState(0);
   const [isFirst, setIsFirst] = useState();
   const [isMuted, setIsMuted] = useState(false);
   console.log("OneCahnnel: ", sources)

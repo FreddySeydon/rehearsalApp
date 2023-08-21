@@ -6,11 +6,11 @@ import sounds from "./lib/sounds.json";
 import { formatTime } from "../utils/lrcParser";
 import Lyrics from "./components/Lyrics";
 import { useMediaQuery } from "react-responsive";
-import { Howl, Howler } from "howler";
 
 import iconPlay from "./lib/img/play.png"
 import iconPause from "./lib/img/pause.png"
 import iconStop from "./lib/img/stop.png"
+import { format } from "path";
 
 const App = () => {
   // console.log(Object.keys(Howler))
@@ -20,6 +20,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [userSeek, setUserSeek] = useState(false);
   const [trackDuration, setTrackDuration] = useState(0);
+  const [statePlayers, setStatePlayers] = useState(null)
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({query: '(min-width: 1224px)'})
@@ -28,111 +29,12 @@ const App = () => {
   const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
 
-  // Create an array of 10 refs to keep the order of hook calls. Not all refs are being used.
-  const maxTracks = 10;
-  const refs = Array.from({ length: maxTracks }).map(() => useRef(null));
 
   // Create a state for the playing status
   const [playing, setPlaying] = useState(false);
   const [globalSeek, setGlobalSeek] = useState(0);
-  // booleans to trigger the right method with the sounds in the channels
-  const [pausePressed, setPausePressed] = useState(false);
-  const [stopPressed, setStopPressed] = useState(false);
-  const [playPressed, setPlayPressed] = useState(false);
-
-  // const testSound = new Howl({
-  //   src: sounds[selectedSong]?.tracks?[0].src
-  // })
-    // Play Pause function for Howler
-const handlePlayPause = () => {
-  setPlaying(!playing);
-  setPlayPressed(!playPressed);
-}
-
-const handleStop = () => {
-  setStopPressed(!stopPressed)
-  setPlaying(false)
-  }
 
 
-// orientation sound for seek + functions
-const sound = new Howl({
-  src: [sounds[selectedSong]?.tracks[0]?.src],
-  volume: 0.0,
-  autoplay: false
-})
-
-const playPause = () => {
-  if(playing) {
-    sound.pause();
-  } else {
-    sound.play();
-  }
-  // setPlaying(!playing)
-}
-
-useEffect(() => {
-  sound.stop();
-}, [stopPressed])
-
-useEffect(() => {
-  playPause()
-}, [playing])
-
-useEffect(() => {
-  sound.seek(globalSeek);
-}, [userSeek])
-
-
-console.log(playing)
-console.log(sound.seek())
-// const id1 = sound.play()
-
-  // Create a function to play all the audio elements
-  const play = () => {
-    refs.forEach((ref) => ref.current.play());
-    setPlaying(true);
-  };
-
-  // Create a function to pause all the audio elements
-  const pause = () => {
-    refs.forEach((ref) => ref.current.pause());
-    setPlaying(false);
-  };
-
-  // Create a function to stop all the audio elements
-  const stop = (e) => {
-    refs.forEach((ref) => {
-      ref.current.pause();
-      ref.current.currentTime = 0;
-    });
-    setGlobalSeek(0);
-    setPlaying(false);
-  };
-
-  // Use the useEffect hook to sync the playing status of all the audio elements
-  useEffect(() => {
-    refs.forEach((ref) => {
-      if (ref.current) {
-        ref.current.onplay = () => setPlaying(true);
-        ref.current.onpause = () => setPlaying(false);
-        ref.current.onended = () => {
-          setPlaying(false);
-          setGlobalSeek(0);
-        };
-      }
-    });
-  }, [refs]);
-
-  useEffect(() => {
-    if(playing){
-      handleStop();
-    }
-  }, [selectedSong])
-
-  const handleTimeUpdate = () => {
-    setGlobalSeek(sound.seek());
-  };
 
   const handleSongChange = (e) => {
     setSelectedSong(e.target.value);
@@ -155,6 +57,7 @@ console.log(sound.seek())
                   handleTimeUpdate={handleTimeUpdate}
                   userSeek={userSeek}
                   selectedSong={selectedSong}
+                  setSelectedSong={setSelectedSong}
                   isBigScreen={isBigScreen}
                   isDesktopOrLaptop={isDesktopOrLaptop}
                   isTabletOrMobile={isTabletOrMobile}
@@ -164,6 +67,10 @@ console.log(sound.seek())
                   playPressed={playPressed}
                   setPlayPressed={setPlayPressed}
                   setTrackDuration={setTrackDuration}
+                  trackDuration={trackDuration}
+                  statePlayers={statePlayers}
+                  setStatePlayers={setStatePlayers}
+                  formatTime={formatTime}
                 />
               </div>
 
@@ -182,34 +89,7 @@ console.log(sound.seek())
               ))}
             </select>
           </div>
-          <div className="controls">
-            <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={handlePlayPause} >
-              <img style={{width:"3rem"}} src={playing ? iconPause : iconPlay} alt="Play Button" />
-            </button>
-            <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={handleStop} disabled={!sound.playing()}>
-            <img style={{width:"3rem", opacity: sound.playing() ? 1 : 0.5}} src={iconStop} alt="Stop Button" />
-            </button>
-          </div>
-          <div className="globalSeek">
-            <input
-              type="range"
-              min="0"
-              max={trackDuration || 0}
-              value={globalSeek}
-              onChange={(e) => {
-                setGlobalSeek(e.target.value);
-              }}
-              onInput={() => setUserSeek(!userSeek)}
-            />
-            <div>{formatTime(globalSeek)}</div>
-          </div>
-          {/* <div className="refAudio">
-            <audio
-              ref={refs[0]}
-              src={sounds[selectedSong]?.tracks[0]?.src}
-              onTimeUpdate={handleTimeUpdate}
-            ></audio>
-          </div> */}
+
         </div>
         <div className="lyrics">
           <Lyrics

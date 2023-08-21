@@ -1,130 +1,118 @@
 import React, { useEffect, useState, useRef} from 'react'
 import "./Channel.css"
-import { Howl, Howler } from "howler";
+import * as Tone from 'tone'
 import OneChannelControls from './OneChannelControls';
 
-const Channel = ({refs, setTrackDuration, setGlobalSeek, sources, globalSeek, playPressed, setPlayPressed, selectedSong, handleTimeUpdate, userSeek, handlePlayPause, stopPressed, isBigScreen, isTabletOrMobile, isDesktopOrLaptop, playing}) => {
+const Channel = ({ formatTime, statePlayers, setStatePlayers, setTrackDuration, trackDuration, selectedSong, setSelectedSong, setUserSeek, setGlobalSeek, sources, globalSeek, playPressed, setPlayPressed, selectedSong, handleTimeUpdate, userSeek, stopPressed, isBigScreen, isTabletOrMobile, isDesktopOrLaptop, playing}) => {
 const [channelVolume, setChannelVolume] = useState(0.5)
 const [isMuted, setIsMuted] = useState(false)
 const [isFirst, setIsFirst] = useState(false)
 const [soundIds, setSoundIds] = useState(null)
 const [sourcePaths, setSourcePaths] = useState([])
 
-const soundRef = useRef(null)
-
-const sliderColor = "#FFCC70"
-// console.log("sourcepaths",sourcePaths)
-console.log("Channel sources: ", sources)
-
-// useEffect(() => {
-//   console.log("Why is this not running?")
-//   sources.map((track) => {
-//     setSourcePaths((prev) => [...prev, track.src])
-//   })
-// }, [])
+// const soundRef = useRef(null)
 
 
-// useEffect(() =>{
-//   console.log("SOURCEPATHS:", sourcePaths)
-// }, [sourcePaths])
+  useEffect(() => {
+    const players = new Tone.Players().toDestination();
+    loadTracks(players);
 
-console.log("Length of sourcePaths",sourcePaths.length)
-useEffect(() => {
-  const paths = sources.map((track) => {
-    return track.src
-  })
-  soundRef.current = new Howl({
-    src: [...paths],
-    volume: 0.5,
-    autoplay: false
-  })
-  setSourcePaths(paths)
+    return () => {
+        players.dispose();
+    }
+
+
 }, [selectedSong])
 
-// console.log(soundRef.current)
-
-// const stopAllTracks = () => {
-//   soundIds.forEach((id) => {
-//     console.log("HowlID:", id);
-//     soundRef.current.stop(id);
-//   })
-// }
-
-// const getIds = () => {
-//   sourcePaths.map(() => {
-//     console.log(soundRef.current.play())
-//     setSoundIds((prev) => [...prev, soundRef.current.play()])
-//   })
-
-//   if(soundIds.length === sourcePaths.length){
-//     stopAllTracks();
-//   }
-// }
-useEffect(() => {
-console.log("sound1", soundRef.current.play())
-console.log("sound2", soundRef.current.play())
-console.log("sound3", soundRef.current.play())
-console.log("sound4", soundRef.current.play())
-// console.log("sound5", soundRef.current.play())
-// console.log("sound6", soundRef.current.play())
-}, [])
-const getIds = () => {
-  const ids = sourcePaths.map(src => {
-    const id =soundRef.current.play();
-    soundRef.current.pause(id);
-    return id;
-  })
-  setSoundIds(ids);
-  console.log("IDS",  ids)
+const loadTracks = (players) => {
+  if(players._players.size === 0) {
+    console.log("Adding Players")
+    sources.map((track, index) => {
+      players.add(`${index}`, track.src)
+      if(index===0){
+        players.player(`${index}`).buffer.onload = () => setTrackDuration(players.player(`${index}`).buffer.duration)
+      }
+      players.player(`${index}`).sync().start(0)
+    });
+    setStatePlayers(players);
+  }
 }
 
-useEffect(() => {
-  console.log("SoundIDs Array: ", soundIds)
-}, [soundIds])
-
-useEffect(() => {
-  if(sourcePaths.length){
-    getIds();
-  }
-}, [sourcePaths])
-
-
-
-const playPause = () => {
-  if(playing) {
-    soundRef.current.pause();
+const handleGlobalSeek = (value) => {
+  if(Tone.Transport.state === "started"){
+      Tone.Transport.pause()
+      Object.values(statePlayers._players).forEach(player => player.sync());
+      setGlobalSeek(value)
+      Tone.Transport.seconds = value
+      Tone.Transport.start()
   } else {
-      soundRef.current.play();
-    }
+      Object.values(statePlayers._players).forEach(player => player.sync());
+      setGlobalSeek(value)
+      Tone.Transport.seconds = value
   }
+}
 
-useEffect(() => {
-  soundRef.current.stop();
-  setGlobalSeek(0)
-}, [stopPressed])
+const handlePlay = () => {
+  // await Tone.start()
+  const interval = setInterval(() => {
+      // console.log(Tone.Transport.seconds);
+      setGlobalSeek(Tone.Transport.seconds)
+  }, 10)
+  Tone.Transport.start();
+}
 
-useEffect(() => {
-  console.log(playPressed)
-  if(playPressed){
-    playPause()
-    setPlayPressed(false)
+const handlePlayPause = async () => {
+  if(Tone.Transport.state === "started"){
+    handlePause()
+  } else {
+    await Tone.start()
+    handlePlay() 
   }
-}, [playPressed])
+}
+const handlePause = () => {
+  Tone.Transport.pause();
+}
+const handleStop = () => {
+  Tone.Transport.stop();
+  setGlobalSeek(0);
+}
 
-// useEffect(() => {
-//   isMuted ? soundRef.current.mute(true) : soundRef.current.mute(false)
-// }, [isMuted])
 
-useEffect(() => {
-  soundRef.current.seek(globalSeek);
-}, [userSeek])
+// const handleSongChange = (e) => {
+//   setSelectedSong(e.target.value);
+// }
+
+
 
   return (
     <div className="trackControls" style={{display:'flex'}}>
-      {!soundIds ? <div>Loading...</div> : soundIds.map((id, index) => {
-        return <OneChannelControls key={index} index={index} sound={soundRef.current} soundIds={soundIds} id={id} sources={sources} isTabletOrMobile={isTabletOrMobile} isDesktopOrLaptop={isDesktopOrLaptop}/>
+      {!isLoading ? <div>Loading...</div> : sources.map((track, index) => {
+        return <OneChannelControls key={index} players={statePlayers} track={track} index={index} sources={sources} isTabletOrMobile={isTabletOrMobile} isDesktopOrLaptop={isDesktopOrLaptop}/>
 
       })}
+      <div className="globalControls">
+      <div className="controls">
+            <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={handlePlayPause} >
+              <img style={{width:"3rem"}} src={playing ? iconPause : iconPlay} alt="Play Button" />
+            </button>
+            <button style={{marginRight:"0.25rem", marginLeft:"0.25rem", backgroundColor:"transparent"}} onClick={handleStop} disabled={!sound.playing()}>
+            <img style={{width:"3rem", opacity: Tone.Transport.state ? 1 : 0.5}} src={iconStop} alt="Stop Button" />
+            </button>
+          </div>
+          <div className="globalSeek">
+            <input
+              type="range"
+              min="0"
+              max={trackDuration || 0}
+              value={Tone.Transport.seconds}
+              onChange={(e) => {
+                handleGlobalSeek(e.target.value);
+              }}
+              onInput={() => setUserSeek(!userSeek)}
+            />
+            <div>{formatTime(globalSeek)}</div>
+          </div>
+      </div>
     </div>
 
   )
