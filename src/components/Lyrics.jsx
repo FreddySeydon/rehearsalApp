@@ -7,15 +7,16 @@ import { Transport } from "tone";
 
 const Lyrics = ({
   sounds,
+  statePlayers,
   selectedSong,
-  setLrcContent,
   lrcContent,
-  setLoading,
+  setLrcContent,
   loading,
+  setLoading,
   globalSeek,
   setGlobalSeek,
-  setUserSeek,
   userSeek,
+  setUserSeek,
   isBigScreen,
   isDesktopOrLaptop,
   isTabletOrMobile
@@ -57,14 +58,15 @@ const Lyrics = ({
 
   const goToLyricsPosition = (position) => {
     if(Transport.state === "started"){
-
       Transport.pause();
+      Object.values(statePlayers._players).forEach((player) => player.sync());
       Transport.seconds = position;
       setGlobalSeek(position);
       setUserSeek(!userSeek);
       Transport.start();
     } else {
       Transport.seconds = position;
+      Object.values(statePlayers._players).forEach((player) => player.sync());
       setGlobalSeek(position);
       setUserSeek(!userSeek);
     }

@@ -71,6 +71,7 @@ const App = () => {
         <div className="lyrics">
           <Lyrics
             sounds={sounds}
+            statePlayers={statePlayers}
             setLrcContent={setLrcContent}
             lrcContent={lrcContent}
             setLoading={setLoading}
