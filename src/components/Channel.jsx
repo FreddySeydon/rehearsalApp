@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect } from "react";
 import "./Channel.css";
 import * as Tone from "tone";
 import OneChannelControls from "./OneChannelControls";
@@ -14,8 +14,6 @@ const Channel = ({
   trackDuration,
   selectedSong,
   setSelectedSong,
-  userSeek,
-  setUserSeek,
   globalSeek,
   setGlobalSeek,
   sources,
@@ -39,7 +37,6 @@ const Channel = ({
 
   const loadTracks = (players) => {
     if (players._players.size === 0) {
-      console.log("Adding Players");
       sources.map((track, index) => {
         players.add(`${index}`, track.src);
         if (index === 0) {
@@ -73,8 +70,6 @@ const Channel = ({
       setPlaying(false)
     }
   },[globalSeek])
-
-  console.log(trackDuration)
 
   const handlePlay = () => {
     const interval = setInterval(() => {
@@ -185,7 +180,7 @@ const Channel = ({
             }}
             // onInput={() => setUserSeek(!userSeek)}
           />
-          <div>{formatTime(globalSeek)}</div>
+          <div style={{fontWeight: "bold", fontSize: isTabletOrMobile ? "1.5rem" : "1.1rem"}}>{formatTime(globalSeek)}</div>
         </div>
       </div>
     </div>

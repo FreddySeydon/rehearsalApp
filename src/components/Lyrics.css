@@ -4,24 +4,12 @@
 
 .lyricsdisplay {
     overflow-y: scroll;
-    height: 400px;
+    height: 430px;
     /* background-color: black; */
     scrollbar-width: thin;
     /* overflow: hidden; */
-    mask-image: linear-gradient(to top, transparent 0%, black 48px, black calc(100% - 5px), transparent 100%);
+    mask-image: linear-gradient(to top, transparent 0%, black 10px, black calc(100% - 10px), transparent 100%);
 }
-
-/* .lyricsdisplay::after {
-    content: "catsdsaf";
-    position: absolute;
-    z-index: 2;
-    bottom: -11;
-    left:0;
-    pointer-events: none;
-    background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255, 1) 90%);
-    width: 100%;
-    height: 10rem;
-} */
 
 .lyricsdisplay::-webkit-scrollbar{
     /* display:none; */

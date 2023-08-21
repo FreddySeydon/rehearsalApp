@@ -1,3 +1,4 @@
+
 export function parseLyrics(lrc) {
     //matching time/text lines in lrc file and storing in group "time" and "text"
     const regex = /^\[(?<time>\d{2}:\d{2}(.\d{2})?)\](?<text>.*)/;
@@ -51,6 +52,9 @@ export function syncLyrics(lyrics, time) {
 }
 
 export function formatTime(timeInSeconds) {
+    if(timeInSeconds < 0){
+        return '00:00'
+    }
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = Math.floor(timeInSeconds % 60);
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;

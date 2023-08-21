@@ -7,15 +7,7 @@ import "./Channel.css"
 const OneChannelControls = ({ players, index, sources, isTabletOrMobile, track}) => {
 
   const [channelVolume, setChannelVolume] = useState(0);
-  // const [isFirst, setIsFirst] = useState();
   const [isMuted, setIsMuted] = useState(false);
-  // console.log("OneCahnnel: ", sources)
-
-//   useEffect(() => {
-//   if(index === 0) {
-//     setIsFirst(true)
-//   }
-// }, [])
 
 const handleVolumeChange = (value) => {
   players.player(`${index}`).volume.value = value

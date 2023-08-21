@@ -1,8 +1,8 @@
 import React from "react";
 import "./App.css";
 import Channel from "./components/Channel";
-import { useState, useEffect, useRef } from "react";
-import sounds from "./assets/sounds.json";
+import { useState } from "react";
+import sounds from "./lib/sounds.json";
 import { formatTime } from "../utils/lrcParser";
 import Lyrics from "./components/Lyrics";
 import { useMediaQuery } from "react-responsive";
@@ -23,7 +23,6 @@ const App = () => {
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
   const isPortrait = useMediaQuery({ query: '(orientation: portrait)' })
   const isRetina = useMediaQuery({ query: '(min-resolution: 2dppx)' })
-
 
   // Create a state for the playing status
   const [playing, setPlaying] = useState(false);

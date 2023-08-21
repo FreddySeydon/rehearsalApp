@@ -24,8 +24,11 @@
 .audio-mixer {
   width: 100%;
   display: flex;  
+  justify-content: center;
+  /* align-items: flex-start; */
   flex-wrap: wrap;
 }
+
 .globalSeek input {
   width: 100%
 
