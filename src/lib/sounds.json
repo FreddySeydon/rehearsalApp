@@ -35,10 +35,7 @@
         "name" : "Jürgen"},
         {"id" : 3,
         "src": "/sounds/15_angst-und-umsicht/15_angst-und-umsicht_sophia.mp3",
-        "name" : "Sophia"},
-        {"id" : 4,
-        "src": "/sounds/15_angst-und-umsicht/15_angst-und-umsicht_tutti.mp3",
-        "name" : "Tutti"}
+        "name" : "Sophia"}
     ]
 },
 "theoPetzt_16": 
@@ -55,10 +52,7 @@
         "name" : "Theo"},
         {"id" : 3,
         "src": "/sounds/16_theo-petzt/16_theo-petzt_lennard.mp3",
-        "name" : "Lennard"},
-        {"id" : 4,
-        "src": "/sounds/16_theo-petzt/16_theo-petzt_lennard+klavier.mp3",
-        "name" : "Lennard + Klavier"}
+        "name" : "Lennard"}
     ]
 },
 "horrorMassaker_17a": 
@@ -72,10 +66,7 @@
         "lrc" : "/lrc/17a_der-horrortrip_das-massaker_alle.lrc"},
         {"id" : 2,
         "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-alle.mp3",
-        "name" : "Alle"},
-        {"id" : 3,
-        "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-tutti.mp3",
-        "name" : "Tutti + Klavier"}
+        "name" : "Alle"}
     ]
 },
 "horrorBeerd_17b": 
@@ -89,10 +80,7 @@
         "lrc" : "/lrc/17b_horrortrip_versager_sven+klavier.lrc"},
         {"id" : 2,
         "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_sven.mp3",
-        "name" : "Sven"},
-        {"id" : 3,
-        "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_sven+klavier.mp3",
-        "name" : "Sven + Klavier"}
+        "name" : "Sven"}
     ]
 },
 "hoerIhm_18": 
