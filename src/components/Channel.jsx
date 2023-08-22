@@ -25,6 +25,8 @@ const Channel = ({
   playing,
   setPlaying,
   sounds,
+  seekUpdateInterval,
+  setSeekUpdateInterval
 }) => {
   useEffect(() => {
     const players = new Tone.Players().toDestination();
@@ -32,6 +34,7 @@ const Channel = ({
 
     return () => {
       players.dispose();
+      clearInterval(seekUpdateInterval);
     };
   }, [selectedSong]);
 
@@ -72,13 +75,14 @@ const Channel = ({
   },[globalSeek])
 
   const handlePlay = () => {
-    const interval = setInterval(() => {
+    const intervalId = setInterval(() => {
       setGlobalSeek(Tone.Transport.seconds);
       if(Tone.Transport.seconds >= trackDuration){
         Tone.Transport.stop()
       }
     }, 10);
     Tone.Transport.start();
+    setSeekUpdateInterval(intervalId);
   };
 
   const handlePlayPause = async () => {
@@ -97,7 +101,8 @@ const Channel = ({
   const handleStop = () => {
     Tone.Transport.stop();
     setGlobalSeek(0);
-    setPlaying(false)
+    setPlaying(false);
+    clearInterval(seekUpdateInterval);
   };
 
   const handleSongChange = (e) => {

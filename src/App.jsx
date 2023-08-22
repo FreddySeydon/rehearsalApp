@@ -27,6 +27,7 @@ const App = () => {
   // Create a state for the playing status
   const [playing, setPlaying] = useState(false);
   const [globalSeek, setGlobalSeek] = useState(0);
+  const [seekUpdateInterval, setSeekUpdateInterval] = useState(null)
 
   // Render the audio mixer component
   return (
@@ -59,6 +60,8 @@ const App = () => {
                   sounds={sounds}
                   isStopped={isStopped}
                   setIsStopped={setIsStopped}
+                  setSeekUpdateInterval={setSeekUpdateInterval}
+                  seekUpdateInterval={seekUpdateInterval}
                 />
               </div>
 
