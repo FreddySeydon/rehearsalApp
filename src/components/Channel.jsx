@@ -47,6 +47,7 @@ const Channel = ({
             setTrackDuration(players.player(`${index}`).buffer.duration);
         }
         players.player(`${index}`).sync().start(0);
+        players.player(`${index}`).volume.value = -10
       });
       setStatePlayers(players);
     }
@@ -125,6 +126,7 @@ const Channel = ({
               sources={sources}
               isTabletOrMobile={isTabletOrMobile}
               isDesktopOrLaptop={isDesktopOrLaptop}
+              statePlayers={statePlayers}
             />
           );
         })
