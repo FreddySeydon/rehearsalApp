@@ -1,8 +1,9 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition, isBigScreen, isDesktopOrLaptop, isTabletOrMobile}) => {
   const [lineActive, setLineActive] = useState(false);
+  const lineRef = useRef()
 
   useEffect(() => {
     if (displayedLyricsIndex == null) {
@@ -11,13 +12,14 @@ const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition, isBigS
     }
     if (displayedLyricsIndex == index) {
       setLineActive(true);
+      lineRef.current.scrollIntoView({behavior:"smooth", block:"center", inline:"center"})
       return;
     }
     setLineActive(false);
   }, [displayedLyricsIndex]);
 
   return (
-    <div style={{width: isTabletOrMobile ? "100%" : "25rem" }}>
+    <div ref={lineRef} style={{width: isTabletOrMobile ? "100%" : "25rem" }}>
       <a
         onClick={() => goToLyricsPosition(line.time)}
         style={{
