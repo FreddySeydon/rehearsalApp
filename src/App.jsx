@@ -16,6 +16,7 @@ const App = () => {
   const [trackDuration, setTrackDuration] = useState(0);
   const [statePlayers, setStatePlayers] = useState(null)
   const [isStopped, setIsStopped] = useState(true)
+  const [playersLoaded, setPlayersLoaded] = useState(false)
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({query: '(min-width: 1224px)'})
@@ -62,6 +63,8 @@ const App = () => {
                   setIsStopped={setIsStopped}
                   setSeekUpdateInterval={setSeekUpdateInterval}
                   seekUpdateInterval={seekUpdateInterval}
+                  playersLoaded={playersLoaded}
+                  setPlayersLoaded={setPlayersLoaded}
                 />
               </div>
 

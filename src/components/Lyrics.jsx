@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { parseLyrics, syncLyrics } from "../../utils/lrcParser";
 import OneLine from "./OneLine";
 import "./Lyrics.css";
@@ -25,6 +25,8 @@ const Lyrics = ({
   const [currentLyrics, setCurrentLyrics] = useState([]);
   const [displayedLyricsIndex, setDisplayedLyricsIndex] = useState(0);
 
+  const lyricsRef = useRef();
+
   useEffect(() => {
     const loadLrc = async () => {
       setLoading(true);
@@ -35,6 +37,7 @@ const Lyrics = ({
       setLoading(false);
     };
     loadLrc();
+    lyricsRef.current.scrollTo(0,0);
   }, [selectedSong]);
 
   const displayCurrentLyrics = () => {
@@ -81,7 +84,7 @@ const Lyrics = ({
         ) : (
           <div style={{ display: "none" }}>{displayedLyrics}</div>
         )}
-        <div className="lyricsdisplay">
+        <div ref={lyricsRef} className="lyricsdisplay">
           {currentLyrics.map((line, index) => {
             return (
               <div key={index} style={{width: isTabletOrMobile ? "100%" : "25rem"}}>

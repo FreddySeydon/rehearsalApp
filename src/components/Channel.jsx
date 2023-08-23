@@ -5,6 +5,7 @@ import OneChannelControls from "./OneChannelControls";
 import iconPlay from "../assets/img/play.png"
 import iconPause from "../assets/img/pause.png"
 import iconStop from "../assets/img/stop.png"
+import loadingSpinner from "../assets/img/loading.gif"
 
 const Channel = ({
   formatTime,
@@ -26,7 +27,9 @@ const Channel = ({
   setPlaying,
   sounds,
   seekUpdateInterval,
-  setSeekUpdateInterval
+  setSeekUpdateInterval,
+  playersLoaded,
+  setPlayersLoaded
 }) => {
   useEffect(() => {
     const players = new Tone.Players().toDestination();
@@ -35,6 +38,7 @@ const Channel = ({
     return () => {
       players.dispose();
       clearInterval(seekUpdateInterval);
+      setPlayersLoaded(false);
     };
   }, [selectedSong]);
 
@@ -42,10 +46,14 @@ const Channel = ({
     if (players._players.size === 0) {
       sources.map((track, index) => {
         players.add(`${index}`, track.src);
-        if (index === 0) {
-          players.player(`${index}`).buffer.onload = () =>
+        // if (index === 0) {
+        //   players.player(`${index}`).buffer.onload = () =>
+        //     setTrackDuration(players.player(`${index}`).buffer.duration);
+        // }
+          players.player(`${index}`).buffer.onload = () => {
             setTrackDuration(players.player(`${index}`).buffer.duration);
-        }
+            setPlayersLoaded(true)
+          }
         players.player(`${index}`).sync().start(0);
         players.player(`${index}`).volume.value = -10
       });
@@ -75,7 +83,10 @@ const Channel = ({
     }
   },[globalSeek])
 
+  // console.log(statePlayers._buffers.loaded)
+
   const handlePlay = () => {
+    if(statePlayers._buffers.loaded){
     const intervalId = setInterval(() => {
       setGlobalSeek(Tone.Transport.seconds);
       if(Tone.Transport.seconds >= trackDuration){
@@ -84,6 +95,7 @@ const Channel = ({
     }, 10);
     Tone.Transport.start();
     setSeekUpdateInterval(intervalId);
+  }
   };
 
   const handlePlayPause = async () => {
@@ -151,12 +163,14 @@ const Channel = ({
               marginRight: "0.25rem",
               marginLeft: "0.25rem",
               backgroundColor: "transparent",
+              opacity: playersLoaded ? 1 : 0.5
             }}
+            disabled={playersLoaded ? false : true}
             onClick={handlePlayPause}
           >
             <img
               style={{ width: "3rem" }}
-              src={playing ? iconPause : iconPlay}
+              src={!playersLoaded ? loadingSpinner : playing ? iconPause : iconPlay}
               alt="Play Button"
             />
           </button>
@@ -167,10 +181,10 @@ const Channel = ({
               backgroundColor: "transparent",
             }}
             onClick={handleStop}
-            // disabled={isStopped ? false : true}
+            disabled={playersLoaded ? false : true}
           >
             <img
-              style={{ width: "3rem", opacity: 1 }}
+              style={{ width: "3rem", opacity: playersLoaded ? 1 : 0.5 }}
               src={iconStop}
               alt="Stop Button"
             />
