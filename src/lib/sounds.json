@@ -1,4 +1,51 @@
-{"emBlock_14_01": 
+{"blabla_12": 
+{   "selectvalue":"blabla_12",
+    "songname":"12 - Bla Bla",
+    "tracks": [
+    {"id" : 1,
+    "src": "/sounds/12_blabla/12_blabla_klavier.mp3",
+    "name" : "Klavier",
+    "lrc" : "/lrc/12_blabla.lrc"},
+    {"id" : 2,
+    "src": "/sounds/12_blabla/12_blabla_ben.mp3",
+    "name" : "Ben"},
+    {"id" : 3,
+    "src": "/sounds/12_blabla/12_blabla_mona.mp3",
+    "name" : "Mona"},
+    {"id" : 4,
+    "src": "/sounds/12_blabla/12_blabla_sophia.mp3",
+    "name" : "Sophia"},
+    {"id" : 5,
+    "src": "/sounds/12_blabla/12_blabla_tess.mp3",
+    "name" : "Tess"},
+    {"id" : 6,
+    "src": "/sounds/12_blabla/12_blabla_helena.mp3",
+    "name" : "Helena"}
+]
+},
+"famAufst_13": 
+{   "selectvalue":"famAufst_13",
+    "songname":"13 - Familienaufstellung",
+    "tracks": [
+    {"id" : 1,
+    "src": "/sounds/13_familienaufstellung/13_familienaufstellung_klavier.mp3",
+    "name" : "Klavier",
+    "lrc" : "/lrc/13_familienaufstellung.lrc"},
+    {"id" : 2,
+    "src": "/sounds/13_familienaufstellung/13_familienaufstellung_lennard.mp3",
+    "name" : "Lennard"},
+    {"id" : 3,
+    "src": "/sounds/13_familienaufstellung/13_familienaufstellung_mona.mp3",
+    "name" : "Mona"},
+    {"id" : 4,
+    "src": "/sounds/13_familienaufstellung/13_familienaufstellung_tess.mp3",
+    "name" : "Tess"},
+    {"id" : 5,
+    "src": "/sounds/13_familienaufstellung/13_familienaufstellung_theo.mp3",
+    "name" : "Theo"}
+]
+},
+"emBlock_14_01": 
     {
     "selectvalue":"emBlock_14_01",
     "songname":"14 - Emotionale Blockade",
@@ -72,6 +119,20 @@
 "horrorBeerd_17b": 
     {
     "selectvalue":"horrorBeerd_17b",
+    "songname":"17b - Horror - Beerdigung",
+    "tracks": [
+        {"id" : 1,
+        "src": "/sounds/17b_horrortrip_beerdigung/17b_horrortrip-beerdigung_klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "/lrc/17b_horrortrip-beerdigung.lrc"},
+        {"id" : 2,
+        "src": "/sounds/17b_horrortrip_beerdigung/17b_horrortrip-beerdigung_alle.mp3",
+        "name" : "Tutti"}
+    ]
+},
+"horrorBeerdVersag_17b": 
+    {
+    "selectvalue":"horrorBeerdVersag_17b",
     "songname":"17b - Horror - Versager",
     "tracks": [
         {"id" : 1,
