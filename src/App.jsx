@@ -9,7 +9,7 @@ import { useMediaQuery } from "react-responsive";
 
 const App = () => {
 
-  const [selectedSong, setSelectedSong] = useState("emBlock_14_01");
+  const [selectedSong, setSelectedSong] = useState(JSON.parse(localStorage.getItem('selected-song')) || "blabla_12");
   const [lrcContent, setLrcContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userSeek, setUserSeek] = useState(false);

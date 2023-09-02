@@ -120,6 +120,7 @@ const Channel = ({
 
   const handleSongChange = (e) => {
     setSelectedSong(e.target.value);
+    localStorage.setItem('selected-song', JSON.stringify(e.target.value));
   }
 
   return (
