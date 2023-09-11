@@ -25,13 +25,12 @@ const handleSolo = () => {
   // players.player(`${index}`).solo = !players.player(`${index}`).solo
   stateSolos[index].solo = !isSolo
   setIsSolo(stateSolos[index].solo)
-  console.log(stateSolos[0].solo)
-  console.log(stateSolos[1].solo)
 } 
 
 useEffect(() => {
   setIsMuted(false);
-  setIsSolo(false)
+  setIsSolo(false);
+  setChannelVolume(-10);
 }, [clearMute])
 
   return (

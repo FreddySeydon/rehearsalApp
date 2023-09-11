@@ -102,20 +102,33 @@
         "name" : "Lennard"}
     ]
 },
-"horrorMassaker_17a": 
+"horrorKeta_17c": 
     {
-    "selectvalue":"horrorMassaker_17a",
-    "songname":"17a - Horror - Massaker",
+    "selectvalue":"horrorBeerd_17b",
+    "songname":"17c - Horror - Ketamin",
     "tracks": [
         {"id" : 1,
-        "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-klavier.mp3",
+        "src": "/sounds/17c_horrortrip-ketamin/17c_horrortrip-ketamin_klavier.mp3",
         "name" : "Klavier",
-        "lrc" : "/lrc/17a_der-horrortrip_das-massaker_alle.lrc"},
+        "lrc" : "/lrc/17c_horrortrip-ketamin-lyrics.lrc"},
         {"id" : 2,
-        "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-alle.mp3",
-        "name" : "Alle"}
+        "src": "/sounds/17c_horrortrip-ketamin/17c_horrortrip-ketamin_tess.mp3",
+        "name" : "Tess"},
+        {"id" : 3,
+        "src": "/sounds/17c_horrortrip-ketamin/17c_horrortrip-ketamin_helena.mp3",
+        "name" : "Helena"},
+        {"id" : 4,
+        "src": "/sounds/17c_horrortrip-ketamin/17c_horrortrip-ketamin_sophia.mp3",
+        "name" : "Sophia"},
+        {"id" : 5,
+        "src": "/sounds/17c_horrortrip-ketamin/17c_horrortrip-ketamin_theo.mp3",
+        "name" : "Theo"},
+        {"id" : 6,
+        "src": "/sounds/17c_horrortrip-ketamin/17c_horrortrip-ketamin_juergen-boris.mp3",
+        "name" : "Jürgen + Boris"}
     ]
 },
+
 "horrorBeerd_17b": 
     {
     "selectvalue":"horrorBeerd_17b",
@@ -130,18 +143,33 @@
         "name" : "Tutti"}
     ]
 },
+
 "horrorBeerdVersag_17b": 
     {
     "selectvalue":"horrorBeerdVersag_17b",
     "songname":"17b - Horror - Versager",
     "tracks": [
         {"id" : 1,
-        "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_klavier.mp3",
+        "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_klavier_-2.mp3",
         "name" : "Klavier",
         "lrc" : "/lrc/17b_horrortrip_versager_sven+klavier.lrc"},
         {"id" : 2,
-        "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_sven.mp3",
+        "src": "/sounds/17b_horrortrip_versager/17b_horrortrip_versager_tutti.mp3",
         "name" : "Sven"}
+    ]
+},
+"horrorMassaker_17a": 
+    {
+    "selectvalue":"horrorMassaker_17a",
+    "songname":"17a - Horror - Massaker",
+    "tracks": [
+        {"id" : 1,
+        "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-klavier.mp3",
+        "name" : "Klavier",
+        "lrc" : "/lrc/17a_der-horrortrip_das-massaker_alle.lrc"},
+        {"id" : 2,
+        "src": "/sounds/17a_horrortrip_massaker/17a_der-horrortrip_das-massaker-alle.mp3",
+        "name" : "Alle"}
     ]
 },
 "hoerIhm_18": 
