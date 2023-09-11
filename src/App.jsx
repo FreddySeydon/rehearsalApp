@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import Channel from "./components/Channel";
 import { useState } from "react";
-import sounds from "./lib/sounds.json";
+// import sounds from "./lib/sounds.json";
 import { formatTime } from "../utils/lrcParser";
 import Lyrics from "./components/Lyrics";
 import { useMediaQuery } from "react-responsive";
+import loadingSpinner from "./assets/img/loading.gif"
 
 const App = () => {
 
@@ -19,6 +20,7 @@ const App = () => {
   const [isStopped, setIsStopped] = useState(true)
   const [playersLoaded, setPlayersLoaded] = useState(false)
   const [clearMute, setClearMute] = useState(false)
+  const [sounds, setSounds] = useState(null)
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({query: '(min-width: 1224px)'})
@@ -32,8 +34,24 @@ const App = () => {
   const [globalSeek, setGlobalSeek] = useState(0);
   const [seekUpdateInterval, setSeekUpdateInterval] = useState(null)
 
+  useEffect(() => {
+    const fetchSounds = async () => {      
+      try {
+        const response = await fetch("sounds/sounds.json")
+        const sounds = await response.json()
+        setSounds(sounds)
+        console.log(sounds)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchSounds()
+  }, [])
+
   // Render the audio mixer component
   return (
+    <>
+    {!sounds ? <div><img src={loadingSpinner} alt="" width={"5rem"}/></div> :
     <div className="appWrapper" style={{padding: isTabletOrMobile ? "1rem" : "5rem"}}>
       <h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal App</h1>
       <div className="audio-mixer" style={{flexDirection: isTabletOrMobile ? "column" : "row"}} >
@@ -99,7 +117,8 @@ const App = () => {
           />
         </div>
       </div>
-    </div>
+    </div>}
+    </>
   );
 };
 
