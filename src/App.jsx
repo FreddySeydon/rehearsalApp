@@ -17,6 +17,7 @@ const App = () => {
   const [statePlayers, setStatePlayers] = useState(null)
   const [isStopped, setIsStopped] = useState(true)
   const [playersLoaded, setPlayersLoaded] = useState(false)
+  const [clearMute, setClearMute] = useState(false)
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({query: '(min-width: 1224px)'})
@@ -65,6 +66,8 @@ const App = () => {
                   seekUpdateInterval={seekUpdateInterval}
                   playersLoaded={playersLoaded}
                   setPlayersLoaded={setPlayersLoaded}
+                  clearMute={clearMute}
+                  setClearMute={setClearMute}
                 />
               </div>
 

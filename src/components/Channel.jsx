@@ -29,11 +29,14 @@ const Channel = ({
   seekUpdateInterval,
   setSeekUpdateInterval,
   playersLoaded,
-  setPlayersLoaded
+  setPlayersLoaded,
+  clearMute,
+  setClearMute
 }) => {
   useEffect(() => {
     const players = new Tone.Players().toDestination();
     loadTracks(players);
+    setClearMute(!clearMute);
 
     return () => {
       players.dispose();
@@ -140,6 +143,7 @@ const Channel = ({
               isTabletOrMobile={isTabletOrMobile}
               isDesktopOrLaptop={isDesktopOrLaptop}
               statePlayers={statePlayers}
+              clearMute={clearMute}
             />
           );
         })

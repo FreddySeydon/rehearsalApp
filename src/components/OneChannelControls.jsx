@@ -4,7 +4,7 @@ import iconMuted from "../assets/img/muted.png"
 import iconUnmuted from "../assets/img/unmuted.png"
 import "./Channel.css"
 
-const OneChannelControls = ({ statePlayers, players, index, sources, isTabletOrMobile, track}) => {
+const OneChannelControls = ({ statePlayers, players, index, sources, isTabletOrMobile, track, clearMute}) => {
 
   const [channelVolume, setChannelVolume] = useState(-10);
   const [isMuted, setIsMuted] = useState(false);
@@ -18,6 +18,10 @@ const handleMute = () => {
     players.player(`${index}`).mute = !players.player(`${index}`).mute
     setIsMuted(players.player(`${index}`).mute);
 }
+
+useEffect(() => {
+  setIsMuted(false);
+}, [clearMute])
 
   return (
     <div style={{display: "flex"}}>
