@@ -36,24 +36,34 @@ const Channel = ({
   setClearMute
 }) => {
   useEffect(() => {
+    if(stateSolos) {
+      const solos = Object.values(stateSolos)
+      solos.forEach((solo) => {
+        solo.solo = false;
+        solo.dispose();
+      })
+    }
     const players = new Tone.Players();
     loadTracks(players);
     setClearMute(!clearMute);
 
     return () => {
       players.dispose();
+      console.log(stateSolos);
       clearInterval(seekUpdateInterval);
       setPlayersLoaded(false);
     };
   }, [selectedSong]);
+
+  // console.log(Object.values(stateSolos))
 
   const loadTracks = (players) => {
     const solos = {}
     if (players._players.size === 0) {
       sources.map((track, index) => {
         players.add(`${index}`, track.src);
-        solos[index] = new Tone.Solo();
-        players.player(`${index}`).connect(solos[index]).toDestination();
+        solos[index] = new Tone.Solo().toDestination();
+        players.player(`${index}`).connect(solos[index])
         // if (index === 0) {
         //   players.player(`${index}`).buffer.onload = () =>
         //     setTrackDuration(players.player(`${index}`).buffer.duration);
