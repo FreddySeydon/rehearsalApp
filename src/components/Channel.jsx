@@ -11,6 +11,8 @@ const Channel = ({
   formatTime,
   statePlayers,
   setStatePlayers,
+  stateSolos,
+  setStateSolos,
   setTrackDuration,
   trackDuration,
   selectedSong,
@@ -34,7 +36,7 @@ const Channel = ({
   setClearMute
 }) => {
   useEffect(() => {
-    const players = new Tone.Players().toDestination();
+    const players = new Tone.Players();
     loadTracks(players);
     setClearMute(!clearMute);
 
@@ -46,9 +48,12 @@ const Channel = ({
   }, [selectedSong]);
 
   const loadTracks = (players) => {
+    const solos = {}
     if (players._players.size === 0) {
       sources.map((track, index) => {
         players.add(`${index}`, track.src);
+        solos[index] = new Tone.Solo();
+        players.player(`${index}`).connect(solos[index]).toDestination();
         // if (index === 0) {
         //   players.player(`${index}`).buffer.onload = () =>
         //     setTrackDuration(players.player(`${index}`).buffer.duration);
@@ -61,9 +66,10 @@ const Channel = ({
         players.player(`${index}`).volume.value = -10
       });
       setStatePlayers(players);
+      setStateSolos(solos);
     }
   };
-
+console.log(stateSolos)
   const handleGlobalSeek = (value) => {
     if (Tone.Transport.state === "started") {
       Tone.Transport.pause();
@@ -144,6 +150,7 @@ const Channel = ({
               isDesktopOrLaptop={isDesktopOrLaptop}
               statePlayers={statePlayers}
               clearMute={clearMute}
+              stateSolos={stateSolos}
             />
           );
         })

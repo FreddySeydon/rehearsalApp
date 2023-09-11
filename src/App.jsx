@@ -15,6 +15,7 @@ const App = () => {
   const [userSeek, setUserSeek] = useState(false);
   const [trackDuration, setTrackDuration] = useState(0);
   const [statePlayers, setStatePlayers] = useState(null)
+  const [stateSolos, setStateSolos] = useState(null)
   const [isStopped, setIsStopped] = useState(true)
   const [playersLoaded, setPlayersLoaded] = useState(false)
   const [clearMute, setClearMute] = useState(false)
@@ -56,6 +57,8 @@ const App = () => {
                   trackDuration={trackDuration}
                   statePlayers={statePlayers}
                   setStatePlayers={setStatePlayers}
+                  stateSolos={stateSolos}
+                  setStateSolos={setStateSolos}
                   formatTime={formatTime}
                   setLoading={setLoading}
                   loading={loading}
