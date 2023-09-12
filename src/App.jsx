@@ -40,7 +40,6 @@ const App = () => {
         const response = await fetch("sounds/sounds.json")
         const sounds = await response.json()
         setSounds(sounds)
-        console.log(sounds)
       } catch (error) {
         console.log(error)
       }

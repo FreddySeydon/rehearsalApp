@@ -49,7 +49,6 @@ const Channel = ({
 
     return () => {
       players.dispose();
-      console.log(stateSolos);
       clearInterval(seekUpdateInterval);
       setPlayersLoaded(false);
     };
@@ -79,7 +78,7 @@ const Channel = ({
       setStateSolos(solos);
     }
   };
-console.log(stateSolos)
+
   const handleGlobalSeek = (value) => {
     if (Tone.Transport.state === "started") {
       Tone.Transport.pause();
