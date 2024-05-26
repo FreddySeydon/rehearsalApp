@@ -108,6 +108,7 @@ npm run dev
 - **Lyrics**: Click on lyrics to jump to the corresponding position in the song.
 
 ## File Structure
+```plaintext
 rehearsal-app/
 │
 ├── public/
@@ -139,6 +140,7 @@ rehearsal-app/
 ├── package.json
 ├── README.md
 └── yarn.lock
+```
 
 ## Dependencies
 
