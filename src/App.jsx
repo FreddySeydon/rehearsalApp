@@ -2,15 +2,16 @@ import React, { useEffect } from "react";
 import "./App.css";
 import Channel from "./components/Channel";
 import { useState } from "react";
-// import sounds from "./lib/sounds.json";
 import { formatTime } from "../utils/lrcParser";
 import Lyrics from "./components/Lyrics";
 import { useMediaQuery } from "react-responsive";
 import loadingSpinner from "./assets/img/loading.gif"
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { db } from "../utils/firebase";
 
 const App = () => {
 
-  const [selectedSong, setSelectedSong] = useState(JSON.parse(localStorage.getItem('selected-song')) || "blabla_12");
+  const [selectedSong, setSelectedSong] = useState(JSON.parse(localStorage.getItem('selected-song')) || "kopfkino_blabla_12");
   const [lrcContent, setLrcContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userSeek, setUserSeek] = useState(false);
@@ -21,6 +22,8 @@ const App = () => {
   const [playersLoaded, setPlayersLoaded] = useState(false)
   const [clearMute, setClearMute] = useState(false)
   const [sounds, setSounds] = useState(null)
+
+
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({query: '(min-width: 1224px)'})
@@ -34,6 +37,27 @@ const App = () => {
   const [globalSeek, setGlobalSeek] = useState(0);
   const [seekUpdateInterval, setSeekUpdateInterval] = useState(null)
 
+  const getOneSong = async () => {
+    const docRef = doc(db, "songs", "kopfkino_blabla_12")
+    const docSnap = await getDoc(docRef)
+    if(docSnap.exists()){
+      console.log("Doc from firestore: ",docSnap)
+    } else {
+      console.log('Document Not found');
+    }
+  }
+
+const getSongs = async () => {
+  const querySnapshot = await getDocs(collection(db, "songs"));
+  console.log("Query Snapshot",querySnapshot)
+  querySnapshot.forEach((doc) => {
+    // const oneSongObject = {[doc.id] : doc.data()}
+    setSounds((prev) => ({...prev, [doc.id] : doc.data()}))
+    // console.log("whole doc: ",doc)
+    // console.log(doc.id, " => ", doc.data());
+  })
+}  
+
   useEffect(() => {
     const fetchSounds = async () => {      
       try {
@@ -44,7 +68,8 @@ const App = () => {
         console.log(error)
       }
     }
-    fetchSounds()
+    // fetchSounds()
+    getSongs()
   }, [])
 
   // Render the audio mixer component

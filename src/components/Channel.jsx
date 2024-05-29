@@ -147,7 +147,7 @@ const Channel = ({
       {false ? (
         <div>Loading...</div>
       ) : (
-        sources.map((track, index) => {
+        sources?.map((track, index) => {
           return (
             <OneChannelControls
               key={index}
