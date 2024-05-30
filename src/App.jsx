@@ -44,6 +44,11 @@ const App = () => {
       });
       setAlbums(albumsList);
       if (albumsList.length > 0) {
+        const lastAlbum = localStorage.getItem("selected-album")
+        if(lastAlbum) {
+          setSelectedAlbum(JSON.parse(localStorage.getItem('selected-album')))
+          return
+        }
         setSelectedAlbum(albumsList[0].id); // Set the first album as the default selected album
       }
     } catch (error) {
@@ -64,9 +69,13 @@ const App = () => {
       });
       setSongs(songsList);
       if (songsList.length > 0) {
+        const lastSong = localStorage.getItem("selected-song")
+        if(lastSong) {
+          setSelectedSong(JSON.parse(localStorage.getItem('selected-song')))
+          return
+        }
         setSelectedSong(songsList[0].id); // Set the first song as the default selected song
       }
-      console.log("Songslist: ",songsList)
     } catch (error) {
       console.error("Error fetching songs:", error);
     } finally {
@@ -86,12 +95,12 @@ const App = () => {
 
   const handleAlbumChange = (albumId) => {
     setSelectedAlbum(albumId);
-    localStorage.setItem("selected-album", albumId);
+    localStorage.setItem("selected-album", JSON.stringify(albumId));
   };
 
   const handleSongChange = (songId) => {
     setSelectedSong(songId);
-    localStorage.setItem("selected-song", songId);
+    localStorage.setItem("selected-song", JSON.stringify(songId));
   };
 
   return (
