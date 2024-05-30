@@ -30,7 +30,8 @@ const Lyrics = ({
   useEffect(() => {
     const loadLrc = async () => {
       setLoading(true);
-      const lrcLocation = sounds[selectedSong].tracks[0].lrc;
+      const lrcLocation = sounds?.find((song) => song.id === selectedSong)?.tracks[0].lrc;
+      console.log("LRC LOCATION: ", lrcLocation)
       const res = await fetch(lrcLocation);
       const lrc = await res.text();
       setLrcContent(lrc);

@@ -33,9 +33,11 @@ const Channel = ({
   playersLoaded,
   setPlayersLoaded,
   clearMute,
-  setClearMute
+  setClearMute,
+  isStopped
 }) => {
   useEffect(() => {
+    console.log("Channel sources",sources)
     if(stateSolos) {
       const solos = Object.values(stateSolos)
       solos.forEach((solo) => {
@@ -54,19 +56,13 @@ const Channel = ({
     };
   }, [selectedSong]);
 
-  // console.log(Object.values(stateSolos))
-
   const loadTracks = (players) => {
     const solos = {}
     if (players._players.size === 0) {
-      sources.map((track, index) => {
+      sources?.forEach((track, index) => {
         players.add(`${index}`, track.src);
         solos[index] = new Tone.Solo().toDestination();
         players.player(`${index}`).connect(solos[index])
-        // if (index === 0) {
-        //   players.player(`${index}`).buffer.onload = () =>
-        //     setTrackDuration(players.player(`${index}`).buffer.duration);
-        // }
           players.player(`${index}`).buffer.onload = () => {
             setTrackDuration(players.player(`${index}`).buffer.duration);
             setPlayersLoaded(true)
@@ -101,7 +97,9 @@ const Channel = ({
     }
   },[globalSeek])
 
-  // console.log(statePlayers._buffers.loaded)
+  useEffect(() => {
+    handleStop()
+  }, [isStopped])
 
   const handlePlay = () => {
     if(statePlayers._buffers.loaded){
@@ -147,7 +145,7 @@ const Channel = ({
       {false ? (
         <div>Loading...</div>
       ) : (
-        sources.map((track, index) => {
+        sources?.map((track, index) => {
           return (
             <OneChannelControls
               key={index}
@@ -166,18 +164,7 @@ const Channel = ({
       )}
       </div>
       <div className="globalControls">
-      <select
-              value={selectedSong}
-              onChange={(e) => {handleSongChange(e)}}
-              onClick={handleStop}
-              style={{minWidth: "10rem", minHeight: "2.5rem", textAlign:"center", fontSize:"1.2rem", fontWeight:"bold"}}
-            >
-              {Object.keys(sounds).map((key) => (
-                <option key={key} value={key}>
-                  {sounds[key].songname}
-                </option>
-              ))}
-            </select>
+
         <div className="controls">
           <button
             style={{
