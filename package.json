@@ -10,12 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
     "dotenv": "^16.4.5",
+    "ffmpeg": "^0.0.4",
     "firebase": "^10.12.2",
     "howler": "^2.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-responsive": "^9.0.2",
+    "react-router-dom": "^6.23.1",
     "tone": "^15.0.4"
   },
   "devDependencies": {
