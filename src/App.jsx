@@ -119,6 +119,7 @@ const App = () => {
                 <select
                   value={selectedSong}
                   onChange={(e) => handleSongChange(e.target.value)}
+                  onClick={() => setIsStopped(!isStopped)}
                   style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black" }}
                 >
                   {songs.map((song) => (

@@ -33,7 +33,8 @@ const Channel = ({
   playersLoaded,
   setPlayersLoaded,
   clearMute,
-  setClearMute
+  setClearMute,
+  isStopped
 }) => {
   useEffect(() => {
     console.log("Channel sources",sources)
@@ -96,7 +97,9 @@ const Channel = ({
     }
   },[globalSeek])
 
-  // console.log(statePlayers._buffers.loaded)
+  useEffect(() => {
+    handleStop()
+  }, [isStopped])
 
   const handlePlay = () => {
     if(statePlayers._buffers.loaded){
