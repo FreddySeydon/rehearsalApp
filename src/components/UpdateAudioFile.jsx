@@ -38,8 +38,8 @@ const UpdateAudioFile = ({albumId, songId, trackId}) => {
           // Step 2: Upload the new file to Firebase Storage
         //   const ext = newFile.name.split('.').pop();
         //   const newFileName = `${trackName}.${ext}`;
-          const newFileName = newFile.name;
-          const storageRef = ref(storage, `sounds/${albumId}/${newFileName}`);
+          const newFileName = newFile;
+          const storageRef = ref(storage, `sounds/${albumId}/${songId}/${newFileName}`);
           const uploadTask = uploadBytesResumable(storageRef, newFile);
       
           uploadTask.on(
