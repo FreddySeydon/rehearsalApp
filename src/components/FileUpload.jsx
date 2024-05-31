@@ -15,9 +15,13 @@ const FileUpload = ({ onUploadComplete }) => {
   const [userAlbumName, setUserAlbumName] = useState("")
   const [selectedAlbum, setSelectedAlbum] = useState("")
   const [existingAlbums, setExistingAlbums] = useState([])
+  const [songNumber, setSongNumber] = useState(1)
   const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [uploadCompleted, setUploadCompleted] = useState(false);
+  const [uploadStarted, setUploadStarted] = useState(false)
   const ffmpegRef = useRef(new FFmpeg())
+  const inputFileRef = useRef(null)
 
   useEffect(() => {
     fetchAlbums()
@@ -33,6 +37,28 @@ const FileUpload = ({ onUploadComplete }) => {
         setAlbumUploadName(selectedAlbum);
     }
   }, [userAlbumName])
+
+  const resetUpload = async () => {
+    setLoading(true);
+    await fetchAlbums();
+    setTrackNames({});
+    setSelectedFiles([]);
+    setSongName("New Song");
+    setSongUploadName("newsong");
+    setAlbumName("New Album");
+    setAlbumUploadName("newalbum");
+    setUserAlbumName("");
+    setSongNumber((prev) => parseInt(prev, 10) + 1);
+    setUploadStarted(false);
+    //Reset file input
+    if(inputFileRef.current){
+      inputFileRef.current.value = "";
+      inputFileRef.current.type = "text";
+      inputFileRef.current.type = "file";
+    }
+    setUploadCompleted(false)
+    setLoading(false);
+  }
 
   const formatInput = (input) => {
     let formatted = input.toLowerCase();
@@ -53,12 +79,15 @@ const FileUpload = ({ onUploadComplete }) => {
 
   const fetchAlbums = async () => {
     try {
-      const albumsSnapshot = await getDocs(collection(db, "albums"));
+      const collectionRef = collection(db, "albums")
+      const albumsSnapshot = await getDocs(collectionRef);
+      console.log("Albums snapshot: ", albumsSnapshot)
       const albumsList = [];
       albumsSnapshot.forEach((doc) => {
         albumsList.push({ id: doc.id, ...doc.data() });
       });
       setExistingAlbums(albumsList);
+      console.log("Albums list: ",albumsList)
       if (albumsList.length > 0) {
         const lastUploadAlbum = localStorage.getItem("selected-upload-album")
         if(lastUploadAlbum) {
@@ -111,6 +140,10 @@ const FileUpload = ({ onUploadComplete }) => {
     setTrackNames((prev) => ({ ...prev, [baseName]: newName }));
   };
 
+  const associateLRCWithTrack = (lrcBaseName, mp3BaseName) => {
+    setTrackNames((prev) => ({ ...prev, [mp3BaseName]: lrcBaseName}))
+  };
+
   const compressFile = async (file) => {
     const ext = file.name.split('.').pop().toLowerCase();
     if(true){
@@ -135,6 +168,7 @@ const FileUpload = ({ onUploadComplete }) => {
   };
 
   const handleUpload = async () => {
+    setUploadStarted(true);
     const storage = getStorage();
     const promises = selectedFiles.map(async (file) => {
       const compressedFile = await compressFile(file);
@@ -151,7 +185,7 @@ const FileUpload = ({ onUploadComplete }) => {
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            // Progress monitoring
+            console.log(snapshot.bytesTransferred, "/", snapshot.totalBytes, "State: ", snapshot.state)
           },
           (error) => {
             console.error("Upload failed:", error);
@@ -168,25 +202,28 @@ const FileUpload = ({ onUploadComplete }) => {
     try {
       const uploadedFiles = await Promise.all(promises);
       const songsData = {};
+      let idCounter = 1;
 
-      uploadedFiles.forEach(({ downloadURL, file, trackName, songName }) => {
+      uploadedFiles.forEach(({ downloadURL, file, trackName }) => {
         if (!songsData[songName]) {
           songsData[songName] = { tracks: [] };
         }
         const ext = file.name.split('.').pop();
         if (ext === 'mp3') {
-          songsData[songName].tracks.push({ src: downloadURL, name: trackName });
-        } else if (ext === 'lrc') {
-          songsData[songName].lrcs = songsData[songName].lrcs || {};
-          songsData[songName].lrcs[trackName] = downloadURL;
+          songsData[songName].tracks.push({ id: idCounter, name: trackName, src: downloadURL, lrc: ""});
+          idCounter++
+        } else if (ext !== 'mp3') {
+          throw new Error("Only mp3 files are supported at the moment, sorry!")
         }
       });
 
       // Save metadata to Firestore
       const albumRef = collection(db, 'albums');
       for (const [songName, data] of Object.entries(songsData)) {
-        await addDoc(collection(albumRef, albumName, 'songs'), { ...data, name: songName });
+        await addDoc(collection(albumRef, albumUploadName, 'songs'), { ...data, name: songName, number: songNumber });
       }
+      console.log("end of uploading reached")
+    setUploadCompleted(true);
 
     //   onUploadComplete();
     } catch (error) {
@@ -198,8 +235,12 @@ const FileUpload = ({ onUploadComplete }) => {
     selectedAlbum(album);
     setAlbumName(album);
   }
+  console.log(uploadCompleted)
 
   return (
+    <>
+    <h2>Song Upload</h2>
+    {!uploadCompleted ? 
     <div style={{
         display: "flex",
         flexDirection: "column",
@@ -209,8 +250,6 @@ const FileUpload = ({ onUploadComplete }) => {
             flexDirection: "column",
             marginBottom: 20
         }}>
-            <h2>Song Upload</h2>
-      <label htmlFor="AlbumName">Album Name: {!userAlbumName ? albumName : userAlbumName  }</label>
       {loading ? <div>Loading...</div> :       
       !userAlbumName ? <div className="selectBox" style={{paddingBottom: 10, paddingTop: 0, marginTop: 0}}>
                 <p style={{fontSize: "1rem"}}>Choose an album to add songs to...</p>
@@ -223,14 +262,19 @@ const FileUpload = ({ onUploadComplete }) => {
                 </select>
                 </div> : null
       }
+      <label htmlFor="AlbumName">Album Name: {!userAlbumName ? albumName : userAlbumName  }</label>
         <input type="text" onChange={(e) => {
             setUserAlbumName(e.target.value);
             setAlbumUploadName(formatInput(e.target.value));
             }} placeholder="...or type here to create a new Album" />
         <label htmlFor="SongName">Song Name: </label>
-        <input type="text" onChange={(e) => {
+        <input type="text" required onChange={(e) => {
             setSongName(e.target.value);
             setSongUploadName(formatInput(e.target.value))
+            }} />
+        <label htmlFor="SongNumber">Song Number: </label>
+        <input type="number" value={songNumber} required onChange={(e) => {
+            setSongNumber(e.target.value);
             }} />
         </div>
         <div
@@ -246,7 +290,7 @@ const FileUpload = ({ onUploadComplete }) => {
           }}
         >
       <label htmlFor="Files">Drag and drop or choose files to upload</label>
-      <input type="file" multiple onChange={handleFileChange} />
+      <input type="file" multiple onChange={handleFileChange} ref={inputFileRef} />
       {selectedFiles.length > 0 && (
         <div style={{display: "flex", flexDirection: 'column'}}>
           <h3>Selected Files</h3>
@@ -265,11 +309,13 @@ const FileUpload = ({ onUploadComplete }) => {
               </li>
             ))}
           </ul>
-          <button onClick={handleUpload}>Upload Files</button>
+          <button onClick={handleUpload}>{uploadStarted? "Uploading..." : "Upload Files"}</button>
         </div>
       )}
     </div>
-    </div>
+    </div> : <div style={{display: flex, flexDirection: "column"}}>Upload Complete! <button onClick={resetUpload}>Upload next song</button> <button>Add LRC to Album</button></div>
+  }
+    </>
   );
 };
 
