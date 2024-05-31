@@ -27,10 +27,10 @@ const FileUpload = ({ onUploadComplete }) => {
     fetchAlbums()
   }, [])
 
-  useEffect(() => {
-    console.log("Song: ", songName, ":", songUploadName)
-    console.log("Album: ", albumName, ":", albumUploadName)
-  }, [songUploadName, albumUploadName, albumName, songName])
+  // useEffect(() => {
+  //   console.log("Song: ", songName, ":", songUploadName)
+  //   console.log("Album: ", albumName, ":", albumUploadName)
+  // }, [songUploadName, albumUploadName, albumName, songName])
 
   useEffect(() => {
     if(!userAlbumName){
@@ -219,6 +219,9 @@ const FileUpload = ({ onUploadComplete }) => {
 
       // Save metadata to Firestore
       const albumRef = collection(db, 'albums');
+      if(userAlbumName){
+        await addDoc(collection(albumRef, albumUploadName), {name: albumName})
+      }
       for (const [songName, data] of Object.entries(songsData)) {
         await addDoc(collection(albumRef, albumUploadName, 'songs'), { ...data, name: songName, number: songNumber });
       }

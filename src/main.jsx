@@ -8,6 +8,9 @@ import {
   createBrowserRouter, RouterProvider
 } from "react-router-dom"
 import './index.css'
+import AlbumsPage from './routes/albumsPage.jsx'
+import AlbumDetailPage from './routes/albumDetailPage.jsx'
+import SongDetailPage from './routes/songDetailPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -18,6 +21,18 @@ const router = createBrowserRouter([
   {
     path: "/upload",
     element: <UploadPage />,
+  },
+  {
+    path: "/albums",
+    element: <AlbumsPage />,
+  },
+  {
+    path: "/albums/:albumId",
+    element: <AlbumDetailPage />,
+  },
+  {
+    path: "/albums/:albumId/:songId",
+    element: <SongDetailPage />,
   }
 ])
 
