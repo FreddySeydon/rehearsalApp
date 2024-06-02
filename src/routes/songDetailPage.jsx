@@ -4,6 +4,7 @@ import { db } from '../../utils/firebase';
 import { Link, useParams } from 'react-router-dom';
 import LrcUpload from '../components/LrcUpload';
 import UpdateAudioFile from '../components/UpdateAudioFile';
+import UpdateLrcFile from '../components/UpdateLrcFile';
 
 const SongDetailPage = () => {
     console.log(useParams())
@@ -66,7 +67,8 @@ const SongDetailPage = () => {
                                 {/* <h3>Track {track.id}</h3> */}
                                 <h3>Name: {track.name}</h3>
                                 <div>File: <UpdateAudioFile albumId={albumId} songId={songId} trackId={track.id} /></div>
-                                <h3>{getLRCForTrack(track.id) ? "Lyrics" : null} {getLRCForTrack(track.id) || <LrcUpload albumId={albumId} songId={songId} trackId={track.id} trackName={track.name}/>}</h3>
+                                <h3>{getLRCForTrack(track.id) ? "Lyrics" : null}</h3> 
+                                {getLRCForTrack(track.id) ? <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} /> : <LrcUpload albumId={albumId} songId={songId} trackId={track.id} trackName={track.name}/>}
                             </div>
                            
                        </div>

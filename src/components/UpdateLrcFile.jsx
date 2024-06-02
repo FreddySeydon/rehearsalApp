@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 
 const UpdateLrcFile = ({ albumId, songId, trackId }) => {
   const [newFile, setNewFile] = useState(null);
   const [uploadStarted, setUploadStarted] = useState(false);
+  const [uploadFinished, setUploadFinished] = useState(false);
 
   const updateLrc = async () => {
     if (!newFile) {
       return console.log("You have to choose a file");
     }
 
-    const ext = newFile.name.split('.').pop();
+    const ext = newFile.name.split(".").pop();
     if (ext !== "lrc") {
       return console.log("Choose an lrc file");
     }
@@ -26,7 +33,7 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
 
     if (songSnap.exists()) {
       const songData = songSnap.data();
-      const lrc = songData.lrcs.find(lrc => lrc.trackId === trackId);
+      const lrc = songData.lrcs.find((lrc) => lrc.trackId === trackId);
 
       if (!lrc) {
         console.log("Lrc not found!");
@@ -36,15 +43,21 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
       const oldSrc = lrc.lrc || null;
 
       // Step 2: Upload the new file to Firebase Storage
-      const newFileName = newFile;
-      const storageRef = ref(storage, `sounds/${albumId}/${songId}/${newFileName}`);
+      console.log("New file: ",newFile.name, typeof(newFile.name))
+      const newFileName = newFile.name;
+      const storageRef = ref(
+        storage,
+        `sounds/${albumId}/${songId}/${newFileName}`
+      );
       const uploadTask = uploadBytesResumable(storageRef, newFile);
 
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           // Progress monitoring
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(progress);
           console.log("Upload is " + progress + "% done");
           setUploadStarted(true);
         },
@@ -64,7 +77,7 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
           }
 
           // Step 4: Update Firestore document with the new file path
-          const updatedTracks = albumData.tracks.map(track => {
+          const updatedTracks = songData.tracks.map((track) => {
             if (track.id === trackId) {
               return { ...track, lrc: newSrc }; // Update the specific field
             }
@@ -85,17 +98,31 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
 
   const handleFileChange = (e) => {
     setNewFile(e.target.files[0]);
-  }
+  };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10, justifyContent: "center", alignItems: "center" }}>
-      <label htmlFor="Files">Update the LRC file here:</label>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={updateLrc} disabled={uploadStarted}>
-        {uploadStarted ? "Uploading..." : "Upload"}
-      </button>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {uploadFinished ? (
+        <div>Lrc update successful!</div>
+      ) : (
+        <div>
+          <label htmlFor="Files">LRC present - Update LRC below</label>
+          <input type="file" onChange={handleFileChange} />
+          <button onClick={updateLrc} disabled={uploadStarted}>
+            {uploadStarted ? "Uploading..." : "Upload"}
+          </button>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
 export default UpdateLrcFile;
