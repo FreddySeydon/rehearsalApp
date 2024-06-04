@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, getDocs, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -63,8 +63,10 @@ const FileUpload = ({ onUploadComplete }) => {
   const [albumUploadName, setAlbumUploadName] = useState("newalbum");
   const [userAlbumName, setUserAlbumName] = useState("");
   const [selectedAlbum, setSelectedAlbum] = useState("");
+  const [selectedAlbumData, setSelectedAlbumData] = useState(null);
   const [existingAlbums, setExistingAlbums] = useState([]);
   const [songNumber, setSongNumber] = useState(1);
+  const [selectedAlbumNextSongNumber, setSelectedAlbumNextSongNumber] = useState(1);
   const [trackNumbers, setTrackNumbers] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -166,10 +168,36 @@ function isInteractiveElement(element) {
     setLoaded(true);
   };
 
+  const fetchSelectedAlbum = async (albumId) => {
+    try {
+      const albumRef = collection(db, "albums", albumId, "songs");
+      const albumSnapshot = await getDocs(albumRef);
+      const songsList = [];
+      albumSnapshot.forEach((doc) => {
+        songsList.push({id: doc.id, ...doc.data()})
+    })
+      if(songsList){
+        console.log(songsList)
+        const songNumbers = songsList.map((song) => song.number)
+        const maxSongNumber = Math.max(...songNumbers)
+        console.log("Max song number: ",maxSongNumber)
+        if(maxSongNumber){
+          setSelectedAlbumNextSongNumber(maxSongNumber + 1);
+          setSongNumber(maxSongNumber + 1);
+        }
+        setSelectedAlbumData(songsList)
+      }
+      
+    } catch (error) {
+      console.log("Error fetching selected Album", error)
+    }
+  }
+
   const fetchAlbums = async () => {
     try {
       const collectionRef = collection(db, "albums");
       const albumsSnapshot = await getDocs(collectionRef);
+      console.log(albumsSnapshot.docs[0].data())
       const albumsList = [];
       albumsSnapshot.forEach((doc) => {
         albumsList.push({ id: doc.id, ...doc.data() });
@@ -181,7 +209,8 @@ function isInteractiveElement(element) {
         if (lastUploadAlbum) {
           setSelectedAlbum(JSON.parse(lastUploadAlbum));
           setAlbumUploadName(JSON.parse(lastUploadAlbum));
-          setAlbumName(JSON.parse(lastUploadAlbum));
+          const currentAlbum = albumsList.find((album) => album.id === JSON.parse(lastUploadAlbum))
+          setAlbumName(currentAlbum.name);
           setLoading(false);
           return;
         }
@@ -194,6 +223,12 @@ function isInteractiveElement(element) {
       console.error("Error fetching albums:", error);
     }
   };
+
+  useEffect(() => {
+    if(selectedAlbum){
+      fetchSelectedAlbum(selectedAlbum);
+    }
+  }, [selectedAlbum])
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
@@ -324,8 +359,10 @@ function isInteractiveElement(element) {
 
   const handleAlbumChange = (e) => {
     setSelectedAlbum(e.target.value);
-    setAlbumName(e.target.value);
+    const currentAlbum = existingAlbums.find((album) => album.id === e.target.value)
+    setAlbumName(currentAlbum.name);
     localStorage.setItem("selected-upload-album", JSON.stringify(e.target.value))
+    fetchSelectedAlbum(e.target.value);
   };
 
   const handleDelete = (index) => {
@@ -355,7 +392,8 @@ function isInteractiveElement(element) {
     <>
       <h2>Song Upload</h2>
       {!uploadCompleted ? (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{display: "flex", flexDirection: "row", gap: 20}}>
+        <div style={{ display: "flex", flexDirection: "column", width:"33%" }}>
           <div style={{ display: "flex", flexDirection: "column", marginBottom: 20 }}>
             {loading ? (
               <div>Loading...</div>
@@ -373,9 +411,11 @@ function isInteractiveElement(element) {
                 </div>
               ) : null
             )}
+
             <label htmlFor="AlbumName">Album Name: {!userAlbumName ? albumName : userAlbumName}</label>
             <input type="text" onChange={(e) => {
               setUserAlbumName(e.target.value);
+              setSongNumber(1);
               setAlbumUploadName(formatInput(e.target.value));
             }} placeholder="...or type here to create a new Album" />
             <label htmlFor="SongName">Song Name: </label>
@@ -383,16 +423,31 @@ function isInteractiveElement(element) {
               setSongName(e.target.value);
               setSongUploadName(formatInput(e.target.value));
             }} />
+            <div style={{display: "flex", flexDirection: "row"
+            }}>
             <label htmlFor="SongNumber">Song Number: </label>
             <input type="number" value={songNumber} required onChange={(e) => {
               setSongNumber(e.target.value);
             }} />
+            </div>
+            <button onClick={handleUpload} style={{padding: 10, marginTop: 10}}>{uploadStarted ? "Uploading..." : "Upload Files"}</button>
           </div>
-          <Droppable id="file-drop">
+          </div>
+          {!userAlbumName ? <div style={{width: "33%"}}>
+              <h4>Songs in selected album:</h4>
+              {selectedAlbumData?.map((song) => {
+                return (
+                  <div>
+                    <p>{song.number}. {song.name}</p>
+                  </div>
+                )
+              })}
+            </div> : null}
+          <Droppable id="file-drop" style={{width: "33%"}}>
             <label htmlFor="Files">Drag and drop or choose files to upload</label>
             <input type="file" multiple onChange={handleFileChange} ref={inputFileRef} />
             {selectedFiles.length > 0 && (
-              <div style={{ display: "flex", flexDirection: 'column' }}>
+              <div style={{ display: "flex", flexDirection: 'row' }}>
                 <h3>Selected Files</h3>
                 <DndContext
                   sensors={sensors}
@@ -423,7 +478,6 @@ function isInteractiveElement(element) {
                     </ul>
                   </SortableContext>
                 </DndContext>
-                <button onClick={handleUpload}>{uploadStarted ? "Uploading..." : "Upload Files"}</button>
               </div>
             )}
           </Droppable>
