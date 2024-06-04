@@ -5,6 +5,54 @@ import { db } from "../../utils/firebase";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { Link } from "react-router-dom";
+import {
+  DndContext,
+  closestCenter,
+  useDroppable,
+  useDraggable
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+
+const SortableItem = ({ id, children }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition
+  };
+
+  return (
+    <li ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {children}
+    </li>
+  );
+};
+
+const Droppable = ({ children, id }) => {
+  const { setNodeRef } = useDroppable({
+    id,
+  });
+
+  return (
+    <div ref={setNodeRef} style={{ padding: '20px', border: '2px dashed #ccc' }}>
+      {children}
+    </div>
+  );
+};
 
 const FileUpload = ({ onUploadComplete }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -25,21 +73,60 @@ const FileUpload = ({ onUploadComplete }) => {
   const ffmpegRef = useRef(new FFmpeg());
   const inputFileRef = useRef(null);
 
+  // Preventing dragging in inputs and buttons
+
+class MyPointerSensor extends PointerSensor {
+  static activators = [
+    {
+      eventName: 'onPointerDown',
+      handler: ({nativeEvent: event}) => {
+        if (
+          !event.isPrimary ||
+          event.button !== 0 ||
+          isInteractiveElement(event.target)
+        ) {
+          return false;
+        }
+
+        return true;
+      },
+    },
+  ];
+}
+
+function isInteractiveElement(element) {
+  const interactiveElements = [
+    'button',
+    'input',
+    'textarea',
+    'select',
+    'option',
+  ];
+
+  if (interactiveElements.includes(element.tagName.toLowerCase())) {
+    return true;
+  }
+
+  return false;
+}
+
+  const sensors = useSensors(
+    useSensor(MyPointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   useEffect(() => {
     fetchAlbums();
   }, []);
-
-  useEffect(() => {
-    console.log("Song: ", songName, ":", songUploadName);
-    console.log("Album: ", userAlbumName ? userAlbumName : albumName, ":", albumUploadName);
-  }, [songUploadName, albumUploadName, albumName, songName]);
 
   useEffect(() => {
     if (!userAlbumName) {
       setAlbumUploadName(selectedAlbum);
     }
     console.log("Useralbum name: ", userAlbumName);
-  }, [userAlbumName]);
+  }, [userAlbumName, albumUploadName]);
 
   const resetUpload = async () => {
     setLoading(true);
@@ -49,8 +136,8 @@ const FileUpload = ({ onUploadComplete }) => {
     setTrackNumbers([]);
     setSongName("New Song");
     setSongUploadName("newsong");
-    setAlbumName("New Album");
-    setAlbumUploadName("newalbum");
+    // setAlbumName("New Album");
+    // setAlbumUploadName("newalbum");
     setUserAlbumName("");
     setSongNumber((prev) => parseInt(prev, 10) + 1);
     setUploadStarted(false);
@@ -90,8 +177,12 @@ const FileUpload = ({ onUploadComplete }) => {
       setExistingAlbums(albumsList);
       if (albumsList.length > 0) {
         const lastUploadAlbum = localStorage.getItem("selected-upload-album");
+        console.log("last album: ", JSON.parse(lastUploadAlbum))
         if (lastUploadAlbum) {
-          setSelectedAlbum(JSON.parse(localStorage.getItem('selected-album')));
+          setSelectedAlbum(JSON.parse(lastUploadAlbum));
+          setAlbumUploadName(JSON.parse(lastUploadAlbum));
+          setAlbumName(JSON.parse(lastUploadAlbum));
+          setLoading(false);
           return;
         }
         setSelectedAlbum(albumsList[0].id);
@@ -106,7 +197,7 @@ const FileUpload = ({ onUploadComplete }) => {
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
-    setSelectedFiles(files);
+    setSelectedFiles(prevFiles => [...prevFiles, ...files]);
     initializeTrackNames(files);
     initializeTrackNumbers(files);
   };
@@ -114,7 +205,7 @@ const FileUpload = ({ onUploadComplete }) => {
   const handleDrop = (event) => {
     event.preventDefault();
     const files = Array.from(event.dataTransfer.files);
-    setSelectedFiles(files);
+    setSelectedFiles(prevFiles => [...prevFiles, ...files]);
     initializeTrackNames(files);
     initializeTrackNumbers(files);
   };
@@ -130,28 +221,24 @@ const FileUpload = ({ onUploadComplete }) => {
       const baseName = file.name.replace(`.${ext}`, '');
       const parts = baseName.split('_');
       const trackName = parts.pop();
-      names[baseName] = trackName;
+      names[file.name] = trackName;
     });
-    setTrackNames(names);
+    setTrackNames(prevNames => ({ ...prevNames, ...names }));
   };
 
   const initializeTrackNumbers = (files) => {
-    const numbers = files.map((_, index) => index + 1);
-    setTrackNumbers(numbers);
+    const numbers = files.map((_, index) => selectedFiles.length + index + 1);
+    setTrackNumbers(prevNumbers => [...prevNumbers, ...numbers]);
   };
 
-  const handleTrackNameChange = (baseName, newName) => {
-    setTrackNames((prev) => ({ ...prev, [baseName]: newName }));
+  const handleTrackNameChange = (fileName, newName) => {
+    setTrackNames((prev) => ({ ...prev, [fileName]: newName }));
   };
 
   const handleTrackNumberChange = (index, newNumber) => {
     const updatedTrackNumbers = [...trackNumbers];
     updatedTrackNumbers[index] = newNumber;
     setTrackNumbers(updatedTrackNumbers);
-  };
-
-  const associateLRCWithTrack = (lrcBaseName, mp3BaseName) => {
-    setTrackNames((prev) => ({ ...prev, [mp3BaseName]: lrcBaseName }));
   };
 
   const compressFile = async (file) => {
@@ -182,9 +269,10 @@ const FileUpload = ({ onUploadComplete }) => {
       return new Promise(async (resolve, reject) => {
         const ext = compressedFile.name.split('.').pop();
         const baseName = compressedFile.name.replace(`.${ext}`, '');
-        const trackName = trackNames[baseName];
+        const trackName = trackNames[compressedFile.name];
         const storageRef = ref(storage, `sounds/${albumUploadName}/${songUploadName}/${compressedFile.name}`);
         const uploadTask = uploadBytesResumable(storageRef, compressedFile);
+        localStorage.setItem("selected-upload-album", JSON.stringify(albumUploadName))
 
         uploadTask.on(
           "state_changed",
@@ -206,8 +294,7 @@ const FileUpload = ({ onUploadComplete }) => {
     try {
       const uploadedFiles = await Promise.all(promises);
       const songsData = {};
-
-      uploadedFiles.map(({ downloadURL, file, trackName }, index) => {
+      uploadedFiles.forEach(({ downloadURL, file, trackName }, index) => {
         if (!songsData[songName]) {
           songsData[songName] = { tracks: [] };
         }
@@ -235,9 +322,33 @@ const FileUpload = ({ onUploadComplete }) => {
     }
   };
 
-  const handleAlbumChange = (album) => {
-    setSelectedAlbum(album);
-    setAlbumName(album);
+  const handleAlbumChange = (e) => {
+    setSelectedAlbum(e.target.value);
+    setAlbumName(e.target.value);
+    localStorage.setItem("selected-upload-album", JSON.stringify(e.target.value))
+  };
+
+  const handleDelete = (index) => {
+    const updatedFiles = [...selectedFiles];
+    updatedFiles.splice(index, 1);
+    setSelectedFiles(updatedFiles);
+
+    const updatedTrackNumbers = [...trackNumbers];
+    updatedTrackNumbers.splice(index, 1);
+    setTrackNumbers(updatedTrackNumbers);
+  };
+
+  const onDragEnd = ({ active, over }) => {
+    if (active?.id !== over?.id) {
+      const oldIndex = selectedFiles.findIndex(file => file.name === active.id);
+      const newIndex = selectedFiles.findIndex(file => file.name === over.id);
+
+      const reorderedFiles = arrayMove(selectedFiles, oldIndex, newIndex);
+      setSelectedFiles(reorderedFiles);
+
+      const reorderedTrackNumbers = arrayMove(trackNumbers, oldIndex, newIndex);
+      setTrackNumbers(reorderedTrackNumbers);
+    }
   };
 
   return (
@@ -252,7 +363,7 @@ const FileUpload = ({ onUploadComplete }) => {
               !userAlbumName ? (
                 <div className="selectBox" style={{ paddingBottom: 10, paddingTop: 0, marginTop: 0 }}>
                   <p style={{ fontSize: "1rem" }}>Choose an album to add songs to...</p>
-                  <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black" }}>
+                  <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e)} style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black" }}>
                     {existingAlbums.map((album) => (
                       <option key={album.id} value={album.id}>
                         {album.name}
@@ -277,48 +388,45 @@ const FileUpload = ({ onUploadComplete }) => {
               setSongNumber(e.target.value);
             }} />
           </div>
-          <div
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            style={{
-              border: "2px dashed #ccc",
-              padding: "20px",
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              gap: 10
-            }}
-          >
+          <Droppable id="file-drop">
             <label htmlFor="Files">Drag and drop or choose files to upload</label>
             <input type="file" multiple onChange={handleFileChange} ref={inputFileRef} />
             {selectedFiles.length > 0 && (
               <div style={{ display: "flex", flexDirection: 'column' }}>
                 <h3>Selected Files</h3>
-                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column" }}>
-                  {selectedFiles.map((file, index) => (
-                    <li key={index} style={{ display: "flex", flexDirection: "column" }}>
-                      <p>Track Number: 
-                        <input 
-                          type="text" 
-                          value={trackNumbers[index]} 
-                          onChange={(e) => handleTrackNumberChange(index, e.target.value)} 
-                        />
-                      </p>
-                      <input
-                        type="text"
-                        value={trackNames[file.name.replace(/\.[^/.]+$/, '')] || ''}
-                        onChange={(e) =>
-                          handleTrackNameChange(file.name.replace(/\.[^/.]+$/, ''), e.target.value)
-                        }
-                      />
-                      <p>File: {file.name}</p>
-                    </li>
-                  ))}
-                </ul>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={onDragEnd}
+                >
+                  <SortableContext
+                    items={selectedFiles.map((file, index) => file.name)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <ul style={{ listStyle: "none", display: "flex", flexDirection: "column" }}>
+                      {selectedFiles.map((file, index) => (
+                        <SortableItem key={file.name} id={file.name}>
+                          <div style={{ display: "flex", flexDirection: "column", marginBottom: 10, background: "black", padding: 10, borderRadius: 5 }}>
+                            <p>Track Number: {index + 1}</p>
+                            <input
+                              type="text"
+                              value={trackNames[file.name]}
+                              onChange={(e) =>
+                                handleTrackNameChange(file.name, e.target.value)
+                              }
+                            />
+                            <p>File: {file.name}</p>
+                            <button onClick={() => handleDelete(index)}>Delete</button>
+                          </div>
+                        </SortableItem>
+                      ))}
+                    </ul>
+                  </SortableContext>
+                </DndContext>
                 <button onClick={handleUpload}>{uploadStarted ? "Uploading..." : "Upload Files"}</button>
               </div>
             )}
-          </div>
+          </Droppable>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column" }}>
