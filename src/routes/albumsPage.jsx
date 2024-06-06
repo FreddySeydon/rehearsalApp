@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { collection, getDocs,  } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import { Link } from 'react-router-dom';
+import DeleteAlbum from '../components/DeleteAlbum';
 
 const AlbumsPage = () => {
     const [albums, setAlbums] = useState([])
@@ -49,11 +50,16 @@ const AlbumsPage = () => {
             <div>Loading...</div> : error ? 
                 <div>There was an error: {error}</div> : 
                    albums.map((album) => {
-                    return(<Link to={album.id}>
+                    return(
+                    <div>
+                    <Link to={album.id}>
                        <div>
                            <h4>{album.name}</h4>
                        </div>
-                    </Link>)
+                    </Link>
+                    <DeleteAlbum albumId={album.id} refetchAlbums={fetchAlbums}/>
+                    </div>
+                  )
                 }) }
     </div>
   )

@@ -70,7 +70,7 @@ const SongDetailPage = () => {
                                 <div>File: <UpdateAudioFile albumId={albumId} songId={songId} trackId={track.id} /></div>
                                 <h3>{getLRCForTrack(track.id) ? "Lyrics" : null}</h3> 
                                 {getLRCForTrack(track.id) ? <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} /> : <LrcUpload albumId={albumId} songId={songId} trackId={track.id} trackName={track.name}/>}
-                                {tracks.length > 1 ? <DeleteTrack albumId={albumId} songId={songId} trackId={track.id} /> : null}
+                                {tracks.length > 1 ? <DeleteTrack albumId={albumId} songId={songId} trackId={track.id} refetchSongs={fetchSongs} /> : null}
                             </div>
                            
                        </div>

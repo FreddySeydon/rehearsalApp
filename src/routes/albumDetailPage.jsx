@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { collection, getDocs,  } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import { Link, useParams } from 'react-router-dom';
+import DeleteSong from '../components/DeleteSong';
 
 const AlbumDetailPage = () => {
     
@@ -49,11 +50,17 @@ const AlbumDetailPage = () => {
             <div>Loading...</div> : error ? 
                 <div>There was an error: {error}</div> : 
                    songs.map((song) => {
-                    return(<Link to={song.id}>
+                    return(
+                      <div>
+                    <Link to={song.id}>
                        <div>
-                           <h4>{song.number} {song.name}</h4>                           
+                           <h4>{song.number} - {song.name}</h4>
                        </div>
-                    </Link>)
+                    </Link>
+                    <DeleteSong albumId={albumId} songId={song.id} refetchAlbum={fetchSongs} />
+                    </div>
+                    
+                  )
                 }) }
     </div>
   )

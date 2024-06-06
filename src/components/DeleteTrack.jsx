@@ -3,7 +3,7 @@ import { getStorage, ref, deleteObject } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 
-const DeleteTrack = ({albumId, songId, trackId}) => {
+const DeleteTrack = ({albumId, songId, trackId, refetchSongs}) => {
     const deleteTrack = async() => {
         const storage = getStorage();
 
@@ -51,6 +51,7 @@ const DeleteTrack = ({albumId, songId, trackId}) => {
     }
 
     console.log("Track deleted successfully!");
+    refetchSongs()
   } else {
     console.log("No such document!");
 }
