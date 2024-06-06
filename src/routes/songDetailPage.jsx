@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import LrcUpload from '../components/LrcUpload';
 import UpdateAudioFile from '../components/UpdateAudioFile';
 import UpdateLrcFile from '../components/UpdateLrcFile';
+import DeleteTrack from '../components/DeleteTrack';
 
 const SongDetailPage = () => {
     console.log(useParams())
@@ -69,6 +70,7 @@ const SongDetailPage = () => {
                                 <div>File: <UpdateAudioFile albumId={albumId} songId={songId} trackId={track.id} /></div>
                                 <h3>{getLRCForTrack(track.id) ? "Lyrics" : null}</h3> 
                                 {getLRCForTrack(track.id) ? <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} /> : <LrcUpload albumId={albumId} songId={songId} trackId={track.id} trackName={track.name}/>}
+                                {tracks.length > 1 ? <DeleteTrack albumId={albumId} songId={songId} trackId={track.id} /> : null}
                             </div>
                            
                        </div>

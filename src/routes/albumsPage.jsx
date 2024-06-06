@@ -34,7 +34,7 @@ const AlbumsPage = () => {
           setError(error)
           setLoading(false)
         } finally {
-          // setLoading(false);
+          setLoading(false);
         }
       };
 
