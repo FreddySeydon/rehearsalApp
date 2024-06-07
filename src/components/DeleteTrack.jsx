@@ -44,7 +44,7 @@ const DeleteTrack = ({albumId, songId, trackId, refetchSongs}) => {
     // Step 4: Remove the track reference from Firestore
     const updatedTracks = songData.tracks.filter(track => track.id !== trackId);
     if(trackLrc){
-        const updatedLrcs =  songData.lrcs.filter(lrc => lrc.trackId) !== trackId;
+        const updatedLrcs =  songData.lrcs.filter(lrc => lrc.trackId !== trackId);
         await updateDoc(songRef, { tracks: updatedTracks, lrcs: updatedLrcs });
     } else {
         await updateDoc(songRef, { tracks: updatedTracks });

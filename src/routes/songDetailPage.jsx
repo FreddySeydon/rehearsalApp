@@ -23,9 +23,11 @@ const SongDetailPage = () => {
             // const songRef = doc(db, "albums", albumId, songId)
           const songSnapshot = await getDoc(doc(db, `albums/${albumId}/songs/${songId}`));
           const songData = songSnapshot.data()
-          console.log(songData)
+          console.log("Song Data: ",songData)
           const tracksList = songData.tracks
+          // console.log(song)
           const lrcList = songData.lrcs
+          console.log("lrc list: ",lrcList)
           if(lrcList){
               const lrcMap = lrcList.reduce((acc, lrcData) => {
                 acc[lrcData.trackId] = lrcData.lrc;

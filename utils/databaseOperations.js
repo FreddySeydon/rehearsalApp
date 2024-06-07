@@ -1,9 +1,10 @@
 import React from "react";
 import { getStorage, ref, deleteObject } from "firebase/storage";
-import { doc, collection, getDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../../utils/firebase";
+import { doc, collection, getDoc, deleteDoc, getDocs } from "firebase/firestore";
+import { db } from "./firebase";
 
 export const deleteSong = async (albumId, songId) => {
+  console.log("Delete Song invoked: ", albumId, songId)
 
     const storage = getStorage();
 
@@ -39,9 +40,6 @@ export const deleteSong = async (albumId, songId) => {
     await deleteDoc(songRef);
 
     console.log("Song and all its tracks deleted successfully!");
-    
-    // Update displayed list of songs
-    refetchAlbum()
 
   } else {
     console.log("No such document!");
@@ -51,16 +49,25 @@ export const deleteSong = async (albumId, songId) => {
 };
 
 export const deleteAlbum = async(albumId) => {
+  console.log("Delete Album invoked: ", albumId)
     try {
         const albumRef = doc(db, "albums", albumId);
+        console.log("Delete Album Ref: ", albumRef)
         const albumSnap = await getDoc(albumRef);
+        console.log("Delete Album albumSnap: ", albumSnap)
         
         if (albumSnap.exists()) {
-            const songsSnap = await getDoc(albumRef, "songs")
+            const songsSnap = await getDocs(collection(albumRef, "songs"))
+            const songsList = [];
+          songsSnap.forEach((song) => {
+            songsList.push({ id: song.id, ...song.data() });
+          });
           const albumData = albumSnap.data();
-          const songsData = songsSnap.data();
-          await songsData.forEach((song) => deleteSong(albumId , song.id))
-          await deleteObject(albumRef);
+          // console.log("OP Album Data: ",albumData)
+          // const songsData = songsSnap.data();
+          console.log("OP Songs data: ", songsList)
+          songsList.forEach(async (song) => await deleteSong(albumId , song.id))
+          await deleteDoc(albumRef);
         }
         
     } catch (error) {

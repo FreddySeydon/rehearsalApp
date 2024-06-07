@@ -3,7 +3,7 @@ import { deleteAlbum } from '../../utils/databaseOperations'
 
 const DeleteAlbum = ({albumId, refetchAlbums}) => {
     const handleAlbumDelete = async () => {
-        await deleteAlbum();
+        await deleteAlbum(albumId);
         await refetchAlbums();
     }
 

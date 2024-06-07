@@ -51,7 +51,7 @@ const AlbumDetailPage = () => {
                 <div>There was an error: {error}</div> : 
                    songs.map((song) => {
                     return(
-                      <div>
+                      <div key={song.id}>
                     <Link to={song.id}>
                        <div>
                            <h4>{song.number} - {song.name}</h4>

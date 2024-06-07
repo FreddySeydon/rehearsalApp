@@ -14,13 +14,13 @@ const AlbumsPage = () => {
         try {
           const collectionRef = collection(db, "albums")
           const albumsSnapshot = await getDocs(collectionRef);
-          console.log("Albums snapshot: ", albumsSnapshot)
+          // console.log("Albums snapshot: ", albumsSnapshot)
           const albumsList = [];
           albumsSnapshot.forEach((doc) => {
             albumsList.push({ id: doc.id, ...doc.data() });
           });
           setAlbums(albumsList);
-          console.log("Albums list: ",albumsList)
+          // console.log("Albums list: ",albumsList)
           if (albumsList.length > 0) {
             const lastUploadAlbum = localStorage.getItem("selected-upload-album")
             if(lastUploadAlbum) {
@@ -51,7 +51,7 @@ const AlbumsPage = () => {
                 <div>There was an error: {error}</div> : 
                    albums.map((album) => {
                     return(
-                    <div>
+                    <div key={album.id}>
                     <Link to={album.id}>
                        <div>
                            <h4>{album.name}</h4>
