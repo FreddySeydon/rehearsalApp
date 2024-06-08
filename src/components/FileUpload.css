@@ -20,6 +20,15 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+.glassCard {
+    background: rgba(202, 159, 91, 0.1);
+    border-radius: 3px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2.7px);
+    -webkit-backdrop-filter: blur(2.7px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 .glasstransparent {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 3px;
@@ -34,7 +43,7 @@
     text-align: center;
     border-color:   #fdc873;
     border-width: 1px;
-    width: 100%;
+    width: 98%;
     font-size: large;
     font-weight: bold;
     /* margin-bottom: 10px; */

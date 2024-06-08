@@ -97,6 +97,8 @@ const FileUpload = ({ onUploadComplete }) => {
   const [totalBytes, setTotalBytes] = useState(0);
   const [currentlyUploadingFilename, setCurrentlyUploadingFilename] = useState("");
   const [uploadedPercentage, setUploadedPercentage] = useState(null);
+  const [uploadedTracks, setUploadedTracks] = useState([]);
+  const [existingSongNumbers, setExistingSongNumbers] = useState([])
   const ffmpegRef = useRef(new FFmpeg());
   const inputFileRef = useRef(null);
 
@@ -149,6 +151,7 @@ const FileUpload = ({ onUploadComplete }) => {
   }, []);
 
   console.log("Currently uploading: ",currentlyUploadingFilename)
+  console.log("Uploaded Tracks: ",uploadedTracks)
 
   useEffect(() => {
     if (!userAlbumName) {
@@ -198,6 +201,22 @@ const FileUpload = ({ onUploadComplete }) => {
     setLoaded(true);
   };
 
+  const sortSongsList = (songsList) => {
+    songsList.sort((a, b) => {
+      const numberA = String(a.number).match(/\d+/g) ? parseInt(String(a.number).match(/\d+/g)[0]) : 0;
+      const numberB = String(b.number).match(/\d+/g) ? parseInt(String(b.number).match(/\d+/g)[0]) : 0;
+    
+      if (numberA < numberB) return -1;
+      if (numberA > numberB) return 1;
+    
+      const letterA = String(a.number).match(/[a-zA-Z]+/g) ? String(a.number).match(/[a-zA-Z]+/g)[0] : '';
+      const letterB = String(b.number).match(/[a-zA-Z]+/g) ? String(b.number).match(/[a-zA-Z]+/g)[0] : '';
+    
+      return letterA.localeCompare(letterB);
+    });
+    return songsList;
+  }
+
   const fetchSelectedAlbum = async (albumId) => {
     try {
       const albumRef = collection(db, "albums", albumId, "songs");
@@ -215,7 +234,13 @@ const FileUpload = ({ onUploadComplete }) => {
           setSelectedAlbumNextSongNumber(maxSongNumber + 1);
           setSongNumber(maxSongNumber + 1);
         }
-        setSelectedAlbumData(songsList);
+        const sortedSongsList = sortSongsList(songsList);
+        const existingSongNumbers = songsList.map((song) => {
+          return String(song.number)
+        })
+        setExistingSongNumbers(existingSongNumbers);
+        // console.log("SongsList:" ,songsList, sortedSongsList)
+        setSelectedAlbumData(sortedSongsList);
       }
     } catch (error) {
       console.log("Error fetching selected Album", error);
@@ -339,8 +364,13 @@ const FileUpload = ({ onUploadComplete }) => {
   };
 
   const handleUpload = async () => {
+    if(existingSongNumbers.includes(String(songNumber))) {
+      console.log("Song number already exisitng. Please choose another one.");
+      return
+    }
     setUploadStarted(true);
     const storage = getStorage();
+    // const uploadedFilesArray = []
     const promises = selectedFiles.map(async (file) => {
       const compressedFile = await compressFile(file);
       return new Promise(async (resolve, reject) => {
@@ -361,6 +391,7 @@ const FileUpload = ({ onUploadComplete }) => {
           "state_changed",
           (snapshot) => {
             if(!totalBytes){
+              // uploadedFilesArray.push(compressedFile.name);
               setCurrentlyUploadingFilename(compressedFile.name);
               setTotalBytes(snapshot.totalBytes);
             }
@@ -378,6 +409,7 @@ const FileUpload = ({ onUploadComplete }) => {
               setTotalBytes(0);
               setTransferredBytes(0);
               setUploadedPercentage(0);
+              // setUploadedTracks(uploadedFilesArray);
             }
             )
           },
@@ -508,9 +540,9 @@ const FileUpload = ({ onUploadComplete }) => {
                 ) : !userAlbumName ? (
                   <div
                     className="selectBox, glass"
-                    style={{ paddingBottom: 10, paddingTop: 0, marginTop: 0 , marginBottom: 20}}
+                    style={{ paddingBottom: 20, paddingTop: 0, marginTop: 0 , marginBottom: 20, width: "100%"}}
                   >
-                    <p style={{ fontSize: "1rem", color: "black", fontSize: "large", fontWeight: "bold" }}>
+                    <p style={{ color: "#3f3f3f", fontSize: "large", fontWeight: "bold" }}>
                       Choose an album to add songs to...
                     </p>
                     <select
@@ -519,17 +551,18 @@ const FileUpload = ({ onUploadComplete }) => {
                       style={{
                         minWidth: "10rem",
                         minHeight: "2.5rem",
-                        textAlign: "center",
+                        // textAlign: "center",
                         fontSize: "1.2rem",
                         fontWeight: "bold",
                         color: "black",
                         backgroundColor: "white",
+                        width: "90%"
                       }}
                       className="glass"
                     >
                       {existingAlbums.map((album) => (
-                        <option key={album.id} value={album.id} className="glass inputbox">
-                          {album.name}
+                        <option key={album.id} value={album.id} className="glass inputbox" >
+                          <p style={{color: "#3f3f3f"}}>{album.name}</p>
                         </option>
                       ))}
                     </select>
@@ -558,7 +591,7 @@ const FileUpload = ({ onUploadComplete }) => {
                   }}
                   className="glass inputbox"
                 />
-                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", alignItems: "center", marginTop: 10 }}>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", alignItems: "center", marginTop: 10, width: "100%" }}>
                   <label htmlFor="SongNumber" style={{width: "50%", marginRight: 20, fontSize: "large"}}>Song Number: </label>
                   <input
                     type="text"
@@ -582,12 +615,13 @@ const FileUpload = ({ onUploadComplete }) => {
               </div>
             </div>
             {!userAlbumName && !initialAlbum ? (
-              <div style={{ width: "33%" }}>
-                <h4>Songs in selected album:</h4>
+              <div style={{ width: "33%" }} className="glasstransparent">
+                <p style={{paddingBottom: 0, marginBottom: 0}}>Songs in</p>
+                <h2 style={{paddingTop: 0, marginTop: 0}}>{albumName}</h2>
                 {selectedAlbumData?.map((song) => {
                   return (
                     <div>
-                      <p>
+                      <p style={{fontSize: "1.25rem"}}>
                         {song.number}. {song.name}
                       </p>
                     </div>
@@ -601,7 +635,7 @@ const FileUpload = ({ onUploadComplete }) => {
                 Drag and drop or choose files to upload
               </label> */}
               {selectedFiles.length > 0 && (
-                <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", flexDirection: "column", padding: 20 }} className="glasstransparent">
                   <h3>Selected Files</h3>
                   <DndContext
                     sensors={sensors}
@@ -617,16 +651,22 @@ const FileUpload = ({ onUploadComplete }) => {
                           listStyle: "none",
                           display: "flex",
                           flexDirection: "column",
+                          marginBlockStart: 0,
+                          marginLeft: 0,
+                          marginInlineStart: 0,
+                          marginInlineEnd: 0,
+                          paddingInlineStart: 0,
                         }}
                       >
                         {selectedFiles.map((file, index) => (
                           <SortableItem key={file.name} id={file.name}>
-                            <div className="grabbable"
+                            {uploadedTracks.includes(file.name) ? <h2>Done!</h2> :                             
+                            <div className="grabbable glassCard"
                               style={{
                                 display: "flex",
                                 flexDirection: "row",
                                 marginBottom: 10,
-                                background: `linear-gradient(${index % 2 ? "120deg" : "120deg"}, #4158D0 0%, #C850C0 46%, #FFCC70 100%)`,
+                                // background: `linear-gradient(${index % 2 ? "120deg" : "120deg"}, #4158D0 0%, #C850C0 46%, #FFCC70 100%)`,
                                 padding: 10,
                                 borderRadius: 5,
                                 boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
@@ -645,7 +685,8 @@ const FileUpload = ({ onUploadComplete }) => {
                                   )
                                 }
                                 textAlign="center"
-                                style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}
+                                style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "#3f3f3f"}}
+                                className="glass inputbox"
                               />
                               <p>File: {file.name}</p>
                               {uploadStarted ? currentlyUploadingFilename === file.name ? <div>{uploadedPercentage}%</div> : <div><img src={loadingSpinner} alt="Loading" width={"15rem"} /></div> : null}
@@ -655,6 +696,7 @@ const FileUpload = ({ onUploadComplete }) => {
                               </div>
                               <img src={DragHandleIcon} alt="DragHandle" width={80} />
                             </div>
+                          }
                           </SortableItem>
                         ))}
                       </ul>
