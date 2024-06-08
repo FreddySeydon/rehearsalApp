@@ -9,7 +9,7 @@ const DeleteAlbum = ({albumId, refetchAlbums}) => {
 
   return (
     <div>
-      <button onClick={handleAlbumDelete}>Delete Album</button>
+      <button onClick={handleAlbumDelete} style={{background: "transparent", color: "darkred", border: "solid", borderWidth: 2}}>Delete Album</button>
     </div>
   )
 }

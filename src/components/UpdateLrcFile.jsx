@@ -8,11 +8,13 @@ import {
 } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
+import LrcUploadDropzone from "./LrcUploadDropzone";
 
 const UpdateLrcFile = ({ albumId, songId, trackId }) => {
   const [newFile, setNewFile] = useState(null);
   const [uploadStarted, setUploadStarted] = useState(false);
   const [uploadFinished, setUploadFinished] = useState(false);
+  const [showUploadForm, setShowUploadForm] = useState(false);
 
   const updateLrc = async () => {
     if (!newFile) {
@@ -96,9 +98,9 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
     }
   };
 
-  const handleFileChange = (e) => {
-    setNewFile(e.target.files[0]);
-  };
+  const handleReset = () => {
+    setNewFile(null);
+  }
 
   return (
     <div
@@ -110,17 +112,24 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
         alignItems: "center",
       }}
     >
-      {uploadFinished ? (
+      {showUploadForm ? uploadFinished ? (
         <div>Lrc update successful!</div>
       ) : (
-        <div>
-          <label htmlFor="Files">LRC present - Update LRC below</label>
-          <input type="file" onChange={handleFileChange} />
-          <button onClick={updateLrc} disabled={uploadStarted}>
+        <div style={{display: "flex", flexDirection: "column", gap: 15}}>
+          {/* <label htmlFor="Files">Lyrics present</label> */}
+          <LrcUploadDropzone setSelectedFiles={setNewFile} selectedFiles={newFile} />
+          <div style={{gap: 10}}>
+          <button onClick={updateLrc} disabled={uploadStarted} style={{marginRight: 5}}>
             {uploadStarted ? "Uploading..." : "Upload"}
           </button>
+          <button onClick={() => setShowUploadForm(false)}>Cancel</button>
+          <button onClick={handleReset} style={{background: "transparent", color: "darkred"}}>Reset</button>
+          </div>
+          <div>
+
+          </div>
         </div>
-      )}
+      ) : <button style={{width: "100%"}} onClick={() => setShowUploadForm(true)}>Replace Lyrics</button>}
     </div>
   );
 };

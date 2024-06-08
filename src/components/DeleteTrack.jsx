@@ -59,7 +59,7 @@ const DeleteTrack = ({albumId, songId, trackId, refetchSongs}) => {
   
 return (
 <>
- <button onClick={deleteTrack}>Delete Track</button>
+ <button onClick={deleteTrack} style={{backgroundColor: "transparent", borderWidth: 3, border: "solid", borderColor: "darkred", color: "darkred"}}>Delete Track</button>
 </>
 
 )

@@ -3,12 +3,14 @@ import { collection, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import { Link } from 'react-router-dom';
 import { getStorage, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import LrcUploadDropzone from './LrcUploadDropzone';
 
-const LrcUpload = ({albumId, songId, trackName, trackId}) => {
+const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
 
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [uploadStarted, setUploadStarted] = useState(false);
     const [uploadCompleted, setUploadCompleted] = useState(false);
+    const [info, setInfo] = useState(null)
     const [error, setError] = useState(null)
 
     const handleFileChange = (event) => {
@@ -17,7 +19,16 @@ const LrcUpload = ({albumId, songId, trackName, trackId}) => {
 
       };
 
+    const resetSelect = () => {
+      setSelectedFiles([])
+      setInfo(null)
+    }
+
     const handleUpload = async () => {
+      if(selectedFiles.length === 0) {
+        setInfo("You have to select a file")
+        return
+      }
         setUploadStarted(true);
         const storage = getStorage();
         const promises = selectedFiles.map(async (file) => {
@@ -58,6 +69,7 @@ const LrcUpload = ({albumId, songId, trackName, trackId}) => {
                 trackName: trackName,
                 lrc: downloadURL})
             } else if (ext !== 'lrc') {
+              setInfo("Only lrc files are supported")
               throw new Error("Only lrc files are supported")
             }
           });
@@ -81,11 +93,16 @@ const LrcUpload = ({albumId, songId, trackName, trackId}) => {
 
       return (
           <div>
-        {uploadCompleted ? error ? (<div>{`An error occurred: ${error}`}</div>) : (<div style={{color: "#fdc873"}}>Lrc uploaded successfully</div>) : 
+        {uploadCompleted ? error ? (<div>{`An error occurred: ${error}`}</div>) : (<div style={{color: "white"}}><p style={{fontSize: 20}}>Lyrics uploaded successfully</p><button onClick={refetchSongs}>Replace Lyrics</button></div>) : 
             <div style={{display: "flex",flexDirection:"column", gap: 10, justifyContent: "center", alignItems: "center"}}>
-              <label htmlFor="Files">Upload your Lyrics file here:</label>
-              <input type="file" multiple onChange={handleFileChange} />
-              <button onClick={handleUpload}>{uploadStarted ? "Uploading..." : "Upload"}</button>
+              <LrcUploadDropzone setSelectedFiles={setSelectedFiles} selectedFiles={selectedFiles} />
+              {/* <label htmlFor="Files">Upload your Lyrics file here:</label>
+              <input type="file" multiple onChange={handleFileChange} /> */}
+              {info ? info : null}
+              <div>
+              <button onClick={handleUpload}>{uploadStarted ? !uploadCompleted ? "Uploading..." : "Done!" : "Upload"}</button>
+              <button onClick={resetSelect} style={{background: "transparent", color: "darkred"}}>Reset</button>
+              </div>
             </div>
         }
         </div>

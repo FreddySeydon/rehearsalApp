@@ -3,6 +3,7 @@ import { collection, getDocs,  } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import { Link } from 'react-router-dom';
 import DeleteAlbum from '../components/DeleteAlbum';
+import "./albumDetailPage.css"
 
 const AlbumsPage = () => {
     const [albums, setAlbums] = useState([])
@@ -45,22 +46,23 @@ const AlbumsPage = () => {
 
   return (
     <div>
-        <h3>Albums</h3>
         {loading ? 
             <div>Loading...</div> : error ? 
-                <div>There was an error: {error}</div> : 
-                   albums.map((album) => {
+            <div>There was an error: {error}</div> : 
+            <div className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20}}>
+                  <h3>Albums</h3>
+                   {albums.map((album) => {
                     return(
-                    <div key={album.id}>
                     <Link to={album.id}>
+                    <div key={album.id} className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20}}>
                        <div>
-                           <h4>{album.name}</h4>
+                           <h4 style={{fontSize: 20, margin: 10, marginBottom: 15}}>{album.name}</h4>
                        </div>
-                    </Link>
                     <DeleteAlbum albumId={album.id} refetchAlbums={fetchAlbums}/>
                     </div>
+                    </Link>
                   )
-                }) }
+                })} </div> }
     </div>
   )
 }

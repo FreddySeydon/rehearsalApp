@@ -52,7 +52,7 @@ const DeleteSong = ({albumId, songId, refetchAlbum}) => {
 
   return (
     <div>
-      <button onClick={deleteSong}>Delete Song</button>
+      <button onClick={deleteSong} style={{background: "transparent", color: "darkred", border: "solid", borderWidth: 2}}>Delete Song</button>
     </div>
   )
 };
