@@ -39,6 +39,8 @@ import {
 } from "@dnd-kit/core";
 import loadingSpinner from "../assets/img/loading.gif";
 import FileUploadDropZone from "./FileUploadDropZone";
+import "./FileUpload.css"
+import DragHandleIcon from "../assets/img/drag-handle.svg"
 
 const SortableItem = ({ id, children }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -64,7 +66,7 @@ const Droppable = ({ children, id }) => {
   return (
     <div
       ref={setNodeRef}
-      style={{ padding: "20px", border: "2px dashed #ccc" }}
+      // style={{ padding: "20px", border: "2px dashed #ccc" }}
     >
       {children}
     </div>
@@ -146,6 +148,8 @@ const FileUpload = ({ onUploadComplete }) => {
     fetchAlbums();
   }, []);
 
+  console.log("Currently uploading: ",currentlyUploadingFilename)
+
   useEffect(() => {
     if (!userAlbumName) {
       setAlbumUploadName(selectedAlbum);
@@ -154,6 +158,7 @@ const FileUpload = ({ onUploadComplete }) => {
 
   const resetUpload = async () => {
     setLoading(true);
+    setInitialAlbum(false);
     await fetchAlbums();
     setTrackNames({});
     setSelectedFiles([]);
@@ -355,9 +360,8 @@ const FileUpload = ({ onUploadComplete }) => {
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            console.log(snapshot.metadata.name)
             if(!totalBytes){
-              setCurrentlyUploadingFilename(snapshot.metadata.name);
+              setCurrentlyUploadingFilename(compressedFile.name);
               setTotalBytes(snapshot.totalBytes);
             }
             setTransferredBytes(snapshot.bytesTransferred);
@@ -467,8 +471,8 @@ const FileUpload = ({ onUploadComplete }) => {
       const reorderedFiles = arrayMove(selectedFiles, oldIndex, newIndex);
       setSelectedFiles(reorderedFiles);
 
-      const reorderedTrackNumbers = arrayMove(trackNumbers, oldIndex, newIndex);
-      setTrackNumbers(reorderedTrackNumbers);
+      // const reorderedTrackNumbers = arrayMove(trackNumbers, oldIndex, newIndex);
+      // setTrackNumbers(reorderedTrackNumbers);
     }
   };
 
@@ -481,7 +485,7 @@ const FileUpload = ({ onUploadComplete }) => {
             <img src={loadingSpinner} alt="Loading" width={"30rem"} />
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "row", gap: 20 }}>
+          <div style={{ display: "flex", flexDirection: "row", gap: 20, padding: 50 }} className="glasstransparent">
             <div
               style={{ display: "flex", flexDirection: "column", width: "33%" }}
             >
@@ -503,10 +507,10 @@ const FileUpload = ({ onUploadComplete }) => {
                   </div>
                 ) : !userAlbumName ? (
                   <div
-                    className="selectBox"
-                    style={{ paddingBottom: 10, paddingTop: 0, marginTop: 0 }}
+                    className="selectBox, glass"
+                    style={{ paddingBottom: 10, paddingTop: 0, marginTop: 0 , marginBottom: 20}}
                   >
-                    <p style={{ fontSize: "1rem" }}>
+                    <p style={{ fontSize: "1rem", color: "black", fontSize: "large", fontWeight: "bold" }}>
                       Choose an album to add songs to...
                     </p>
                     <select
@@ -519,17 +523,19 @@ const FileUpload = ({ onUploadComplete }) => {
                         fontSize: "1.2rem",
                         fontWeight: "bold",
                         color: "black",
+                        backgroundColor: "white",
                       }}
+                      className="glass"
                     >
                       {existingAlbums.map((album) => (
-                        <option key={album.id} value={album.id}>
+                        <option key={album.id} value={album.id} className="glass inputbox">
                           {album.name}
                         </option>
                       ))}
                     </select>
                   </div>
                 ) : null}
-                <label htmlFor="AlbumName">
+                <label htmlFor="AlbumName" style={{ fontSize: "large"}}>
                   Album Name: {!userAlbumName ? albumName : userAlbumName}
                 </label>
                 <input
@@ -540,8 +546,9 @@ const FileUpload = ({ onUploadComplete }) => {
                     setAlbumUploadName(formatInput(e.target.value));
                   }}
                   placeholder="...or type here to create a new Album"
+                  className="glass inputbox"
                 />
-                <label htmlFor="SongName">Song Name: {songName}</label>
+                <label htmlFor="SongName" style={{marginTop: 10, fontSize: "large"}}>Song Name: <b>{songName}</b></label>
                 <input
                   type="text"
                   required
@@ -549,24 +556,29 @@ const FileUpload = ({ onUploadComplete }) => {
                     setSongName(e.target.value);
                     setSongUploadName(formatInput(e.target.value));
                   }}
+                  className="glass inputbox"
                 />
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <label htmlFor="SongNumber">Song Number: </label>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", alignItems: "center", marginTop: 10 }}>
+                  <label htmlFor="SongNumber" style={{width: "50%", marginRight: 20, fontSize: "large"}}>Song Number: </label>
                   <input
-                    type="number"
+                    type="text"
                     value={songNumber}
                     required
                     onChange={(e) => {
                       setSongNumber(e.target.value);
                     }}
+                    className="glass inputbox"
+                    style={{width: "50%"}}
                   />
                 </div>
                 <button
                   onClick={handleUpload}
-                  style={{ padding: 10, marginTop: 10 }}
+                  style={{ padding: 10, marginTop: 10, marginBottom: 10, backgroundColor: "#fdc873" }}
                 >
                   {uploadStarted ? "Uploading..." : "Upload Files"}
+                  {!selectedFiles ? disabled : null}
                 </button>
+                <button onClick={resetUpload} style={{backgroundColor: "transparent", borderWidth: 3, border: "solid", borderColor: "darkred"}}>Reset Upload</button>
               </div>
             </div>
             {!userAlbumName && !initialAlbum ? (
@@ -583,8 +595,8 @@ const FileUpload = ({ onUploadComplete }) => {
                 })}
               </div>
             ) : null}
-              <FileUploadDropZone setSelectedFiles={setSelectedFiles} initializeTrackNames={initializeTrackNames} initializeTrackNumbers={initializeTrackNumbers}/>
             <Droppable id="file-drop" style={{ width: "33%" }}>
+              <FileUploadDropZone setSelectedFiles={setSelectedFiles} selectedFiles={selectedFiles} initializeTrackNames={initializeTrackNames} initializeTrackNumbers={initializeTrackNumbers}/>
               {/* <label htmlFor="Files">
                 Drag and drop or choose files to upload
               </label> */}
@@ -609,16 +621,19 @@ const FileUpload = ({ onUploadComplete }) => {
                       >
                         {selectedFiles.map((file, index) => (
                           <SortableItem key={file.name} id={file.name}>
-                            <div
+                            <div className="grabbable"
                               style={{
                                 display: "flex",
-                                flexDirection: "column",
+                                flexDirection: "row",
                                 marginBottom: 10,
-                                background: "black",
+                                background: `linear-gradient(${index % 2 ? "120deg" : "120deg"}, #4158D0 0%, #C850C0 46%, #FFCC70 100%)`,
                                 padding: 10,
                                 borderRadius: 5,
+                                boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
+                                transition: "ease"
                               }}
                             >
+                              <div style={{display: "flex", flexDirection: "column"}}>
                               <p>Track Number: {index + 1}</p>
                               <input
                                 type="text"
@@ -629,12 +644,16 @@ const FileUpload = ({ onUploadComplete }) => {
                                     e.target.value
                                   )
                                 }
+                                textAlign="center"
+                                style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}
                               />
                               <p>File: {file.name}</p>
-                              {uploadStarted ? currentlyUploadingFilename === file.name ? <div>uploadedPercentage</div> : <div><img src={loadingSpinner} alt="Loading" width={"15rem"} /></div> : null}
+                              {uploadStarted ? currentlyUploadingFilename === file.name ? <div>{uploadedPercentage}%</div> : <div><img src={loadingSpinner} alt="Loading" width={"15rem"} /></div> : null}
                               {/* <button onClick={() => handleDelete(index)}>
                                 Delete
                               </button> */}
+                              </div>
+                              <img src={DragHandleIcon} alt="DragHandle" width={80} />
                             </div>
                           </SortableItem>
                         ))}
@@ -647,11 +666,11 @@ const FileUpload = ({ onUploadComplete }) => {
           </div>
         )
       ) : (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          Upload Complete!
-          <button onClick={resetUpload}>Upload next song</button>
+        <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+          <h2>Upload Complete!</h2>
+          <button onClick={resetUpload} style={{width: "100%"}}>Upload next song</button>
           <Link to={`/albums/${albumUploadName}/${songUploadName}`}>
-            <button>Go to Song</button>
+            <button style={{width: "100%"}}>Go to Song</button>
           </Link>
         </div>
       )}
