@@ -8,11 +8,13 @@ import loadingSpinner from "./assets/img/loading.gif";
 import { collection, getDocs } from "firebase/firestore";
 import { getStorage, getBlob, ref } from "firebase/storage";
 import { db } from "../utils/firebase";
+import { Link } from "react-router-dom";
 
 const App = () => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
   const [lrcContent, setLrcContent] = useState(null);
+  const [lrcs, setLrcs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userSeek, setUserSeek] = useState(false);
   const [trackDuration, setTrackDuration] = useState(0);
@@ -25,6 +27,9 @@ const App = () => {
   const [songs, setSongs] = useState([]);
   const [currentSources, setCurrentSources] = useState([])
   const [blobsReady, setBlobsReady] = useState(false);
+  const [lrcsReady, setLrcsReady] = useState(false);
+  const [currentLrcs, setCurrentLrcs] = useState([]);
+  const [noLrcs, setNoLrcs] = useState(false);
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({ query: "(min-width: 1224px)" });
@@ -71,7 +76,12 @@ const App = () => {
         songsList.push({ id: songDoc.id, ...songDoc.data() });
       });
       setSongs(songsList);
-      fetchCurrentTracks()
+      const lrcsList = [];
+      songsList.forEach((song) => lrcsList.push({id: song.id, lrcs: song.lrcs}))
+      setLrcs(lrcsList);
+      console.log("lrcslist", lrcsList)
+      fetchCurrentTracks();
+      fetchCurrentLrcs()
       if (songsList.length > 0) {
         const lastSong = localStorage.getItem("selected-song")
         if(lastSong) {
@@ -86,6 +96,35 @@ const App = () => {
       setLoading(false);
     }
   };
+
+  const fetchCurrentLrcs = async() => {
+    setLrcsReady(false);
+    const storage = getStorage();
+    if(lrcs.length !== 0 && !loading){
+      const currentLrcs = lrcs.find((song) => song.id === selectedSong)?.lrcs;
+      console.log("Current lrcs: ", currentLrcs)
+      if(currentLrcs){
+        const currentLrcSourcesArray = await Promise.all(currentLrcs.map(async(lrc) => {
+          const httpsReference = ref(storage, lrc.lrc);
+          const blob = await getBlob(httpsReference);
+          // const blobURL = URL.createObjectURL(blob);
+          return {...lrc, lrc: blob}
+        }))
+        setCurrentLrcs(currentLrcSourcesArray)
+        setNoLrcs(false);
+      } else {
+        setNoLrcs(true);
+      }
+    }
+  }
+
+  useEffect(() => {
+    if(currentLrcs.length !== 0){
+      setLrcsReady(true);
+      return
+    }
+    setLrcsReady(false)
+  }, [currentLrcs])
 
   const fetchCurrentTracks = async() => {
     setBlobsReady(false);
@@ -115,7 +154,8 @@ const App = () => {
   }, [currentSources])
 
   useEffect(() => {
-    fetchCurrentTracks()
+    fetchCurrentTracks();
+    fetchCurrentLrcs();
   }, [selectedSong])
   
 
@@ -216,9 +256,13 @@ const App = () => {
                 </div>
               </div>
             </div>
-            {/* <div className="lyrics">
+            <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"flex-start", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}>
+            <h3 style={{paddingLeft: isTabletOrMobile ? 0 : 60}}>Lyrics</h3>
+            {lrcsReady ?             
+            <div className="lyrics">
               <Lyrics
                 sounds={songs}
+                currentLrcs={currentLrcs}
                 statePlayers={statePlayers}
                 setLrcContent={setLrcContent}
                 lrcContent={lrcContent}
@@ -233,7 +277,11 @@ const App = () => {
                 isDesktopOrLaptop={isDesktopOrLaptop}
                 isTabletOrMobile={isTabletOrMobile}
               />
-            </div> */}
+            </div> : noLrcs ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}><p style={{fontSize: "1.25rem", }}>No Lyrics for this song found</p><Link to={`/albums/${selectedAlbum}/${selectedSong}`}><button>Upload Lyrics</button></Link></div> : <div>
+          <img src={loadingSpinner} alt="Loading" width={50} />
+        </div>
+          }
+          </div>
           </div>
         }
         </div>
