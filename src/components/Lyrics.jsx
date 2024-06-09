@@ -7,6 +7,7 @@ import { Transport } from "tone";
 
 const Lyrics = ({
   sounds,
+  currentLrcs,
   statePlayers,
   selectedSong,
   lrcContent,
@@ -26,14 +27,22 @@ const Lyrics = ({
   const [displayedLyricsIndex, setDisplayedLyricsIndex] = useState(0);
 
   const lyricsRef = useRef();
+  
 
   useEffect(() => {
     const loadLrc = async () => {
       setLoading(true);
-      const lrcLocation = sounds?.find((song) => song.id === selectedSong)?.tracks[0].lrc;
-      console.log("LRC LOCATION: ", lrcLocation)
-      const res = await fetch(lrcLocation);
-      const lrc = await res.text();
+      console.log("LRCSSS",currentLrcs)
+      if(currentLrcs.length === 0){
+        console.log("No lrc found")
+        setLoading(false);
+        return
+      }
+      const lrcLocation = currentLrcs[0].lrc;
+      // console.log("LRC LOCATION: ", lrcLocation)
+      // const lrc = lrcLocation
+      // const res = await fetch(lrcLocation);
+      const lrc = await lrcLocation.text();
       setLrcContent(lrc);
       setLoading(false);
     };
@@ -42,12 +51,14 @@ const Lyrics = ({
   }, [selectedSong]);
 
   const displayCurrentLyrics = () => {
-    const lyrics = parseLyrics(lrcContent);
-    setCurrentLyrics(lyrics);
-    const index = syncLyrics(lyrics, globalSeek);
-    setDisplayedLyricsIndex(index);
-    if (index === null) return;
-    setDisplayedLyrics(lyrics[index].text);
+    if(lrcContent){
+      const lyrics = parseLyrics(lrcContent);
+      setCurrentLyrics(lyrics);
+      const index = syncLyrics(lyrics, globalSeek);
+      setDisplayedLyricsIndex(index);
+      if (index === null) return;
+      setDisplayedLyrics(lyrics[index].text);
+    }
   };
 
   useEffect(() => {
@@ -79,7 +90,7 @@ const Lyrics = ({
   return (
     <>
       <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}>
-        <h3>Lyrics</h3>
+        {/* <h3>Lyrics</h3> */}
         {loading ? (
           <div>Loading...</div>
         ) : (
