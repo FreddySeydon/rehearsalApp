@@ -6,6 +6,7 @@ import Lyrics from "./components/Lyrics";
 import { useMediaQuery } from "react-responsive";
 import loadingSpinner from "./assets/img/loading.gif";
 import { collection, getDocs } from "firebase/firestore";
+import { getStorage, getBlob, ref } from "firebase/storage";
 import { db } from "../utils/firebase";
 
 const App = () => {
@@ -22,6 +23,8 @@ const App = () => {
   const [clearMute, setClearMute] = useState(false);
   const [albums, setAlbums] = useState([]);
   const [songs, setSongs] = useState([]);
+  const [currentSources, setCurrentSources] = useState([])
+  const [blobsReady, setBlobsReady] = useState(false);
 
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({ query: "(min-width: 1224px)" });
@@ -68,6 +71,7 @@ const App = () => {
         songsList.push({ id: songDoc.id, ...songDoc.data() });
       });
       setSongs(songsList);
+      fetchCurrentTracks()
       if (songsList.length > 0) {
         const lastSong = localStorage.getItem("selected-song")
         if(lastSong) {
@@ -82,6 +86,38 @@ const App = () => {
       setLoading(false);
     }
   };
+
+  const fetchCurrentTracks = async() => {
+    setBlobsReady(false);
+    const storage = getStorage();
+    console.log("Songs",songs)
+    if(songs.length !== 0 && !loading){
+      const currentTracks = songs.find((song) => song.id === selectedSong)?.tracks;
+      console.log("Tracks: ", currentTracks)
+      const currentSourcesArray = await Promise.all(currentTracks.map(async (track) => {
+        const httpsReference = ref(storage, track.src)
+        const blob = await getBlob(httpsReference);
+        console.log("Blob: ",blob)
+        const blobURL = URL.createObjectURL(blob);
+        return {...track, src: blobURL}; // create a new object with the updated src
+      }))
+      console.log("Current sources Arr: ",currentSourcesArray)
+      setCurrentSources(currentSourcesArray) // set the state with the new array
+    }
+  }
+
+  useEffect(() => {
+    if(currentSources !== 0){
+      setBlobsReady(true)
+      return
+    }
+    setBlobsReady(false)
+  }, [currentSources])
+
+  useEffect(() => {
+    fetchCurrentTracks()
+  }, [selectedSong])
+  
 
   useEffect(() => {
     fetchAlbums();
@@ -139,12 +175,15 @@ const App = () => {
                 </select>
                 </div>
               </div>
+              {!blobsReady ? <div>
+          <img src={loadingSpinner} alt="Loading" width={50} />
+        </div> : 
           <div className="audio-mixer" style={{ flexDirection: isTabletOrMobile ? "column" : "row" }}>
             <div className="controlsWrapper">
               <div className="tracks">
                 <div className="singleTrack">
                   <Channel
-                    sources={songs.find((song) => song.id === selectedSong)?.tracks}
+                    sources={currentSources}
                     globalSeek={globalSeek}
                     setGlobalSeek={setGlobalSeek}
                     userSeek={userSeek}
@@ -177,7 +216,7 @@ const App = () => {
                 </div>
               </div>
             </div>
-            <div className="lyrics">
+            {/* <div className="lyrics">
               <Lyrics
                 sounds={songs}
                 statePlayers={statePlayers}
@@ -194,8 +233,9 @@ const App = () => {
                 isDesktopOrLaptop={isDesktopOrLaptop}
                 isTabletOrMobile={isTabletOrMobile}
               />
-            </div>
+            </div> */}
           </div>
+        }
         </div>
       )}
     </>
