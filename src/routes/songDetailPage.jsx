@@ -97,9 +97,9 @@ const SongDetailPage = () => {
     );
 
     return (
-        <div>
-            <h2>{loading || error ? null : fullSongData.tracks.length} tracks of </h2>
-            {loading ? renderLoading() : error ? null : <h2>{`${fullSongData.number}. ${fullSongData.name}`}</h2>}
+        <div className='glasstransparent' style={{padding: 20}}>
+            <h2 style={{marginBottom: 0}}>{loading || error ? null : fullSongData.tracks.length} Tracks</h2>
+            {loading ? renderLoading() : error ? null : <h2 style={{marginTop: 0}}>{`${fullSongData.number}. ${fullSongData.name}`}</h2>}
             {loading ? renderLoading() : error ? renderError() : renderTracks()}
         </div>
     );

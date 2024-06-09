@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { collection, getDocs, getDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, Outlet } from 'react-router-dom';
 import DeleteSong from '../components/DeleteSong';
 import { sortSongsList } from '../../utils/utils';
 import "./albumDetailPage.css";
@@ -50,7 +50,7 @@ const AlbumDetailPage = () => {
       }, [])
 
   return (
-    <div>
+    <div style={{display: "flex", gap: 20}}>
         {loading ? 
             <div>Loading...</div> : error ? 
             <div>There was an error: {error}</div> : 
@@ -73,6 +73,7 @@ const AlbumDetailPage = () => {
                     
                   )
                 })} </div> }
+                <Outlet />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { collection, getDocs,  } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import DeleteAlbum from '../components/DeleteAlbum';
 import "./albumDetailPage.css"
 
@@ -45,7 +45,7 @@ const AlbumsPage = () => {
       }, [])
 
   return (
-    <div>
+    <div style={{display: "flex", gap: 20}}>
         {loading ? 
             <div>Loading...</div> : error ? 
             <div>There was an error: {error}</div> : 
@@ -53,8 +53,8 @@ const AlbumsPage = () => {
                   <h3>Albums</h3>
                    {albums.map((album) => {
                     return(
-                    <Link to={album.id}>
-                    <div key={album.id} className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20}}>
+                    <Link to={album.id} key={album.id}>
+                    <div  className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20}}>
                        <div>
                            <h4 style={{fontSize: 20, margin: 10, marginBottom: 15}}>{album.name}</h4>
                        </div>
@@ -63,6 +63,7 @@ const AlbumsPage = () => {
                     </Link>
                   )
                 })} </div> }
+                <Outlet/>
     </div>
   )
 }
