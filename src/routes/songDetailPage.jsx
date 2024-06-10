@@ -89,7 +89,9 @@ const SongDetailPage = () => {
                             <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} /> : 
                             <LrcUpload albumId={albumId} songId={songId} trackId={track.id} trackName={track.name} refetchSongs={fetchSongs}/>
                         }
-                        
+                        <Link to={`/lyricseditor/${albumId}/${songId}`} style={{width: "100%"}}>
+                        <button style={{width: "100%"}}>{getLRCForTrack(track.id) ? `Edit Lyrics` : `Add Lyrics`}</button>
+                        </Link>
                     </div>
                 </div>
             </div>

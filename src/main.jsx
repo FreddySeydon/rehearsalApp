@@ -10,6 +10,7 @@ import './index.css'
 import AlbumsPage from './routes/albumsPage.jsx'
 import AlbumDetailPage from './routes/albumDetailPage.jsx'
 import SongDetailPage from './routes/songDetailPage.jsx'
+import LyricsEditorPage from './routes/lyricsEditorPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,11 @@ const router = createBrowserRouter([
     {
       path: "/albums/:albumId/:songId",
       element: <SongDetailPage />,
-    }
+    },
+    {
+      path: "/lyricseditor/:albumId/:songId",
+      element: <LyricsEditorPage />,
+    },
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(

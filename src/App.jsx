@@ -104,7 +104,6 @@ const App = () => {
     const storage = getStorage();
     if(lrcs.length !== 0 && !loading){
       const currentLrcs = lrcs.find((song) => song.id === selectedSong)?.lrcs;
-      console.log("Current lrcs: ", currentLrcs)
       if(currentLrcs){
         const currentLrcSourcesArray = await Promise.all(currentLrcs.map(async(lrc) => {
           const httpsReference = ref(storage, lrc.lrc);

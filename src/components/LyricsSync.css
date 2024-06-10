@@ -1,0 +1,63 @@
+.lyricsWrapper {
+    margin-left: 5rem;
+}
+
+.lyricsdisplay {
+    overflow-y: scroll;
+    height: 430px;
+    /* background-color: black; */
+    scrollbar-width: thin;
+    /* overflow: hidden; */
+    text-align: center;
+    mask-image: linear-gradient(to top, transparent 0%, black 10px, black calc(100% - 10px), transparent 100%);
+}
+
+.lyricsdisplay::-webkit-scrollbar{
+    display:none;
+    scrollbar-width: none;
+}
+
+.lyricsinput{
+    height: 430px;
+    background-color: transparent;
+
+}
+
+textarea::placeholder {
+    color: white;
+}
+
+textarea:focus {
+    border: 2px;
+    border-color: #fdc873;
+    outline-color: #fdc873;
+}
+
+.lyricsinputarea {
+    background-color: transparent;
+    font-size: large;
+    color: white;
+    border-color: yellow;
+    padding-left: 5%;
+    padding-top: 5%;
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 100%;
+}
+
+.timestamp {
+    background-color: transparent;
+    color: white;
+    font-weight: bold;
+    padding-left: 2%;
+    font-size: large;
+}
+
+.glasstransparent {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2.7px);
+    -webkit-backdrop-filter: blur(2.7px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}

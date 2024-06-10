@@ -60,3 +60,18 @@ export function formatTime(timeInSeconds) {
     const seconds = Math.floor(timeInSeconds % 60);
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
+
+export function formatTimeMilliseconds(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    const milliseconds = Math.floor((time % 1) * 100);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
+}
+
+export function parseLrcTimeToSeconds(time) {
+    const minsec = time.split(":")
+    const min = parseInt(minsec[0] * 60);
+    const sec = parseFloat(minsec[1]);
+
+    return min + sec;
+}
