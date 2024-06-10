@@ -73,7 +73,9 @@ const AlbumDetailPage = () => {
                     
                   )
                 })} </div> }
+              <div id='detail'>
                 <Outlet />
+              </div>
     </div>
   )
 }

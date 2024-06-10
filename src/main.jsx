@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
 import UploadPage from './routes/uploadPage.jsx'
 import Root from './routes/root.jsx'
 import ErrorPage from './error-page.jsx'
@@ -25,18 +24,16 @@ const router = createBrowserRouter([
   {
     path: "/albums",
     element: <AlbumsPage />,
-    children: [
-      {
-        path: "/albums/:albumId",
-        element: <AlbumDetailPage />,
-      },
-
-    ]
   },
   {
-    path: "/albums/:albumId/:songId",
-    element: <SongDetailPage />,
-  }
+    path: "/albums/:albumId",
+    element: <AlbumDetailPage />,
+    },
+    
+    {
+      path: "/albums/:albumId/:songId",
+      element: <SongDetailPage />,
+    }
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(

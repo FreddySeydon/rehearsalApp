@@ -9,6 +9,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { getStorage, getBlob, ref } from "firebase/storage";
 import { db } from "../utils/firebase";
 import { Link } from "react-router-dom";
+import { sortSongsList } from "../utils/utils";
 
 const App = () => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
@@ -75,7 +76,8 @@ const App = () => {
       songsSnapshot.forEach((songDoc) => {
         songsList.push({ id: songDoc.id, ...songDoc.data() });
       });
-      setSongs(songsList);
+      const sortedSongsList = sortSongsList(songsList)
+      setSongs(sortedSongsList);
       const lrcsList = [];
       songsList.forEach((song) => lrcsList.push({id: song.id, lrcs: song.lrcs}))
       setLrcs(lrcsList);
