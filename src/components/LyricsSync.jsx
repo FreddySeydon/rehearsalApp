@@ -39,8 +39,6 @@ const LyricsSync = ({
     setLines(e.target.value.split('\n'));
   };
 
-  // console.log("Sync existing: ", existingLyrics)
-
   useEffect(() => {
     if(existingLyrics){
       // setLyrics(existingLyrics);
@@ -213,7 +211,7 @@ const LyricsSync = ({
       onChange={handleLyricsChange}
       className='lyricsinputarea glasstransparent'
     />
-    <p style={{color: "darkred"}}>{info ? info : null}</p>
+    <p style={{color: "darkred", marginTop: 2, marginBottom: 2}}>{info ? info : null}</p>
     <button onClick={handleDoneEditing}>Done</button>
         </div>
 

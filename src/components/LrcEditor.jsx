@@ -67,7 +67,6 @@ const LrcEditor = ({albumId, songId}) => {
       setLrcs(lrcsList);
       fetchCurrentTracks();
       if (songsList.length > 0) {
-        console.log("Songslist stuff go")
         setSelectedSong(songId);
         setSelectedTrack(1);
       }
@@ -99,9 +98,6 @@ const LrcEditor = ({albumId, songId}) => {
 
   const fetchTrackLrcs = async(trackId) => {
     const currentTrackId = trackId ? parseInt(trackId) : parseInt(selectedTrack);
-    if(trackId){
-      console.log("Called with track id", trackId)
-    }
     setLrcsReady(false);
     setCurrentTrackLrc([]);
     setExistingLyrics("");
@@ -121,7 +117,6 @@ const LrcEditor = ({albumId, songId}) => {
         // }))
         setCurrentTrackLrc(currentLrcSource)
         const lrcText = await currentLrcSource.lrc.text()
-        console.log("Lrc text: ",lrcText)
         setExistingLyrics(lrcText)
         setNoTrackLrc(false);
       } else {
@@ -131,13 +126,6 @@ const LrcEditor = ({albumId, songId}) => {
       }
     }
   }
-
-  // console.log("ex lyrics: ",existingLyrics)
-  // console.log(selectedTrack)
-
-  // useEffect(() => {
-  //   fetchTrackLrcs();
-  // }, [selectedTrack])
 
   useEffect(() => {
     fetchAlbums();
@@ -179,7 +167,6 @@ const LrcEditor = ({albumId, songId}) => {
   };
 
   const handleTrackChange = (trackId) => {
-    console.log("handletrackchange: ",trackId)
     setSelectedTrack(trackId)
     fetchTrackLrcs(trackId)
   }
