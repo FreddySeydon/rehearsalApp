@@ -13,6 +13,7 @@ import { formatTimeMilliseconds } from '../../utils/lrcParser';
 const LrcEditor = ({albumId, songId}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
+  const [selectedTrack, setSelectedTrack] = useState(1)
   const [loading, setLoading] = useState(true);
   const [globalSeek, setGlobalSeek] = useState(0);
   const [statePlayers, setStatePlayers] = useState(null);
@@ -25,6 +26,11 @@ const LrcEditor = ({albumId, songId}) => {
   const [blobsReady, setBlobsReady] = useState(false);
   const [hideMixer, setHideMixer] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [existingLyrics, setExistingLyrics] = useState("");
+  const [lrcsReady, setLrcsReady] = useState(false);
+  const [lrcs, setLrcs] = useState([]);
+  const [currentTrackLrc, setCurrentTrackLrc] = useState([]);
+  const [noTrackLrc, setNoTrackLrc] = useState(true);
 
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 
@@ -56,9 +62,14 @@ const LrcEditor = ({albumId, songId}) => {
       });
       const sortedSongsList = sortSongsList(songsList);
       setSongs(sortedSongsList);
+      const lrcsList = [];
+      songsList.forEach((song) => lrcsList.push({id: song.id, lrcs: song.lrcs}))
+      setLrcs(lrcsList);
       fetchCurrentTracks();
       if (songsList.length > 0) {
         setSelectedSong(songId);
+        setSelectedTrack(1);
+        fetchTrackLrcs(1);
       }
     } catch (error) {
       console.error('Error fetching songs:', error);
@@ -81,11 +92,62 @@ const LrcEditor = ({albumId, songId}) => {
         })
       );
       setCurrentSources(currentSourcesArray);
+      
     }
   };
 
+
+  const fetchTrackLrcs = async(trackId) => {
+    const currentTrackId = trackId ? parseInt(trackId) : parseInt(selectedTrack);
+    console.log("CURRENT: ",currentTrackId)
+    if(trackId){
+      console.log("Called with track id", trackId)
+    }
+    setLrcsReady(false);
+    setCurrentTrackLrc([]);
+    setExistingLyrics("");
+    const storage = getStorage();
+    if(lrcs.length !== 0 && !loading){
+      console.log("LRc fetch invoked", currentTrackId)
+      const currentLrcs = lrcs.find((song) => song.id === selectedSong)?.lrcs;
+      console.log("Curr: ",currentLrcs)
+      const trackLrc = currentLrcs.find((lrc) => lrc.trackId === currentTrackId);
+      console.log("before fetch: ", trackLrc)
+      if(trackLrc){
+        console.log("Actual fetch invoked", trackLrc)
+        const httpsReference = ref(storage, trackLrc.lrc);
+        const blob = await getBlob(httpsReference)
+        const currentLrcSource = {...trackLrc, lrc: blob}
+        // const currentLrcSourcesArray = await Promise.all(trackLrcArray.map(async(lrc) => {
+        //   const httpsReference = ref(storage, lrc.lrc);
+        //   const blob = await getBlob(httpsReference);
+          // const blobURL = URL.createObjectURL(blob);
+          // return {...lrc, lrc: blob}
+        // }))
+        console.log("Lrc source: ", currentLrcSource)
+        setCurrentTrackLrc(currentLrcSource)
+        const lrcText = await currentLrcSource.lrc.text()
+        setExistingLyrics(lrcText)
+        setNoTrackLrc(false);
+      } else {
+        console.log("Nothing fetched")
+        setNoTrackLrc(true);
+        setCurrentTrackLrc([])
+        setExistingLyrics("")
+      }
+    }
+  }
+
+  // console.log("ex lyrics: ",existingLyrics)
+  // console.log(selectedTrack)
+
+  // useEffect(() => {
+  //   fetchTrackLrcs();
+  // }, [selectedTrack])
+
   useEffect(() => {
     fetchAlbums();
+    
   }, []);
 
   useEffect(() => {
@@ -112,7 +174,17 @@ const LrcEditor = ({albumId, songId}) => {
 
   const handleSongChange = (songId) => {
     setSelectedSong(songId);
+    setSelectedTrack(1);
+    setExistingLyrics("");
   };
+
+  const handleTrackChange = (trackId) => {
+    console.log("handletrackchange: ",trackId)
+    setSelectedTrack(trackId)
+    fetchTrackLrcs(trackId)
+  }
+
+  console.log(typeof(selectedTrack))
 
   return (
     <>
@@ -140,6 +212,16 @@ const LrcEditor = ({albumId, songId}) => {
                 {songs.map((song) => (
                   <option key={song.id} value={song.id}>
                     {song.number} - {song.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="selectBox">
+              <p>Track:</p>
+              <select value={selectedTrack} onChange={(e) => handleTrackChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black' }}>
+                {currentSources.map((track) => (
+                  <option key={track.id} value={track.id}>
+                    {track.id} - {track.name}
                   </option>
                 ))}
               </select>
@@ -200,6 +282,8 @@ const LrcEditor = ({albumId, songId}) => {
                   playing={playing}
                   setPlaying={setPlaying}
                   trackDuration={trackDuration}
+                  existingLyrics={existingLyrics}
+                  selectedTrack={selectedTrack}
                 />
               </div>
             </div>

@@ -21,7 +21,9 @@ const LyricsSync = ({
   setHideMixer,
   setPlaying,
   playing,
-  trackDuration
+  trackDuration,
+  existingLyrics,
+  selectedTrack
 }) => {
   const [lyrics, setLyrics] = useState('');
   const [lines, setLines] = useState([]);
@@ -36,6 +38,36 @@ const LyricsSync = ({
     setLyrics(e.target.value);
     setLines(e.target.value.split('\n'));
   };
+
+  // console.log("Sync existing: ", existingLyrics)
+
+  useEffect(() => {
+    if(existingLyrics){
+      // setLyrics(existingLyrics);
+      
+      // Parse existing lyrics to timestamps if needed
+      const cleanLyrics = []
+      const existingTimestamps = existingLyrics.split('\n').map(line => {
+        const match = line.match(/^\[(?<time>\d{2}:\d{2}(.\d{2})?)\](?<text>.*)/);
+        if (match) {
+          const {time, text} = match.groups;
+          cleanLyrics.push(text);
+          // const [, min, sec, ms, text] = match;
+          // const time = `${min}:${sec}.${ms}`;
+          return { time, line: text.trim() };
+        }
+        return null;
+      }).filter(Boolean);
+      setLines(cleanLyrics);
+      setLyrics(cleanLyrics.join("\n"))
+      setTimestamps(existingTimestamps);
+    } else {
+      setLyrics("");
+      setLines([]);
+      setTimestamps([]);
+    }
+  }, [existingLyrics]);
+  
 
   const handleSync = () => {
     if(!playing){
