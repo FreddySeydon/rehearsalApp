@@ -67,9 +67,9 @@ const LrcEditor = ({albumId, songId}) => {
       setLrcs(lrcsList);
       fetchCurrentTracks();
       if (songsList.length > 0) {
+        console.log("Songslist stuff go")
         setSelectedSong(songId);
         setSelectedTrack(1);
-        fetchTrackLrcs(1);
       }
     } catch (error) {
       console.error('Error fetching songs:', error);
@@ -99,7 +99,6 @@ const LrcEditor = ({albumId, songId}) => {
 
   const fetchTrackLrcs = async(trackId) => {
     const currentTrackId = trackId ? parseInt(trackId) : parseInt(selectedTrack);
-    console.log("CURRENT: ",currentTrackId)
     if(trackId){
       console.log("Called with track id", trackId)
     }
@@ -108,13 +107,9 @@ const LrcEditor = ({albumId, songId}) => {
     setExistingLyrics("");
     const storage = getStorage();
     if(lrcs.length !== 0 && !loading){
-      console.log("LRc fetch invoked", currentTrackId)
       const currentLrcs = lrcs.find((song) => song.id === selectedSong)?.lrcs;
-      console.log("Curr: ",currentLrcs)
       const trackLrc = currentLrcs.find((lrc) => lrc.trackId === currentTrackId);
-      console.log("before fetch: ", trackLrc)
       if(trackLrc){
-        console.log("Actual fetch invoked", trackLrc)
         const httpsReference = ref(storage, trackLrc.lrc);
         const blob = await getBlob(httpsReference)
         const currentLrcSource = {...trackLrc, lrc: blob}
@@ -124,13 +119,12 @@ const LrcEditor = ({albumId, songId}) => {
           // const blobURL = URL.createObjectURL(blob);
           // return {...lrc, lrc: blob}
         // }))
-        console.log("Lrc source: ", currentLrcSource)
         setCurrentTrackLrc(currentLrcSource)
         const lrcText = await currentLrcSource.lrc.text()
+        console.log("Lrc text: ",lrcText)
         setExistingLyrics(lrcText)
         setNoTrackLrc(false);
       } else {
-        console.log("Nothing fetched")
         setNoTrackLrc(true);
         setCurrentTrackLrc([])
         setExistingLyrics("")
@@ -149,6 +143,12 @@ const LrcEditor = ({albumId, songId}) => {
     fetchAlbums();
     
   }, []);
+
+  useEffect(() => {
+    if(lrcs.length !== 0){
+      fetchTrackLrcs();
+    }
+  }, [lrcs])
 
   useEffect(() => {
     if (selectedAlbum) {
@@ -183,8 +183,6 @@ const LrcEditor = ({albumId, songId}) => {
     setSelectedTrack(trackId)
     fetchTrackLrcs(trackId)
   }
-
-  console.log(typeof(selectedTrack))
 
   return (
     <>
