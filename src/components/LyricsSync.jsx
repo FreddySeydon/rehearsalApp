@@ -8,6 +8,8 @@ import iconPause from "../assets/img/pause.png"
 import iconStop from "../assets/img/stop.png"
 import iconRight from "../assets/img/right-chevron.svg"
 import iconLeft from "../assets/img/left-chevron.svg"
+import iconEdit from "../assets/img/edit.svg"
+import iconDownload from "../assets/img/download.svg"
 
 const LyricsSync = ({
   statePlayers,
@@ -18,7 +20,8 @@ const LyricsSync = ({
   hideMixer,
   setHideMixer,
   setPlaying,
-  playing
+  playing,
+  trackDuration
 }) => {
   const [lyrics, setLyrics] = useState('');
   const [lines, setLines] = useState([]);
@@ -50,6 +53,18 @@ const LyricsSync = ({
     });
     setCurrentLineIndex((prev) => prev + 1);
   };
+
+  const handlePreviousLine = () => {
+    if(currentLineIndex - 1 >= 1){
+        setTimestamps((prev) => {
+            const newTimestamps = [...prev];
+            newTimestamps.pop();
+            return newTimestamps;
+        });
+        setCurrentLineIndex((prev) => prev - 1);
+
+    }
+  }
 
   const handleEditTimestamp = (index, newTime) => {
     setTimestamps((prev) =>
@@ -116,6 +131,14 @@ const LyricsSync = ({
     }
     setInfo('');
     setEditing(false);
+  }
+
+  const handleStartEditing = () => {
+    if(Tone.Transport.state === "started"){
+        handlePause();
+    }
+    setEditing(true);
+
   }
 
   const goToLyricsPosition = (position, index) => {
@@ -197,11 +220,18 @@ const LyricsSync = ({
         ))}
       </div>
                 <div style={{display: "flex", flexDirection: "column", gap:10, paddingTop: 10}}>
-                    <div>
-                  {currentLineIndex + 1 > lines.length ? null : <button onClick={handleSync} style={{
+                    <div style={{display: 'flex', flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                  {<button onClick={handlePreviousLine} style={{
                     marginRight: "0.25rem",
                     marginLeft: "0.25rem",
                     backgroundColor: "transparent",
+                    }}><img src={iconLeft} alt="Previous Line" style={{ width: "1.5rem", opacity: currentLineIndex - 1 <= 0 ? 0.5 : 1 }} /></button>}
+
+                  {<button onClick={handleSync} style={{
+                    marginRight: "0.25rem",
+                    marginLeft: "0.25rem",
+                    backgroundColor: "transparent",
+                    opacity: currentLineIndex + 1 > lines.length ? 0.5 : 1 
                     }}><img src={iconRight} alt="Next Line" style={{ width: "3rem"}} /></button>}
                     </div>
                     <div>
@@ -219,12 +249,10 @@ const LyricsSync = ({
                     backgroundColor: "transparent",
                     }}><img src={iconStop} alt="Stop" style={{ width: "3rem"}}  /></button>
                     </div>
-                    <div>
+                    <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: 10}}>
                   {/* <button onClick={handlePreview}>Preview</button> */}
-                  <button onClick={() => setEditing(true)}>Edit</button>
-                  <button onClick={handleReset}>Reset</button>
-                    </div>
-                </div>
+                  <button onClick={handleStartEditing} style={{backgroundColor: "transparent"}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
+                  <button onClick={handleReset} style={{backgroundColor: "transparent", borderWidth: 3, border: "dashed", borderColor: "white", color: "white"}}>Reset</button>
       <button
         onClick={() => {
           const lrcContent = timestamps
@@ -240,9 +268,12 @@ const LyricsSync = ({
           a.click();
           URL.revokeObjectURL(url);
         }}
+        style={{backgroundColor: "transparent"}}
       >
-        Download LRC
+        <img src={iconDownload} alt="Download LRC" style={{ width: "3.75rem", marginBottom: 6}} />
       </button>
+                    </div>
+                </div>
     </div>
     {hideMixer ? <button onClick={() => setHideMixer(!hideMixer)} style={{width: "100%", marginTop: 5}}>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button> : null}
 

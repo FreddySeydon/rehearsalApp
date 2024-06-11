@@ -199,6 +199,7 @@ const LrcEditor = ({albumId, songId}) => {
                   setHideMixer={setHideMixer}
                   playing={playing}
                   setPlaying={setPlaying}
+                  trackDuration={trackDuration}
                 />
               </div>
             </div>
