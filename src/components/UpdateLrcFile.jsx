@@ -10,18 +10,20 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import LrcUploadDropzone from "./LrcUploadDropzone";
 
-const UpdateLrcFile = ({ albumId, songId, trackId }) => {
+const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
   const [newFile, setNewFile] = useState(null);
   const [uploadStarted, setUploadStarted] = useState(false);
   const [uploadFinished, setUploadFinished] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
 
   const updateLrc = async () => {
-    if (!newFile) {
+    const newSingleFile = newFile[0]
+    console.log(newSingleFile)
+    if (!newSingleFile) {
       return console.log("You have to choose a file");
     }
 
-    const ext = newFile.name.split(".").pop();
+    const ext = newSingleFile.name.split(".").pop();
     if (ext !== "lrc") {
       return console.log("Choose an lrc file");
     }
@@ -35,7 +37,7 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
 
     if (songSnap.exists()) {
       const songData = songSnap.data();
-      const lrc = songData.lrcs.find((lrc) => lrc.trackId === trackId);
+      const lrc = songData.lrcs.find((lrc) => lrc.trackId === parseInt(trackId));
 
       if (!lrc) {
         console.log("Lrc not found!");
@@ -45,13 +47,20 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
       const oldSrc = lrc.lrc || null;
 
       // Step 2: Upload the new file to Firebase Storage
-      console.log("New file: ",newFile.name, typeof(newFile.name))
-      const newFileName = newFile.name;
+      // console.log("New file: ",newSingleFile.name, typeof(newSingleFile.name))
+      const thisTrack = songData.tracks.find((track) => parseInt(trackId) === track.id)
+      console.log(thisTrack)
+      const trackName = thisTrack.name
+      const newFileName = songId + "_" + trackName + "_track-" + trackId
+      const metadata = {
+        name: newFileName,
+        contentType: 'text/plain'
+      }
       const storageRef = ref(
         storage,
-        `sounds/${albumId}/${songId}/${newFileName}`
+        `sounds/${albumId}/${songId}/${newFileName}.lrc`
       );
-      const uploadTask = uploadBytesResumable(storageRef, newFile);
+      const uploadTask = uploadBytesResumable(storageRef, newSingleFile, metadata);
 
       uploadTask.on(
         "state_changed",
@@ -59,8 +68,9 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
           // Progress monitoring
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(progress);
-          console.log("Upload is " + progress + "% done");
+          // console.log(progress);
+          // console.log("Upload is " + progress + "% done");
+          console.log(snapshot.bytesTransferred, "/", snapshot.totalBytes, "State: ", snapshot.state)
           setUploadStarted(true);
         },
         (error) => {
@@ -79,17 +89,18 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
           }
 
           // Step 4: Update Firestore document with the new file path
-          const updatedTracks = songData.tracks.map((track) => {
-            if (track.id === trackId) {
-              return { ...track, lrc: newSrc }; // Update the specific field
+          const updatedTracks = songData.lrcs.map((lrc) => {
+            if (lrc.trackId === parseInt(trackId)) {
+              return { ...lrc, lrc: newSrc }; // Update the specific field
             }
-            return track;
+            return lrc;
           });
-
-          await updateDoc(albumRef, { tracks: updatedTracks });
+          console.log("UpdatedTracks: ", updatedTracks)
+          await updateDoc(songRef, { lrcs: updatedTracks });
 
           console.log("LRC updated successfully!");
           setUploadStarted(false);
+          setUploadFinished(true);
           setNewFile(null);
         }
       );
@@ -100,6 +111,11 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
 
   const handleReset = () => {
     setNewFile(null);
+  }
+
+  const handleReplaceAfterUpload = () => {
+    refetchSongs();
+    // setShowUploadForm(true);
   }
 
   return (
@@ -113,7 +129,7 @@ const UpdateLrcFile = ({ albumId, songId, trackId }) => {
       }}
     >
       {showUploadForm ? uploadFinished ? (
-        <div>Lrc update successful!</div>
+        <div style={{color: "white", width: "100%"}}><p style={{fontSize: 20}}>Lyrics updated successfully!</p><button onClick={handleReplaceAfterUpload} style={{width: "100%"}}>Reload</button></div>
       ) : (
         <div style={{display: "flex", flexDirection: "column", gap: 15}}>
           {/* <label htmlFor="Files">Lyrics present</label> */}

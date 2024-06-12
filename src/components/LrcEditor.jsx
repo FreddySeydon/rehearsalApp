@@ -13,7 +13,7 @@ import { formatTimeMilliseconds } from '../../utils/lrcParser';
 const LrcEditor = ({albumId, songId}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
-  const [selectedTrack, setSelectedTrack] = useState(1)
+  const [selectedTrack, setSelectedTrack] = useState("")
   const [loading, setLoading] = useState(true);
   const [globalSeek, setGlobalSeek] = useState(0);
   const [statePlayers, setStatePlayers] = useState(null);
@@ -31,6 +31,8 @@ const LrcEditor = ({albumId, songId}) => {
   const [lrcs, setLrcs] = useState([]);
   const [currentTrackLrc, setCurrentTrackLrc] = useState([]);
   const [noTrackLrc, setNoTrackLrc] = useState(true);
+  const [editing, setEditing] = useState(true);
+  const [seekUpdateInterval, setSeekUpdateInterval] = useState(null)
 
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 
@@ -68,7 +70,18 @@ const LrcEditor = ({albumId, songId}) => {
       fetchCurrentTracks();
       if (songsList.length > 0) {
         setSelectedSong(songId);
-        setSelectedTrack(1);
+        console.log("Songslist", songsList)
+        setSelectedTrack(songsList[0].tracks[0].id);
+          fetchTrackLrcs(songsList[0].tracks[0].id);
+        // if(trackId){
+        //   setSelectedTrack(trackId);
+        //   fetchTrackLrcs(trackId);
+  
+        // } else {
+        //   setSelectedTrack(songsList[0].tracks[0].id);
+        //   fetchTrackLrcs(songsList[0].tracks[0].id);
+        // }
+        
       }
     } catch (error) {
       console.error('Error fetching songs:', error);
@@ -90,21 +103,27 @@ const LrcEditor = ({albumId, songId}) => {
           return { ...track, src: blobURL };
         })
       );
-      setCurrentSources(currentSourcesArray);
-      
+      setCurrentSources(currentSourcesArray);      
     }
   };
 
 
   const fetchTrackLrcs = async(trackId) => {
-    const currentTrackId = trackId ? parseInt(trackId) : parseInt(selectedTrack);
+    const currentTrackId = trackId ? trackId : selectedTrack;
+    console.log("fetchTracklrc invoked with track id", currentTrackId)
     setLrcsReady(false);
     setCurrentTrackLrc([]);
     setExistingLyrics("");
     const storage = getStorage();
     if(lrcs.length !== 0 && !loading){
+      console.log("Actually fetching now")
       const currentLrcs = lrcs.find((song) => song.id === selectedSong)?.lrcs;
-      const trackLrc = currentLrcs.find((lrc) => lrc.trackId === currentTrackId);
+      console.log("Current Lrcs", currentLrcs)
+      
+        const trackLrc = currentLrcs ?  currentLrcs.find((lrc) => lrc.trackId === currentTrackId) : null;
+
+        console.log("Track Lrc: ",trackLrc)
+      
       if(trackLrc){
         const httpsReference = ref(storage, trackLrc.lrc);
         const blob = await getBlob(httpsReference)
@@ -119,10 +138,12 @@ const LrcEditor = ({albumId, songId}) => {
         const lrcText = await currentLrcSource.lrc.text()
         setExistingLyrics(lrcText)
         setNoTrackLrc(false);
+        setEditing(false)
       } else {
         setNoTrackLrc(true);
         setCurrentTrackLrc([])
         setExistingLyrics("")
+        setEditing(true)
       }
     }
   }
@@ -133,10 +154,12 @@ const LrcEditor = ({albumId, songId}) => {
   }, []);
 
   useEffect(() => {
-    if(lrcs.length !== 0){
-      fetchTrackLrcs();
+    console.log(lrcs)
+    if(lrcs.length !== 0 && selectedTrack){
+      console.log("LRcs loaded", selectedTrack)
+      fetchTrackLrcs(selectedTrack);
     }
-  }, [lrcs])
+  }, [lrcs, selectedTrack])
 
   useEffect(() => {
     if (selectedAlbum) {
@@ -206,7 +229,7 @@ const LrcEditor = ({albumId, songId}) => {
               <select value={selectedTrack} onChange={(e) => handleTrackChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black' }}>
                 {currentSources.map((track) => (
                   <option key={track.id} value={track.id}>
-                    {track.id} - {track.name}
+                    {track.number} - {track.name}
                   </option>
                 ))}
               </select>
@@ -246,8 +269,8 @@ const LrcEditor = ({albumId, songId}) => {
                       setClearMute={() => {}}
                       isStopped={false}
                       setIsStopped={() => {}}
-                      setSeekUpdateInterval={() => {}}
-                      seekUpdateInterval={null}
+                      setSeekUpdateInterval={setSeekUpdateInterval}
+                      seekUpdateInterval={seekUpdateInterval}
                       playersLoaded={playersLoaded}
                       setPlayersLoaded={setPlayersLoaded}
                     />
@@ -269,6 +292,13 @@ const LrcEditor = ({albumId, songId}) => {
                   trackDuration={trackDuration}
                   existingLyrics={existingLyrics}
                   selectedTrack={selectedTrack}
+                  selectedAlbum={selectedAlbum}
+                  editing={editing}
+                  setEditing={setEditing}
+                  lrcs={lrcs}
+                  seekUpdateInterval={seekUpdateInterval}
+                  setSeekUpdateInterval={setSeekUpdateInterval}
+                  songs={songs}
                 />
               </div>
             </div>

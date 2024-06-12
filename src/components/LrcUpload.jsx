@@ -35,10 +35,15 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
           return new Promise(async (resolve, reject) => {
             const ext = file.name.split('.').pop();
             const baseName = file.name.replace(`.${ext}`, '');
+            const fileName = baseName + "_" + trackName + "_" + trackId + "." + ext
             const parts = baseName.split('_');
+            const metadata = {
+              name: fileName,
+              contentType: 'text/plain'
+            }
     
-            const storageRef = ref(storage, `sounds/${albumId}/${songId}/${file.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
+            const storageRef = ref(storage, `sounds/${albumId}/${songId}/${fileName}`);
+            const uploadTask = uploadBytesResumable(storageRef, file, metadata);
     
             uploadTask.on(
               "state_changed",
@@ -93,7 +98,7 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
 
       return (
           <div>
-        {uploadCompleted ? error ? (<div>{`An error occurred: ${error}`}</div>) : (<div style={{color: "white"}}><p style={{fontSize: 20}}>Lyrics uploaded successfully</p><button onClick={refetchSongs}>Replace Lyrics</button></div>) : 
+        {uploadCompleted ? error ? (<div>{`An error occurred: ${error}`}</div>) : (<div style={{color: "white"}}><p style={{fontSize: 20}}>Lyrics uploaded successfully</p><button onClick={refetchSongs}>Reload</button></div>) : 
             <div style={{display: "flex",flexDirection:"column", gap: 10, justifyContent: "center", alignItems: "center"}}>
               <LrcUploadDropzone setSelectedFiles={setSelectedFiles} selectedFiles={selectedFiles} />
               {/* <label htmlFor="Files">Upload your Lyrics file here:</label>

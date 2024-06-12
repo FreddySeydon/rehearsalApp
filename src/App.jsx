@@ -43,6 +43,7 @@ const App = () => {
   const [playing, setPlaying] = useState(false);
   const [globalSeek, setGlobalSeek] = useState(0);
   const [seekUpdateInterval, setSeekUpdateInterval] = useState(null);
+  const [noAlbums, setNoAlbums] = useState(false)
 
   const fetchAlbums = async () => {
     try {
@@ -51,6 +52,9 @@ const App = () => {
       albumsSnapshot.forEach((doc) => {
         albumsList.push({ id: doc.id, ...doc.data() });
       });
+      if(albumsList.length === 0){
+        setNoAlbums(true);
+      }
       setAlbums(albumsList);
       if (albumsList.length > 0) {
         const lastAlbum = localStorage.getItem("selected-album")
@@ -182,7 +186,7 @@ const App = () => {
 
   return (
     <>
-      {loading && !songs ? (
+      {noAlbums ? <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by uploading your first album</h3><Link to={'/upload'}><button>Create First Album</button></Link></div> : loading && !songs ? (
         <div>
           <img src={loadingSpinner} alt="Loading" width={"5rem"} />
         </div>

@@ -9,9 +9,7 @@ import DeleteTrack from '../components/DeleteTrack';
 import "./songDetailPage.css";
 
 const SongDetailPage = () => {
-    console.log(useParams())
     const {songId, albumId} = useParams();
-    // console.log("Params album: ",albumId)
     const [selectedSong, setSelectedSong] = useState("");
     const [tracks, setTracks] = useState([]);
     const [error, setError] = useState(null);
@@ -70,7 +68,7 @@ const SongDetailPage = () => {
     const renderTracks = () => (
         tracks.map((track, index) => (
             <div key={track.id} className='glasstransparent' style={{marginBottom: 10, padding: 20}}>
-                <h2>Track {track.id} - {track.name}</h2>
+                <h2>Track {track.number} - {track.name}</h2>
                 <div className='trackcardcontent' style={{marginBottom: 25, gap:40}}>
                     <div>
                       <div style={{display:"flex", flexDirection: "column", gap: 10, minWidth: 285, padding: 15, minHeight: 140}} className='glassCard'>
@@ -86,7 +84,7 @@ const SongDetailPage = () => {
                       <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>Lyrics</p>
                         {/* <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>{getLRCForTrack(track.id) ? "Lyrics" : null}</p>  */}
                         {getLRCForTrack(track.id) ? 
-                            <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} /> : 
+                            <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} refetchSongs={fetchSongs} /> : 
                             <LrcUpload albumId={albumId} songId={songId} trackId={track.id} trackName={track.name} refetchSongs={fetchSongs}/>
                         }
                         <Link to={`/lyricseditor/${albumId}/${songId}`} style={{width: "100%"}}>

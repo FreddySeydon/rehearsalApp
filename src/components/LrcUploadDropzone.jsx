@@ -28,7 +28,7 @@ const LrcUploadDropzone = ({setSelectedFiles, selectedFiles}) => {
         <div>
           {/* <h4>File</h4> */}
 
-          {selectedFiles.map(file => <p>{file.name}</p>)}
+          {selectedFiles ? selectedFiles.map(file => <p key={file.name}>{file.name}</p>) : null}
         </div>
         }
       </section>

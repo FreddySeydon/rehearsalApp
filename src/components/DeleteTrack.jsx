@@ -36,9 +36,13 @@ const DeleteTrack = ({albumId, songId, trackId, refetchSongs}) => {
     // Step 3: Delete the LRC file from Firebase Storage (if exists)
     if (trackLrc) {
       const lrcFileRef = ref(storage, trackLrc);
-      await deleteObject(lrcFileRef).catch((error) => {
-        console.error("Error deleting LRC file:", error);
-      });
+      try {
+        await deleteObject(lrcFileRef)
+      } catch (error) {
+        if(error.code === 'storage/object-not-found'){
+          console.warn("File not found.")
+        }
+      }
     }
 
     // Step 4: Remove the track reference from Firestore

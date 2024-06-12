@@ -10,6 +10,7 @@ import iconRight from "../assets/img/right-chevron.svg"
 import iconLeft from "../assets/img/left-chevron.svg"
 import iconEdit from "../assets/img/edit.svg"
 import iconDownload from "../assets/img/download.svg"
+import { updateLrc } from '../../utils/databaseOperations';
 
 const LyricsSync = ({
   statePlayers,
@@ -23,13 +24,19 @@ const LyricsSync = ({
   playing,
   trackDuration,
   existingLyrics,
-  selectedTrack
+  selectedTrack,
+  selectedAlbum,
+  editing,
+  setEditing,
+  lrcs,
+  setSeekUpdateInterval,
+  seekUpdateInterval,
+  songs
 }) => {
   const [lyrics, setLyrics] = useState('');
   const [lines, setLines] = useState([]);
   const [timestamps, setTimestamps] = useState([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
-  const [editing, setEditing] = useState(true);
   const [info, setInfo] = useState('')
 
   const lyricsRef = useRef();
@@ -75,7 +82,7 @@ const LyricsSync = ({
     const minutes = Math.floor(now / 60);
     const seconds = Math.floor(now % 60);
     const milliseconds = Math.floor((now % 1) * 100);
-    const time = `${minutes}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`
+    const time = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`
     setTimestamps((prev) => {
         const newTimestamps = [...prev];
         newTimestamps[currentLineIndex] = {time: time, line: lines[currentLineIndex]};
@@ -171,6 +178,21 @@ const LyricsSync = ({
 
   }
 
+  const handleSaveLyrics = async () => {
+    const lrcContent = timestamps
+            .map(({ time, line }) => {
+              return `[${time}]${line}`;
+            })
+            .join('\n');
+          const blob = new Blob([lrcContent], { type: 'text/plain' });
+          const thisSong = songs.find((song) => selectedSong === song.id)
+          console.log(songs)
+          const thisTrack = thisSong.tracks.find((track) => selectedTrack === track.id)
+          console.log(thisTrack)
+          const trackName = thisTrack.name
+          await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName)
+  }
+
   const goToLyricsPosition = (position, index) => {
     const secondsPosition = parseLrcTimeToSeconds(position);
     if(Transport.state === "started"){
@@ -211,7 +233,7 @@ const LyricsSync = ({
       onChange={handleLyricsChange}
       className='lyricsinputarea glasstransparent'
     />
-    <p style={{color: "darkred", marginTop: 2, marginBottom: 2}}>{info ? info : null}</p>
+    <p style={{color: "#fdc873", marginTop: 2, marginBottom: 5}}>{info ? info : null}</p>
     <button onClick={handleDoneEditing}>Done</button>
         </div>
 
@@ -302,6 +324,7 @@ const LyricsSync = ({
       >
         <img src={iconDownload} alt="Download LRC" style={{ width: "3.75rem", marginBottom: 6}} />
       </button>
+      <button onClick={handleSaveLyrics}>Save Lyrics</button>
                     </div>
                 </div>
     </div>

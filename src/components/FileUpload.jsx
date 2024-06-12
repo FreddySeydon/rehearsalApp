@@ -41,6 +41,7 @@ import loadingSpinner from "../assets/img/loading.gif";
 import FileUploadDropZone from "./FileUploadDropZone";
 import "./FileUpload.css"
 import DragHandleIcon from "../assets/img/drag-handle.svg"
+import {v4 as uuidv4} from 'uuid';
 
 const SortableItem = ({ id, children }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -434,9 +435,11 @@ const FileUpload = ({ onUploadComplete }) => {
         }
         const ext = file.name.split(".").pop();
         if (ext === "mp3") {
-          const id = trackNumbers[index];
+          const id = uuidv4();
+          const number = trackNumbers[index];
           songsData[songName].tracks.push({
             id: id,
+            number: number,
             name: trackName,
             src: downloadURL,
           });
@@ -684,7 +687,7 @@ const FileUpload = ({ onUploadComplete }) => {
                                     e.target.value
                                   )
                                 }
-                                textAlign="center"
+                                // textAlign="center"
                                 style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "#3f3f3f"}}
                                 className="glass inputbox"
                               />

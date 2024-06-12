@@ -1,6 +1,6 @@
 import React from "react";
-import { getStorage, ref, deleteObject } from "firebase/storage";
-import { doc, collection, getDoc, deleteDoc, getDocs } from "firebase/firestore";
+import { getStorage, ref, deleteObject, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { doc, collection, getDoc, deleteDoc, getDocs, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "./firebase";
 
 export const deleteSong = async (albumId, songId) => {
@@ -74,3 +74,97 @@ export const deleteAlbum = async(albumId) => {
         console.error("There was an error deleting the album: ", error);
     }
 }
+
+
+export const updateLrc = async (newFile, albumId, songId, trackId, trackName) => {
+  if (!newFile) {
+    return console.log("You have to choose a file");
+  }
+
+  // const ext = newFile.name.split(".").pop();
+  // if (ext !== "lrc") {
+  //   return console.log("Choose an lrc file");
+  // }
+
+  const storage = getStorage();
+  const trackIdInt = trackId;
+
+  // Step 1: Read the document
+  const songRef = doc(db, "albums", albumId, "songs", songId);
+  const songSnap = await getDoc(songRef);
+  console.log("Song Snap: ", songSnap.data());
+
+  if (songSnap.exists()) {
+    const songData = songSnap.data();
+    const lrc = songData.lrcs.find((lrc) => lrc.trackId === trackIdInt);
+
+    if (!lrc) {
+      console.log("Lrc not found!");
+      // return;
+    }
+
+    const oldSrc = lrc ? lrc.lrc : null;
+
+    // Step 2: Upload the new file to Firebase Storage
+    const newFileName = songId + "_" + trackName + "_track-" + trackIdInt
+    const storageRef = ref(
+      storage,
+      `sounds/${albumId}/${songId}/${newFileName}.lrc`
+    );
+    const metadata = {
+      name: newFileName,
+      contentType: 'text/plain'
+    }
+    const uploadTask = uploadBytesResumable(storageRef, newFile, metadata);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Progress monitoring
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(progress);
+        console.log("Upload is " + progress + "% done");
+        // setUploadStarted(true);
+      },
+      (error) => {
+        console.error("Upload failed:", error);
+        // setUploadStarted(false);
+      },
+      async () => {
+        const newSrc = await getDownloadURL(uploadTask.snapshot.ref);
+
+        // Step 3: Delete the old file from Firebase Storage
+        if (oldSrc) {
+          const oldFileRef = ref(storage, oldSrc);
+          await deleteObject(oldFileRef).catch((error) => {
+            console.error("Error deleting old file:", error);
+          });
+        }
+
+        // Step 4: Update Firestore document with the new file path
+        if(oldSrc){
+          const updatedLrcs = songData.lrcs.map((lrc) => {
+            if(lrc.trackId === trackIdInt) {
+              return {...lrc, lrc: newSrc}
+            }
+            return lrc;
+          })
+  
+          await updateDoc(songRef, { lrcs: updatedLrcs });
+        } else {
+          const lrcToUpload = {trackId: trackId, trackName: trackName, lrc: newSrc}
+          await updateDoc(songRef, {
+            lrcs: arrayUnion(lrcToUpload)
+          })
+        }
+
+        console.log("LRC updated successfully!");
+        // setUploadStarted(false);
+        // setNewFile(null);
+      }
+    );
+  } else {
+    console.log("No such document!");
+  }
+};
