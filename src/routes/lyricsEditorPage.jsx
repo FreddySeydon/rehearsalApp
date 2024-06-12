@@ -8,7 +8,7 @@ const LyricsEditorPage = () => {
     const [loading, setLoading] = useState(false);
     const [tracks, setTracks] = useState([]);
 
-    const {songId, albumId} = useParams();
+    const {songId, albumId, trackId} = useParams();
 
 
 
@@ -17,7 +17,7 @@ const LyricsEditorPage = () => {
         {
             loading ? 
                 <img src={loadingSpinner} width={50} alt="" /> : 
-                    <LrcEditor albumId={albumId} songId={songId}/>
+                    <LrcEditor albumId={albumId} songId={songId} trackId={trackId}/>
         }
     </div>
   )

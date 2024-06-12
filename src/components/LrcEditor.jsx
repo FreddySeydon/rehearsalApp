@@ -10,7 +10,7 @@ import loadingSpinner from '../assets/img/loading.gif';
 import { sortSongsList } from '../../utils/utils';
 import { formatTimeMilliseconds } from '../../utils/lrcParser';
 
-const LrcEditor = ({albumId, songId}) => {
+const LrcEditor = ({albumId, songId, trackId}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
   const [selectedTrack, setSelectedTrack] = useState("")
@@ -71,8 +71,8 @@ const LrcEditor = ({albumId, songId}) => {
       if (songsList.length > 0) {
         setSelectedSong(songId);
         console.log("Songslist", songsList)
-        setSelectedTrack(songsList[0].tracks[0].id);
-          fetchTrackLrcs(songsList[0].tracks[0].id);
+        trackId ? setSelectedTrack(trackId) : setSelectedTrack(songsList[0].tracks[0].id);
+        trackId ? fetchTrackLrcs(trackId) : fetchTrackLrcs(songsList[0].tracks[0].id);
         // if(trackId){
         //   setSelectedTrack(trackId);
         //   fetchTrackLrcs(trackId);

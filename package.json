@@ -15,6 +15,7 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",
+    "@react-input/mask": "^1.2.5",
     "dotenv": "^16.4.5",
     "ffmpeg": "^0.0.4",
     "firebase": "^10.12.2",

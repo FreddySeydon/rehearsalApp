@@ -36,7 +36,7 @@ const router = createBrowserRouter([
       element: <SongDetailPage />,
     },
     {
-      path: "/lyricseditor/:albumId/:songId",
+      path: "/lyricseditor/:albumId/:songId/:trackId",
       element: <LyricsEditorPage />,
     },
 ])
