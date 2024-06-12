@@ -11,6 +11,7 @@ import iconLeft from "../assets/img/left-chevron.svg"
 import iconEdit from "../assets/img/edit.svg"
 import iconDownload from "../assets/img/download.svg"
 import { updateLrc } from '../../utils/databaseOperations';
+import { InputMask } from '@react-input/mask';
 
 const LyricsSync = ({
   statePlayers,
@@ -47,9 +48,7 @@ const LyricsSync = ({
   };
 
   useEffect(() => {
-    if(existingLyrics){
-      // setLyrics(existingLyrics);
-      
+    if(existingLyrics){      
       // Parse existing lyrics to timestamps if needed
       const cleanLyrics = []
       const existingTimestamps = existingLyrics.split('\n').map(line => {
@@ -251,12 +250,17 @@ const LyricsSync = ({
           }}>
             <span style={{display: 'flex', flexDirection: "row", gap: 10}}>
               {!timestamps[index] ? <div style={{minWidth: 90}}></div> : (
-                <input
-                type="text"
+                <InputMask
+                // ref={timestampInputRef}
+                // type="text"
                 value={timestamps[index].time}
+                mask= 'ab:ab.cc' 
+                replacement= {{a: /[0-5]/, b: /[0-9]|0?[0-9]/, c:/[0-9]/}}
                 onChange={(e) => handleEditTimestamp(index, e.target.value)}
                 style={{minWidth: 70, maxWidth: 70, textAlign: 'center'}}
                 className='timestamp glasstransparent'
+                // showMask
+                separate
                 />
               )}
               {" "} {timestamps[index] ? <a style={{
