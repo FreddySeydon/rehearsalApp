@@ -42,6 +42,7 @@ import FileUploadDropZone from "./FileUploadDropZone";
 import "./FileUpload.css"
 import DragHandleIcon from "../assets/img/drag-handle.svg"
 import {v4 as uuidv4} from 'uuid';
+import { useUser } from "../context/UserContext";
 
 const SortableItem = ({ id, children }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -103,6 +104,9 @@ const FileUpload = ({ onUploadComplete }) => {
   const ffmpegRef = useRef(new FFmpeg());
   const inputFileRef = useRef(null);
 
+  //Auth
+  const {user, authLoading} = useUser();
+
   // Preventing dragging in inputs and buttons
 
   class MyPointerSensor extends PointerSensor {
@@ -150,9 +154,6 @@ const FileUpload = ({ onUploadComplete }) => {
   useEffect(() => {
     fetchAlbums();
   }, []);
-
-  console.log("Currently uploading: ",currentlyUploadingFilename)
-  console.log("Uploaded Tracks: ",uploadedTracks)
 
   useEffect(() => {
     if (!userAlbumName) {
@@ -227,10 +228,8 @@ const FileUpload = ({ onUploadComplete }) => {
         songsList.push({ id: doc.id, ...doc.data() });
       });
       if (songsList) {
-        console.log(songsList);
         const songNumbers = songsList.map((song) => song.number);
         const maxSongNumber = Math.max(...songNumbers);
-        console.log("Max song number: ", maxSongNumber);
         if (maxSongNumber) {
           setSelectedAlbumNextSongNumber(maxSongNumber + 1);
           setSongNumber(maxSongNumber + 1);
@@ -240,7 +239,7 @@ const FileUpload = ({ onUploadComplete }) => {
           return String(song.number)
         })
         setExistingSongNumbers(existingSongNumbers);
-        // console.log("SongsList:" ,songsList, sortedSongsList)
+        // console.log("SongsList:", sortedSongsList)
         setSelectedAlbumData(sortedSongsList);
       }
     } catch (error) {
@@ -252,9 +251,8 @@ const FileUpload = ({ onUploadComplete }) => {
     try {
       const collectionRef = collection(db, "albums");
       const albumsSnapshot = await getDocs(collectionRef);
-      console.log("Albumssnapshot: ",albumsSnapshot)
+      // console.log("Albumssnapshot: ",albumsSnapshot)
       if (!albumsSnapshot.empty) {
-        console.log(albumsSnapshot.docs[0].data());
         const albumsList = [];
         albumsSnapshot.forEach((doc) => {
           albumsList.push({ id: doc.id, ...doc.data() });
@@ -262,7 +260,6 @@ const FileUpload = ({ onUploadComplete }) => {
         setExistingAlbums(albumsList);
         if (albumsList.length > 0) {
           const lastUploadAlbum = localStorage.getItem("selected-upload-album");
-          console.log("last album: ", JSON.parse(lastUploadAlbum));
           if (lastUploadAlbum) {
             setSelectedAlbum(JSON.parse(lastUploadAlbum));
             setAlbumUploadName(JSON.parse(lastUploadAlbum));
@@ -291,26 +288,6 @@ const FileUpload = ({ onUploadComplete }) => {
     }
   }, [selectedAlbum]);
 
-
-  // const handleFileChange = (event) => {
-  //   const files = Array.from(event.target.files);
-  //   setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
-  //   initializeTrackNames(files);
-  //   initializeTrackNumbers(files);
-  // };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    const files = Array.from(event.dataTransfer.files);
-    setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
-    initializeTrackNames(files);
-    initializeTrackNumbers(files);
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
   const initializeTrackNames = (files) => {
     const names = {};
     files.forEach((file) => {
@@ -335,11 +312,11 @@ const FileUpload = ({ onUploadComplete }) => {
     setTrackNames((prev) => ({ ...prev, [fileName]: newName }));
   };
 
-  const handleTrackNumberChange = (index, newNumber) => {
-    const updatedTrackNumbers = [...trackNumbers];
-    updatedTrackNumbers[index] = newNumber;
-    setTrackNumbers(updatedTrackNumbers);
-  };
+  // const handleTrackNumberChange = (index, newNumber) => {
+  //   const updatedTrackNumbers = [...trackNumbers];
+  //   updatedTrackNumbers[index] = newNumber;
+  //   setTrackNumbers(updatedTrackNumbers);
+  // };
 
   const compressFile = async (file) => {
     const ext = file.name.split(".").pop().toLowerCase();
@@ -452,6 +429,8 @@ const FileUpload = ({ onUploadComplete }) => {
       if (userAlbumName) {
         await setDoc(doc(albumRef, albumUploadName), {
           name: userAlbumName ? userAlbumName : albumName,
+          ownerId: user.uid,
+          sharedWith: [],
         });
       }
       for (const [songName, data] of Object.entries(songsData)) {
@@ -464,6 +443,8 @@ const FileUpload = ({ onUploadComplete }) => {
           ...data,
           name: songName,
           number: songNumber,
+          ownerId: user.uid,
+          sharedWith: [],
         });
       }
       console.log("end of uploading reached");
@@ -510,6 +491,10 @@ const FileUpload = ({ onUploadComplete }) => {
       // setTrackNumbers(reorderedTrackNumbers);
     }
   };
+  if(authLoading){
+    return ( <div> <h2>Song Upload</h2> <p>Loading...</p> </div>
+     )
+  }
 
   return (
     <>
