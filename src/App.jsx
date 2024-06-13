@@ -10,6 +10,9 @@ import { getStorage, getBlob, ref } from "firebase/storage";
 import { db } from "../utils/firebase";
 import { Link } from "react-router-dom";
 import { sortSongsList } from "../utils/utils";
+import { useUser } from "./context/UserContext";
+import { fetchAlbumsList } from "../utils/databaseOperations";
+import { fetchSongsList } from "../utils/databaseOperations";
 
 const App = () => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
@@ -32,6 +35,9 @@ const App = () => {
   const [currentLrcs, setCurrentLrcs] = useState([]);
   const [noLrcs, setNoLrcs] = useState(false);
 
+  //Auth
+  const {user, authLoading} = useUser();
+
   // Media Queries via react-responsive
   const isDesktopOrLaptop = useMediaQuery({ query: "(min-width: 1224px)" });
   const isBigScreen = useMediaQuery({ query: "(min-width: 1824px)" });
@@ -47,19 +53,20 @@ const App = () => {
 
   const fetchAlbums = async () => {
     try {
-      const albumsSnapshot = await getDocs(collection(db, "albums"));
-      const albumsList = [];
-      albumsSnapshot.forEach((doc) => {
-        albumsList.push({ id: doc.id, ...doc.data() });
-      });
+      const albumsList = await fetchAlbumsList(user);
+      setAlbums(albumsList);
       if(albumsList.length === 0){
         setNoAlbums(true);
       }
-      setAlbums(albumsList);
       if (albumsList.length > 0) {
         const lastAlbum = localStorage.getItem("selected-album")
         if(lastAlbum) {
-          setSelectedAlbum(JSON.parse(localStorage.getItem('selected-album')))
+          const albumExists = albumsList.find(
+            (album) => album.id === JSON.parse(lastAlbum)
+          );
+          if(albumExists){
+            setSelectedAlbum(JSON.parse(localStorage.getItem('selected-album')))
+          }
           return
         }
         setSelectedAlbum(albumsList[0].id); // Set the first album as the default selected album
@@ -67,7 +74,7 @@ const App = () => {
     } catch (error) {
       console.error("Error fetching albums:", error);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -75,24 +82,24 @@ const App = () => {
     if (!albumId) return;
     setLoading(true);
     try {
-      const songsSnapshot = await getDocs(collection(db, `albums/${albumId}/songs`));
-      const songsList = [];
-      songsSnapshot.forEach((songDoc) => {
-        songsList.push({ id: songDoc.id, ...songDoc.data() });
-      });
-      const sortedSongsList = sortSongsList(songsList)
+      const songsList = await fetchSongsList(user, albumId);
+      const sortedSongsList = sortSongsList(songsList);
       setSongs(sortedSongsList);
       const lrcsList = [];
       songsList.forEach((song) => lrcsList.push({id: song.id, lrcs: song.lrcs}))
       setLrcs(lrcsList);
-      console.log("lrcslist", lrcsList)
       fetchCurrentTracks();
       fetchCurrentLrcs()
       if (songsList.length > 0) {
         const lastSong = localStorage.getItem("selected-song")
         if(lastSong) {
-          setSelectedSong(JSON.parse(localStorage.getItem('selected-song')))
+          const songExists = songsList.find((song) => {
+            song.id === JSON.parse(lastSong)
+          })
+          if(songExists){
+            setSelectedSong(JSON.parse(localStorage.getItem('selected-song')))
           return
+          }
         }
         setSelectedSong(songsList[0].id); // Set the first song as the default selected song
       }
@@ -134,18 +141,14 @@ const App = () => {
   const fetchCurrentTracks = async() => {
     setBlobsReady(false);
     const storage = getStorage();
-    console.log("Songs",songs)
     if(songs.length !== 0 && !loading){
       const currentTracks = songs.find((song) => song.id === selectedSong)?.tracks;
-      console.log("Tracks: ", currentTracks)
       const currentSourcesArray = await Promise.all(currentTracks.map(async (track) => {
         const httpsReference = ref(storage, track.src)
         const blob = await getBlob(httpsReference);
-        console.log("Blob: ",blob)
         const blobURL = URL.createObjectURL(blob);
         return {...track, src: blobURL}; // create a new object with the updated src
       }))
-      console.log("Current sources Arr: ",currentSourcesArray)
       setCurrentSources(currentSourcesArray) // set the state with the new array
     }
   }
@@ -165,8 +168,10 @@ const App = () => {
   
 
   useEffect(() => {
-    fetchAlbums();
-  }, []);
+    if(user){
+      fetchAlbums();
+    }
+  }, [user]);
 
   useEffect(() => {
     if (selectedAlbum) {
@@ -183,6 +188,11 @@ const App = () => {
     setSelectedSong(songId);
     localStorage.setItem("selected-song", JSON.stringify(songId));
   };
+
+  if(authLoading){
+    return ( <div> <h2>Rehearsal Rocket</h2> <img src={loadingSpinner} alt="Loading" width={50} /> </div>
+     )
+  }
 
   return (
     <>

@@ -32,7 +32,6 @@ const Lyrics = ({
   useEffect(() => {
     const loadLrc = async () => {
       setLoading(true);
-      console.log("LRCSSS",currentLrcs)
       if(currentLrcs.length === 0){
         console.log("No lrc found")
         setLoading(false);

@@ -1,6 +1,6 @@
 import React from "react";
 import { getStorage, ref, deleteObject, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { doc, collection, getDoc, deleteDoc, getDocs, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, collection, getDoc, deleteDoc, getDocs, updateDoc, arrayUnion, where, query } from "firebase/firestore";
 import { db } from "./firebase";
 
 export const deleteSong = async (albumId, songId) => {
@@ -168,3 +168,84 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName) =>
     console.log("No such document!");
   }
 };
+
+export const fetchAlbumsList = async (user) => {
+  const albumsList = [];
+
+    const collectionRef = collection(db, "albums");
+    const albumsQuery = query(
+      collectionRef,
+      where('sharedWith', 'array-contains', user.uid)
+    );
+    const ownedAlbumsQuery = query(
+      collectionRef,
+      where('ownerId', '==', user.uid)
+    );
+
+    const [albumsSnapshot, ownedAlbumsSnapshot] = await Promise.all([
+      getDocs(albumsQuery),
+      getDocs(ownedAlbumsQuery)
+    ]);
+
+    albumsSnapshot.forEach((doc) => {
+      albumsList.push({ id: doc.id, ...doc.data() });
+    });
+
+    ownedAlbumsSnapshot.forEach((doc) => {
+      albumsList.push({ id: doc.id, ...doc.data() });
+    });
+  return albumsList;
+  }
+
+  export const fetchAlbumsListSeperately = async (user) => {
+    const sharedAlbumsList = [];
+    const ownedAlbumsList = [];
+  
+      const collectionRef = collection(db, "albums");
+      const albumsQuery = query(
+        collectionRef,
+        where('sharedWith', 'array-contains', user.uid)
+      );
+      const ownedAlbumsQuery = query(
+        collectionRef,
+        where('ownerId', '==', user.uid)
+      );
+  
+      const [albumsSnapshot, ownedAlbumsSnapshot] = await Promise.all([
+        getDocs(albumsQuery),
+        getDocs(ownedAlbumsQuery)
+      ]);
+  
+      albumsSnapshot.forEach((doc) => {
+        sharedAlbumsList.push({ id: doc.id, ...doc.data() });
+      });
+  
+      ownedAlbumsSnapshot.forEach((doc) => {
+        ownedAlbumsList.push({ id: doc.id, ...doc.data() });
+      });
+    return {sharedAlbumsList, ownedAlbumsList}
+    }
+
+export const fetchSongsList = async (user, albumId) => {
+  const albumRef = collection(db, "albums", albumId, "songs");
+      const songsQuery = query(
+        albumRef,
+        where('sharedWith', 'array-contains', user.uid)
+      )
+      const ownedSongsQuery = query(
+        albumRef,
+        where('ownerId', '==', user.uid)
+      )
+      const [songsSnapshot, ownedSongsSnapshot] = await Promise.all([
+        getDocs(songsQuery),
+        getDocs(ownedSongsQuery)
+      ])
+      const songsList = [];
+      songsSnapshot.forEach((doc) => {
+        songsList.push({ id: doc.id, ...doc.data() });
+      });
+      ownedSongsSnapshot.forEach((doc) => {
+        songsList.push({ id: doc.id, ...doc.data() });
+      });
+      return songsList
+}

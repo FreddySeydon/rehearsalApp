@@ -12,6 +12,8 @@ import {
   doc,
   setDoc,
   getDoc,
+  query,
+  where
 } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
@@ -43,6 +45,7 @@ import "./FileUpload.css"
 import DragHandleIcon from "../assets/img/drag-handle.svg"
 import {v4 as uuidv4} from 'uuid';
 import { useUser } from "../context/UserContext";
+import { fetchAlbumsList } from "../../utils/databaseOperations";
 
 const SortableItem = ({ id, children }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -75,7 +78,7 @@ const Droppable = ({ children, id }) => {
   );
 };
 
-const FileUpload = ({ onUploadComplete }) => {
+const FileUpload = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [trackNames, setTrackNames] = useState({});
   const [songName, setSongName] = useState("New Song");
@@ -222,9 +225,23 @@ const FileUpload = ({ onUploadComplete }) => {
   const fetchSelectedAlbum = async (albumId) => {
     try {
       const albumRef = collection(db, "albums", albumId, "songs");
-      const albumSnapshot = await getDocs(albumRef);
+      const songsQuery = query(
+        albumRef,
+        where('sharedWith', 'array-contains', user.uid)
+      )
+      const ownedSongsQuery = query(
+        albumRef,
+        where('ownerId', '==', user.uid)
+      )
+      const [songsSnapshot, ownedSongsSnapshot] = await Promise.all([
+        getDocs(songsQuery),
+        getDocs(ownedSongsQuery)
+      ])
       const songsList = [];
-      albumSnapshot.forEach((doc) => {
+      songsSnapshot.forEach((doc) => {
+        songsList.push({ id: doc.id, ...doc.data() });
+      });
+      ownedSongsSnapshot.forEach((doc) => {
         songsList.push({ id: doc.id, ...doc.data() });
       });
       if (songsList) {
@@ -250,23 +267,38 @@ const FileUpload = ({ onUploadComplete }) => {
   const fetchAlbums = async () => {
     try {
       const collectionRef = collection(db, "albums");
-      const albumsSnapshot = await getDocs(collectionRef);
-      // console.log("Albumssnapshot: ",albumsSnapshot)
+      const albumsQuery = query(
+        collectionRef,
+        where('sharedWith', 'array-contains', user.uid)
+      );
+      const ownedAlbumsQuery = query(
+        collectionRef,
+        where('ownerId', '==', user.uid)
+      );
+      const [albumsSnapshot, ownedAlbumsSnapshot] = await Promise.all([
+        getDocs(albumsQuery),
+        getDocs(ownedAlbumsQuery)
+      ])
       if (!albumsSnapshot.empty) {
         const albumsList = [];
         albumsSnapshot.forEach((doc) => {
           albumsList.push({ id: doc.id, ...doc.data() });
         });
+        ownedAlbumsSnapshot.forEach((doc) => {
+          albumsList.push({ id: doc.id, ...doc.data() });
+        })
         setExistingAlbums(albumsList);
         if (albumsList.length > 0) {
           const lastUploadAlbum = localStorage.getItem("selected-upload-album");
           if (lastUploadAlbum) {
-            setSelectedAlbum(JSON.parse(lastUploadAlbum));
-            setAlbumUploadName(JSON.parse(lastUploadAlbum));
             const currentAlbum = albumsList.find(
               (album) => album.id === JSON.parse(lastUploadAlbum)
             );
-            setAlbumName(currentAlbum.name);
+            if(currentAlbum){
+              setSelectedAlbum(JSON.parse(lastUploadAlbum));
+              setAlbumUploadName(JSON.parse(lastUploadAlbum));
+              setAlbumName(currentAlbum.name);
+            }
             setLoading(false);
             return;
           }
@@ -419,6 +451,8 @@ const FileUpload = ({ onUploadComplete }) => {
             number: number,
             name: trackName,
             src: downloadURL,
+            ownerId: user.uid,
+            ownerName: user.displayName,
           });
         } else if (ext !== "mp3") {
           throw new Error("Only mp3 files are supported at the moment, sorry!");
@@ -430,6 +464,7 @@ const FileUpload = ({ onUploadComplete }) => {
         await setDoc(doc(albumRef, albumUploadName), {
           name: userAlbumName ? userAlbumName : albumName,
           ownerId: user.uid,
+          ownerName: user.displayName,
           sharedWith: [],
         });
       }
@@ -444,6 +479,7 @@ const FileUpload = ({ onUploadComplete }) => {
           name: songName,
           number: songNumber,
           ownerId: user.uid,
+          ownerName: user.displayName,
           sharedWith: [],
         });
       }
@@ -503,6 +539,7 @@ const FileUpload = ({ onUploadComplete }) => {
         loading ? (
           <div>
             <img src={loadingSpinner} alt="Loading" width={"30rem"} />
+            P
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "row", gap: 20, padding: 50 }} className="glasstransparent">
@@ -550,7 +587,7 @@ const FileUpload = ({ onUploadComplete }) => {
                     >
                       {existingAlbums.map((album) => (
                         <option key={album.id} value={album.id} className="glass inputbox" >
-                          <p style={{color: "#3f3f3f"}}>{album.name}</p>
+                          {album.name}
                         </option>
                       ))}
                     </select>
@@ -608,7 +645,7 @@ const FileUpload = ({ onUploadComplete }) => {
                 <h2 style={{paddingTop: 0, marginTop: 0}}>{albumName}</h2>
                 {selectedAlbumData?.map((song) => {
                   return (
-                    <div>
+                    <div key={song.id}>
                       <p style={{fontSize: "1.25rem"}}>
                         {song.number}. {song.name}
                       </p>

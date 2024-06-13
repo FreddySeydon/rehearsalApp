@@ -9,6 +9,10 @@ import { getStorage, ref, getBlob } from 'firebase/storage';
 import loadingSpinner from '../assets/img/loading.gif';
 import { sortSongsList } from '../../utils/utils';
 import { formatTimeMilliseconds } from '../../utils/lrcParser';
+import { useUser } from '../context/UserContext';
+import { fetchAlbumsList } from '../../utils/databaseOperations';
+import { fetchSongsList } from '../../utils/databaseOperations';
+import { Link } from 'react-router-dom';
 
 const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
@@ -33,17 +37,19 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
   const [noTrackLrc, setNoTrackLrc] = useState(true);
   const [editing, setEditing] = useState(true);
   const [seekUpdateInterval, setSeekUpdateInterval] = useState(null)
+  const [noAlbums, setNoAlbums] = useState(false);
+
+  const {user, authLoading} = useUser();
 
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 
   const fetchAlbums = async () => {
     try {
-      const albumsSnapshot = await getDocs(collection(db, 'albums'));
-      const albumsList = [];
-      albumsSnapshot.forEach((doc) => {
-        albumsList.push({ id: doc.id, ...doc.data() });
-        });
+      const albumsList = await fetchAlbumsList(user);
         setAlbums(albumsList);
+        if(albumsList.length === 0){
+          setNoAlbums(true)
+        }
         if (albumsList.length > 0) {
         setSelectedAlbum(albumId);
         // setSelectedAlbum(albumsList[0].id);
@@ -57,11 +63,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
     if (!albumId) return;
     setLoading(true);
     try {
-      const songsSnapshot = await getDocs(collection(db, `albums/${albumId}/songs`));
-      const songsList = [];
-      songsSnapshot.forEach((songDoc) => {
-        songsList.push({ id: songDoc.id, ...songDoc.data() });
-      });
+      const songsList = await fetchSongsList(user, albumId);
       const sortedSongsList = sortSongsList(songsList);
       setSongs(sortedSongsList);
       const lrcsList = [];
@@ -70,7 +72,6 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
       fetchCurrentTracks();
       if (songsList.length > 0) {
         setSelectedSong(songId);
-        console.log("Songslist", songsList)
         trackId ? setSelectedTrack(trackId) : setSelectedTrack(songsList[0].tracks[0].id);
         trackId ? fetchTrackLrcs(trackId) : fetchTrackLrcs(songsList[0].tracks[0].id);
         // if(trackId){
@@ -110,19 +111,13 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
 
   const fetchTrackLrcs = async(trackId) => {
     const currentTrackId = trackId ? trackId : selectedTrack;
-    console.log("fetchTracklrc invoked with track id", currentTrackId)
     setLrcsReady(false);
     setCurrentTrackLrc([]);
     setExistingLyrics("");
     const storage = getStorage();
     if(lrcs.length !== 0 && !loading){
-      console.log("Actually fetching now")
       const currentLrcs = lrcs.find((song) => song.id === selectedSong)?.lrcs;
-      console.log("Current Lrcs", currentLrcs)
-      
         const trackLrc = currentLrcs ?  currentLrcs.find((lrc) => lrc.trackId === currentTrackId) : null;
-
-        console.log("Track Lrc: ",trackLrc)
       
       if(trackLrc){
         const httpsReference = ref(storage, trackLrc.lrc);
@@ -149,14 +144,14 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
   }
 
   useEffect(() => {
-    fetchAlbums();
+    if(user){
+      fetchAlbums();
+    }
     
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    console.log(lrcs)
     if(lrcs.length !== 0 && selectedTrack){
-      console.log("LRcs loaded", selectedTrack)
       fetchTrackLrcs(selectedTrack);
     }
   }, [lrcs, selectedTrack])
@@ -195,6 +190,14 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
     setSelectedTrack(trackId)
     fetchTrackLrcs(trackId)
     setSearchParams({...Object.fromEntries(searchParams), trackId: trackId})
+  }
+
+  if(authLoading){
+    return <div>Loading...</div>
+  }
+
+  if(noAlbums){
+    return <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by uploading your first album</h3><Link to={'/upload'}><button>Create First Album</button></Link></div>
   }
 
   return (

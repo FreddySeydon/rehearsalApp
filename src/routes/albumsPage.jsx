@@ -4,6 +4,9 @@ import { db } from '../../utils/firebase';
 import { Link, Outlet } from 'react-router-dom';
 import DeleteAlbum from '../components/DeleteAlbum';
 import "./albumDetailPage.css"
+import { fetchAlbumsListSeperately } from '../../utils/databaseOperations';
+import { fetchAlbumsList } from '../../utils/databaseOperations';
+import { useUser } from '../context/UserContext';
 
 const AlbumsPage = () => {
     const [albums, setAlbums] = useState([])
@@ -11,15 +14,11 @@ const AlbumsPage = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
+    const {user, authLoading} = useUser();
+
     const fetchAlbums = async () => {
         try {
-          const collectionRef = collection(db, "albums")
-          const albumsSnapshot = await getDocs(collectionRef);
-          // console.log("Albums snapshot: ", albumsSnapshot)
-          const albumsList = [];
-          albumsSnapshot.forEach((doc) => {
-            albumsList.push({ id: doc.id, ...doc.data() });
-          });
+          const albumsList = await fetchAlbumsList(user);
           setAlbums(albumsList);
           // console.log("Albums list: ",albumsList)
           if (albumsList.length > 0) {
@@ -41,8 +40,14 @@ const AlbumsPage = () => {
       };
 
       useEffect(() => {
-        fetchAlbums()
-      }, [])
+        if(user){
+          fetchAlbums()
+        }
+      }, [user])
+
+if(authLoading){
+  return <div>Loading...</div>
+}
 
   return (
     <div style={{display: "flex", gap: 20}}>

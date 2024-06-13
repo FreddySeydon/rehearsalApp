@@ -5,6 +5,8 @@ import { Link, useParams, Outlet } from 'react-router-dom';
 import DeleteSong from '../components/DeleteSong';
 import { sortSongsList } from '../../utils/utils';
 import "./albumDetailPage.css";
+import { useUser } from '../context/UserContext';
+import { fetchSongsList } from '../../utils/databaseOperations';
 
 const AlbumDetailPage = () => {
     
@@ -15,18 +17,15 @@ const AlbumDetailPage = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const {user, authLoading} = useUser();
+
     const fetchSongs = async () => {
         if (!albumId) return;
         setLoading(true);
         try {
-          const songsSnapshot = await getDocs(collection(db, `albums/${albumId}/songs`));
-          // const albumSnapshot = await getDoc(doc(db, `albums/${albumId}`));
-          // setFullAlbumData(albumSnapshot.data());
-          const songsList = [];
-          songsSnapshot.forEach((songDoc) => {
-            songsList.push({ id: songDoc.id, ...songDoc.data() });
-          });
-          const sortedSongsList = sortSongsList(songsList)
+          const songsList = await fetchSongsList(user, albumId);
+          console.log(songsList)
+          const sortedSongsList = sortSongsList(songsList);
           setSongs(sortedSongsList);
           if (songsList.length > 0) {
             const lastSong = localStorage.getItem("selected-song")
@@ -46,8 +45,14 @@ const AlbumDetailPage = () => {
       };
 
       useEffect(() => {
-        fetchSongs()
-      }, [])
+        if(user){
+          fetchSongs()
+        }
+      }, [user])
+
+    if(authLoading){
+      return <div>Loading...</div>
+    }
 
   return (
     <div style={{display: "flex", gap: 20}}>

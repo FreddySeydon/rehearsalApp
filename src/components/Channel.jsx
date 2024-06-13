@@ -37,7 +37,7 @@ const Channel = ({
   isStopped
 }) => {
   useEffect(() => {
-    console.log("Channel sources",sources)
+    // console.log("Channel sources",sources)
     if(stateSolos) {
       const solos = Object.values(stateSolos)
       solos.forEach((solo) => {

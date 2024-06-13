@@ -1,6 +1,5 @@
 
 export function parseLyrics(lrc) {
-    console.log(lrc)
     //matching time/text lines in lrc file and storing in group "time" and "text"
     const regex = /^\[(?<time>\d{2}:\d{2}(.\d{2})?)\](?<text>.*)/;
 
