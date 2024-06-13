@@ -39,6 +39,10 @@ const router = createBrowserRouter([
       path: "/lyricseditor/:albumId/:songId/:trackId",
       element: <LyricsEditorPage />,
     },
+    {
+      path: "/lyricseditor",
+      element: <LyricsEditorPage />,
+    },
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(

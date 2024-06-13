@@ -10,7 +10,7 @@ import loadingSpinner from '../assets/img/loading.gif';
 import { sortSongsList } from '../../utils/utils';
 import { formatTimeMilliseconds } from '../../utils/lrcParser';
 
-const LrcEditor = ({albumId, songId, trackId}) => {
+const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
   const [selectedTrack, setSelectedTrack] = useState("")
@@ -181,17 +181,20 @@ const LrcEditor = ({albumId, songId, trackId}) => {
 
   const handleAlbumChange = (albumId) => {
     setSelectedAlbum(albumId);
+    setSearchParams({...Object.fromEntries(searchParams), albumId: albumId})
   };
 
   const handleSongChange = (songId) => {
     setSelectedSong(songId);
     setSelectedTrack(1);
     setExistingLyrics("");
+    setSearchParams({...Object.fromEntries(searchParams), songId: songId})
   };
 
   const handleTrackChange = (trackId) => {
     setSelectedTrack(trackId)
     fetchTrackLrcs(trackId)
+    setSearchParams({...Object.fromEntries(searchParams), trackId: trackId})
   }
 
   return (
