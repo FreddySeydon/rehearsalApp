@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, si
 import "../App.css";
 import loadingSpinner from '../assets/img/loading.gif';
 
-const Login = () => {
+const Login = ({mode, setMode}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -85,22 +85,23 @@ const Login = () => {
     <h1>Welcome to Rehearsal Rocket</h1>
     {user ? ( <div> <h2> Welcome, {user.displayName} </h2> <button onClick={handleLogout} className='glass'>Logout</button></div> ) : 
     (<div style={{display: 'flex', flexDirection: "column", gap: 10, padding: 15, height: "fit-content", width: 400}} className='glasstransparent'>
-      <h2>Login or Sign Up</h2>
+      <h2>{mode === 'login' ? "Login" : "Sign Up"}</h2>
+      {mode === 'login' ? null : 
       <input
             type="text"
             placeholder="Name"
             onChange={(e) => setDisplayName(e.target.value)}
             value={displayName}
             className='glass'
-        style={{height: 40}}
-          />
+        style={{height: 40, textAlign: 'center'}}
+          />}
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         className='glass'
-        style={{height: 40}}
+        style={{height: 40, textAlign: 'center'}}
       />
       <input
         type="password"
@@ -108,14 +109,26 @@ const Login = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         className='glass'
-        style={{height: 40}}
+        style={{height: 40, textAlign: 'center'}}
       />
       {error ? <p>{error}</p> : null }
       {info ? <p>{info}</p> : null }
-      <button onClick={handleLogin} className='glass'>Login</button>
-      <button onClick={handleSignUp} className='glass'>Sign Up</button>
+      <div style={{display: 'flex', flexDirection: "column", gap: 5, marginTop: 10}}>
+      {mode === 'login' ? 
+      <div style={{display: "flex", flexDirection: "column"}}>
+        <button onClick={handleLogin} className='glass'>Login</button> 
+        <a onClick={() => setMode('signup')} style={{marginTop: 10, textDecoration: "underline", cursor: "pointer"}}>Don't have an accout? Sign up for free!</a> 
+        </div>
+        :
+       <div style={{display: "flex", flexDirection: "column"}}>
+         <button onClick={handleSignUp} className='glass'>Sign Up</button>
+         <a onClick={() => setMode('login')} style={{marginTop: 10, textDecoration: "underline", cursor: "pointer"}}>Already have an account? Log in!</a> 
+       </div>
+       
+       }
       <h2>or</h2>
       <button onClick={handleGoogleSignIn} className='glass'>Sign in with Google</button>
+      </div>
     </div>)
     }
     </div>

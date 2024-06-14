@@ -354,7 +354,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
             <div className="lyricsWrapperr glasstransparent" style={{display: "flex", justifyContent: "center", alignItems: "center", order: isSwapped ? 1 : 2}}>
             <div style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "30%", display:"flex", flexDirection:"column", justifyContent:"flex-start", alignItems:"center", marginTop: isTabletOrMobile ? 5 : 0, padding: 10}}>
             <h3 style={{paddingLeft: isTabletOrMobile ? 0 : 0}}>Lyrics</h3>
-            {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Lyrics</button></Link></div> :       
+            {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", paddingBottom: 10, height: 400 }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Lyrics</button></Link></div> :       
             <div className="lyrics" style={{marginLeft: 0, paddingLeft: 0}}>
               <Lyrics
                 sounds={songs}

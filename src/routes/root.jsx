@@ -1,10 +1,10 @@
 import React from 'react'
-import App from '../App'
+import LandingPage from './landingPage'
 
 const Root = () => {
   return (
     <>
-      <App />
+      <LandingPage />
     </>
   )
 }
