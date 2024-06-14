@@ -20,7 +20,12 @@ const Lyrics = ({
   setUserSeek,
   isBigScreen,
   isDesktopOrLaptop,
-  isTabletOrMobile
+  isTabletOrMobile,
+  selectedTrack,
+  setNoLrcs,
+  noLrcs,
+  noTrackLrc,
+  setNoTrackLrc
 }) => {
   const [displayedLyrics, setDisplayedLyrics] = useState("");
   const [currentLyrics, setCurrentLyrics] = useState([]);
@@ -30,6 +35,7 @@ const Lyrics = ({
   
 
   useEffect(() => {
+    console.log("Current: ",currentLrcs)
     const loadLrc = async () => {
       setLoading(true);
       if(currentLrcs.length === 0){
@@ -37,17 +43,22 @@ const Lyrics = ({
         setLoading(false);
         return
       }
-      const lrcLocation = currentLrcs[0].lrc;
-      // console.log("LRC LOCATION: ", lrcLocation)
-      // const lrc = lrcLocation
-      // const res = await fetch(lrcLocation);
+      const currentLrc = currentLrcs.find((lrc) => lrc.trackId === selectedTrack)
+      console.log("one:", currentLrc)
+      if(currentLrc){
+        const lrcLocation = currentLrc.lrc
       const lrc = await lrcLocation.text();
       setLrcContent(lrc);
       setLoading(false);
+      return
+      }
+      setNoTrackLrc(true);
+      setLoading(false)
+
     };
     loadLrc();
     lyricsRef.current.scrollTo(0,0);
-  }, [selectedSong]);
+  }, [selectedSong, selectedTrack]);
 
   const displayCurrentLyrics = () => {
     if(lrcContent){

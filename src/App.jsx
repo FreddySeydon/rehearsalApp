@@ -17,6 +17,7 @@ import { fetchSongsList } from "../utils/databaseOperations";
 const App = () => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
+  const [selectedTrack, setSelectedTrack] = useState('')
   const [lrcContent, setLrcContent] = useState(null);
   const [lrcs, setLrcs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,7 @@ const App = () => {
   const [lrcsReady, setLrcsReady] = useState(false);
   const [currentLrcs, setCurrentLrcs] = useState([]);
   const [noLrcs, setNoLrcs] = useState(false);
+  const [noTrackLrc, setNoTrackLrc] = useState(false);
 
   //Auth
   const {user, authLoading} = useUser();
@@ -131,12 +133,12 @@ const App = () => {
   }
 
   useEffect(() => {
-    if(currentLrcs.length !== 0){
+    if(currentLrcs.length !== 0 && selectedTrack){
       setLrcsReady(true);
       return
     }
     setLrcsReady(false)
-  }, [currentLrcs])
+  }, [currentLrcs, selectedTrack])
 
   const fetchCurrentTracks = async() => {
     setBlobsReady(false);
@@ -150,6 +152,9 @@ const App = () => {
         return {...track, src: blobURL}; // create a new object with the updated src
       }))
       setCurrentSources(currentSourcesArray) // set the state with the new array
+      setSelectedTrack(currentSourcesArray[0].id)
+      // console.log(currentSourcesArray)
+      // setSelectedTrack(currentSourcesArray)
     }
   }
 
@@ -188,6 +193,11 @@ const App = () => {
     setSelectedSong(songId);
     localStorage.setItem("selected-song", JSON.stringify(songId));
   };
+
+  const handleTrackChange = (trackId) => {
+    setSelectedTrack(trackId);
+    setNoTrackLrc(false);
+  } 
 
   if(authLoading){
     return ( <div> <h2>Rehearsal Rocket</h2> <img src={loadingSpinner} alt="Loading" width={50} /> </div>
@@ -229,6 +239,16 @@ const App = () => {
                   ))}
                 </select>
                 </div>
+                <div className="selectBox">
+              <p>Track:</p>
+              <select value={selectedTrack} onChange={(e) => handleTrackChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black' }}>
+                {currentSources.map((track) => (
+                  <option key={track.id} value={track.id}>
+                    {track.number} - {track.name}
+                  </option>
+                ))}
+              </select>
+            </div>
               </div>
               {!blobsReady ? <div>
           <img src={loadingSpinner} alt="Loading" width={50} />
@@ -273,7 +293,7 @@ const App = () => {
             </div>
             <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"flex-start", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}>
             <h3 style={{paddingLeft: isTabletOrMobile ? 0 : 60}}>Lyrics</h3>
-            {lrcsReady ?             
+            {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/albums/${selectedAlbum}/${selectedSong}`}><button>Add Lyrics</button></Link></div> :       
             <div className="lyrics">
               <Lyrics
                 sounds={songs}
@@ -291,6 +311,11 @@ const App = () => {
                 isBigScreen={isBigScreen}
                 isDesktopOrLaptop={isDesktopOrLaptop}
                 isTabletOrMobile={isTabletOrMobile}
+                selectedTrack={selectedTrack}
+                setNoLrcs={setNoLrcs}
+                noLrcs={noLrcs}
+                noTrackLrc={noTrackLrc}
+                setNoTrackLrc={setNoTrackLrc}
               />
             </div> : noLrcs ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}><p style={{fontSize: "1.25rem", }}>No Lyrics for this song found</p><Link to={`/albums/${selectedAlbum}/${selectedSong}`}><button>Upload Lyrics</button></Link></div> : <div>
           <img src={loadingSpinner} alt="Loading" width={50} />

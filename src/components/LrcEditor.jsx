@@ -181,7 +181,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
 
   const handleSongChange = (songId) => {
     setSelectedSong(songId);
-    setSelectedTrack(1);
+    // setSelectedTrack(1);
     setExistingLyrics("");
     setSearchParams({...Object.fromEntries(searchParams), songId: songId})
   };

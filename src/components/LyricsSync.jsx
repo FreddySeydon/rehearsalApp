@@ -49,7 +49,7 @@ const LyricsSync = ({
 
   useEffect(() => {
     if(existingLyrics){      
-      // Parse existing lyrics to timestamps if needed
+      // Parse existing lyrics to timestamps
       const cleanLyrics = []
       const existingTimestamps = existingLyrics.split('\n').map(line => {
         const match = line.match(/^\[(?<time>\d{2}:\d{2}(.\d{2})?)\](?<text>.*)/);
