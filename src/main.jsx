@@ -13,6 +13,7 @@ import SongDetailPage from './routes/songDetailPage.jsx'
 import LyricsEditorPage from './routes/lyricsEditorPage.jsx'
 import LoginPage from './routes/loginPage.jsx'
 import PlayerPage from './routes/playerPage.jsx'
+import Navbar from './components/Navbar.jsx'
 import { UserProvider } from './context/UserContext.jsx'
 import { authLoader } from './loaders/authLoader.js'
 
@@ -60,9 +61,12 @@ const router = createBrowserRouter([
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
+  <div>
   <React.StrictMode>
     <UserProvider>
+      
     <RouterProvider router={router} />
     </UserProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
+  </div>
 )

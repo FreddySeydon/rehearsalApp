@@ -3,6 +3,7 @@ import { auth, googleProvider } from '../../utils/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, signInWithPopup, updateProfile, onAuthStateChanged } from 'firebase/auth';
 import "../App.css";
 import loadingSpinner from '../assets/img/loading.gif';
+import Navbar from './Navbar';
 
 const Login = ({mode, setMode}) => {
   const [email, setEmail] = useState('');
@@ -83,7 +84,7 @@ const Login = ({mode, setMode}) => {
     <>
     <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
     <h1>Welcome to Rehearsal Rocket</h1>
-    {user ? ( <div> <h2> Welcome, {user.displayName} </h2> <button onClick={handleLogout} className='glass'>Logout</button></div> ) : 
+    {user ? ( <div> <Navbar /> <h2> Welcome, {user.displayName} </h2> <button onClick={handleLogout} className='glass'>Logout</button></div> ) : 
     (<div style={{display: 'flex', flexDirection: "column", gap: 10, padding: 15, height: "fit-content", width: 400}} className='glasstransparent'>
       <h2>{mode === 'login' ? "Login" : "Sign Up"}</h2>
       {mode === 'login' ? null : 

@@ -13,6 +13,7 @@ import { sortSongsList } from "../utils/utils";
 import { useUser } from "./context/UserContext";
 import { fetchAlbumsList } from "../utils/databaseOperations";
 import { fetchSongsList } from "../utils/databaseOperations";
+import Navbar from "./components/Navbar";
 
 const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
@@ -262,6 +263,8 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
 
   return (
     <>
+    <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%"}}>
+    <Navbar />
       {noAlbums ? <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by uploading your first album</h3><Link to={'/upload'}><button>Create First Album</button></Link></div> : loading && !songs ? (
         <div>
           <img src={loadingSpinner} alt="Loading" width={"5rem"} />
@@ -392,6 +395,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
         </div> : null }
         </div>
       )}
+      </div>
     </>
   );
 };

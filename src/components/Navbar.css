@@ -1,0 +1,17 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    row-gap: 10;
+    align-items: center;
+    /* background-color: #282c34; */
+    color: white;
+  }
+
+  .navbuttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
