@@ -14,7 +14,7 @@ import { useUser } from "./context/UserContext";
 import { fetchAlbumsList } from "../utils/databaseOperations";
 import { fetchSongsList } from "../utils/databaseOperations";
 
-const App = () => {
+const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
   const [selectedTrack, setSelectedTrack] = useState('')
@@ -36,7 +36,8 @@ const App = () => {
   const [currentLrcs, setCurrentLrcs] = useState([]);
   const [noLrcs, setNoLrcs] = useState(false);
   const [noTrackLrc, setNoTrackLrc] = useState(false);
-
+  const [isSwapped, setIsSwapped] = useState(false);
+  const [hideMixer, setHideMixer] = useState(false);
   //Auth
   const {user, authLoading} = useUser();
 
@@ -61,17 +62,30 @@ const App = () => {
         setNoAlbums(true);
       }
       if (albumsList.length > 0) {
+        if(albumId){
+          const albumExists = albumsList.find((album) => album.id === albumId)
+          if(albumExists){
+            setSelectedAlbum(albumId);
+            return
+          }
+          console.log("You can't view this album.")
+          return
+        }
         const lastAlbum = localStorage.getItem("selected-album")
         if(lastAlbum) {
           const albumExists = albumsList.find(
             (album) => album.id === JSON.parse(lastAlbum)
           );
           if(albumExists){
-            setSelectedAlbum(JSON.parse(localStorage.getItem('selected-album')))
+            const parsedAlbumId = JSON.parse(lastAlbum)
+            setSelectedAlbum(parsedAlbumId)
+            setSearchParams({...Object.fromEntries(searchParams), albumId: parsedAlbumId})
+            return
           }
           return
         }
         setSelectedAlbum(albumsList[0].id); // Set the first album as the default selected album
+        setSearchParams({...Object.fromEntries(searchParams), albumId: albumsList[0].id})
       }
     } catch (error) {
       console.error("Error fetching albums:", error);
@@ -93,17 +107,29 @@ const App = () => {
       fetchCurrentTracks();
       fetchCurrentLrcs()
       if (songsList.length > 0) {
+        if(songId){
+          const songExists = songsList.find((song) => song.id === songId)
+          if(songExists){
+            setSelectedSong(songId);
+            return
+          }
+          console.log("You can't view this song.")
+          return
+        }
         const lastSong = localStorage.getItem("selected-song")
         if(lastSong) {
           const songExists = songsList.find((song) => {
             song.id === JSON.parse(lastSong)
           })
           if(songExists){
-            setSelectedSong(JSON.parse(localStorage.getItem('selected-song')))
+            const parsedSongId = JSON.parse(lastSong);
+            setSelectedSong(parsedSongId)
+            setSearchParams({...Object.fromEntries(searchParams), songId: parsedSongId})
           return
           }
         }
         setSelectedSong(songsList[0].id); // Set the first song as the default selected song
+        setSearchParams({...Object.fromEntries(searchParams), songId: songsList[0].id})
       }
     } catch (error) {
       console.error("Error fetching songs:", error);
@@ -151,8 +177,34 @@ const App = () => {
         const blobURL = URL.createObjectURL(blob);
         return {...track, src: blobURL}; // create a new object with the updated src
       }))
-      setCurrentSources(currentSourcesArray) // set the state with the new array
-      setSelectedTrack(currentSourcesArray[0].id)
+      if(currentSourcesArray !== 0){
+        setCurrentSources(currentSourcesArray) // set the state with the new array
+        if(trackId){
+          const trackExists = currentSourcesArray.find((track) => track.id === trackId)
+          if(trackExists){
+            setSelectedTrack(trackId);
+            return
+          }
+          console.log("You can't view this album.")
+          return
+        }
+        const lastTrack = localStorage.getItem("selected-track")
+        if(lastTrack) {
+          const trackExists = currentSourcesArray.find(
+            (track) => track.id === JSON.parse(lastTrack)
+          );
+          if(trackExists){
+            const parsedTrackId = JSON.parse(lastTrack)
+            setSelectedTrack(parsedTrackId)
+            setSearchParams({...Object.fromEntries(searchParams), trackId: parsedTrackId})
+            return
+          }
+          return
+        }
+        setSelectedTrack(currentSourcesArray[0].id); // Set the first album as the default selected album
+        setSearchParams({...Object.fromEntries(searchParams), trackId: currentSourcesArray[0].id})
+      }
+      
       // console.log(currentSourcesArray)
       // setSelectedTrack(currentSourcesArray)
     }
@@ -187,16 +239,20 @@ const App = () => {
   const handleAlbumChange = (albumId) => {
     setSelectedAlbum(albumId);
     localStorage.setItem("selected-album", JSON.stringify(albumId));
+    setSearchParams({...Object.fromEntries(searchParams), albumId: albumId})
   };
 
   const handleSongChange = (songId) => {
     setSelectedSong(songId);
     localStorage.setItem("selected-song", JSON.stringify(songId));
+    setSearchParams({...Object.fromEntries(searchParams), songId: songId})
   };
 
   const handleTrackChange = (trackId) => {
     setSelectedTrack(trackId);
     setNoTrackLrc(false);
+    localStorage.setItem("selected-track", JSON.stringify(trackId))
+    setSearchParams({...Object.fromEntries(searchParams), trackId: trackId})
   } 
 
   if(authLoading){
@@ -213,9 +269,9 @@ const App = () => {
       ) : (
         <div className="appWrapper" style={{ padding: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "1rem" : "3rem" }}>
           <h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1>
-              <div className="selectBoxWrapper" style={{flexDirection: isTabletOrMobile ? "column" : "row"}}>
-                <div className="selectBox">
-                <p>Select Album: </p>
+              <div className="selectBoxWrapper" style={{flexDirection: isTabletOrMobile ? "column" : "row", gap: isTabletOrMobile ? 5 : 0}}>
+                <div className="selectBox glasstransparent" style={{padding: 10}}>
+                <p style={{padding: 0, margin:0}}>Album: </p>
                 <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black" }}>
                   {albums.map((album) => (
                     <option key={album.id} value={album.id}>
@@ -224,8 +280,8 @@ const App = () => {
                   ))}
                 </select>
                 </div>
-                <div className="selectBox">
-                <p>Song:</p>
+                <div className="selectBox glasstransparent" style={{padding: 10}}>
+                <p style={{padding: 0, margin:0}}>Song:</p>
                 <select
                   value={selectedSong}
                   onChange={(e) => handleSongChange(e.target.value)}
@@ -239,8 +295,8 @@ const App = () => {
                   ))}
                 </select>
                 </div>
-                <div className="selectBox">
-              <p>Track:</p>
+                <div className="selectBox glasstransparent" style={{padding: 10}}>
+              <p style={{padding: 0, margin:0}}>Lyrics:</p>
               <select value={selectedTrack} onChange={(e) => handleTrackChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black' }}>
                 {currentSources.map((track) => (
                   <option key={track.id} value={track.id}>
@@ -250,12 +306,16 @@ const App = () => {
               </select>
             </div>
               </div>
+              {isTabletOrMobile ? <div style={{display: "flex", margin: 10, gap: 10, justifyContent: "center", alignItems: "center"}}>
+          <button onClick={() => setIsSwapped(!isSwapped)} className="glassCard" style={{color: "white"}} >Swap Lyircs and Mixer</button>
+          <button onClick={() => setHideMixer(!hideMixer)} className="glassCard" style={{color: "white"}} >{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
+        </div> : null}
               {!blobsReady ? <div>
           <img src={loadingSpinner} alt="Loading" width={50} />
         </div> : 
-          <div className="audio-mixer" style={{ flexDirection: isTabletOrMobile ? "column" : "row" }}>
-            <div className="controlsWrapper">
-              <div className="tracks">
+          <div className="audio-mixer" style={{ flexDirection: isTabletOrMobile ? "column" : "row", gap: 5 }}>
+            <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "60%", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "block", paddingBottom: 5}}>
+              <div className="tracks" style={{width: "100%"}}>
                 <div className="singleTrack">
                   <Channel
                     sources={currentSources}
@@ -291,10 +351,11 @@ const App = () => {
                 </div>
               </div>
             </div>
-            <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"flex-start", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}>
-            <h3 style={{paddingLeft: isTabletOrMobile ? 0 : 60}}>Lyrics</h3>
-            {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/albums/${selectedAlbum}/${selectedSong}`}><button>Add Lyrics</button></Link></div> :       
-            <div className="lyrics">
+            <div className="lyricsWrapperr glasstransparent" style={{display: "flex", justifyContent: "center", alignItems: "center", order: isSwapped ? 1 : 2}}>
+            <div style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "30%", display:"flex", flexDirection:"column", justifyContent:"flex-start", alignItems:"center", marginTop: isTabletOrMobile ? 5 : 0, padding: 10}}>
+            <h3 style={{paddingLeft: isTabletOrMobile ? 0 : 0}}>Lyrics</h3>
+            {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Lyrics</button></Link></div> :       
+            <div className="lyrics" style={{marginLeft: 0, paddingLeft: 0}}>
               <Lyrics
                 sounds={songs}
                 currentLrcs={currentLrcs}
@@ -323,7 +384,12 @@ const App = () => {
           }
           </div>
           </div>
+          </div>
         }
+        {!isTabletOrMobile ? <div style={{display: "flex", marginTop: 10, gap: 10, justifyContent: "center", alignItems: "center"}}>
+          <button onClick={() => setIsSwapped(!isSwapped)} className="glassCard" style={{color: "white"}} >Swap Lyircs and Mixer</button>
+          <button onClick={() => setHideMixer(!hideMixer)} className="glassCard" style={{color: "white"}} >{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
+        </div> : null }
         </div>
       )}
     </>

@@ -99,7 +99,7 @@ const Lyrics = ({
 
   return (
     <>
-      <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}>
+      <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : 0}}>
         {/* <h3>Lyrics</h3> */}
         {loading ? (
           <div>Loading...</div>

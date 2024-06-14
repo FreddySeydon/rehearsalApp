@@ -12,6 +12,7 @@ import AlbumDetailPage from './routes/albumDetailPage.jsx'
 import SongDetailPage from './routes/songDetailPage.jsx'
 import LyricsEditorPage from './routes/lyricsEditorPage.jsx'
 import LoginPage from './routes/loginPage.jsx'
+import PlayerPage from './routes/playerPage.jsx'
 import { UserProvider } from './context/UserContext.jsx'
 import { authLoader } from './loaders/authLoader.js'
 
@@ -45,6 +46,11 @@ const router = createBrowserRouter([
     {
       path: "/lyricseditor",
       element: <LyricsEditorPage />,
+      loader: authLoader,
+    },
+    {
+      path: "/player",
+      element: <PlayerPage />,
       loader: authLoader,
     },
     {
