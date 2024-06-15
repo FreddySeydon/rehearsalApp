@@ -39,6 +39,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   const [noTrackLrc, setNoTrackLrc] = useState(false);
   const [isSwapped, setIsSwapped] = useState(false);
   const [hideMixer, setHideMixer] = useState(false);
+  const [hideSelects, setHideSelects] = useState(false);
   //Auth
   const {user, authLoading} = useUser();
 
@@ -264,15 +265,15 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   return (
     <>
     <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%"}}>
-    <Navbar />
+    {/* <Navbar /> */}
       {noAlbums ? <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by uploading your first album</h3><Link to={'/upload'}><button>Create First Album</button></Link></div> : loading && !songs ? (
         <div>
           <img src={loadingSpinner} alt="Loading" width={"5rem"} />
         </div>
       ) : (
-        <div className="appWrapper" style={{ padding: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "1rem" : "3rem" }}>
+        <div className="appWrapper" style={{ padding: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "0rem" : "0rem" }}>
           <h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1>
-              <div className="selectBoxWrapper" style={{flexDirection: isTabletOrMobile ? "column" : "row", gap: isTabletOrMobile ? 5 : 0}}>
+              <div className="selectBoxWrapper" style={{flexDirection: isTabletOrMobile ? "column" : "row", gap: isTabletOrMobile ? 5 : 0, display: hideSelects ? 'none' : 'flex'}}>
                 <div className="selectBox glasstransparent" style={{padding: 10}}>
                 <p style={{padding: 0, margin:0}}>Album: </p>
                 <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black" }}>
@@ -312,6 +313,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
               {isTabletOrMobile ? <div style={{display: "flex", margin: 10, gap: 10, justifyContent: "center", alignItems: "center"}}>
           <button onClick={() => setIsSwapped(!isSwapped)} className="glassCard" style={{color: "white"}} >Swap Lyircs and Mixer</button>
           <button onClick={() => setHideMixer(!hideMixer)} className="glassCard" style={{color: "white"}} >{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
+          <button onClick={() => setHideSelects(!hideSelects)} className="glassCard" style={{color: "white"}} >{hideSelects ? "Show Selects" : "Hide Selects"}</button>
         </div> : null}
               {!blobsReady ? <div>
           <img src={loadingSpinner} alt="Loading" width={50} />
@@ -358,7 +360,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
             <div style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "30%", display:"flex", flexDirection:"column", justifyContent:"flex-start", alignItems:"center", marginTop: isTabletOrMobile ? 5 : 0, padding: 10}}>
             <h3 style={{paddingLeft: isTabletOrMobile ? 0 : 0}}>Lyrics</h3>
             {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", paddingBottom: 10, height: 400 }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Lyrics</button></Link></div> :       
-            <div className="lyrics" style={{marginLeft: 0, paddingLeft: 0}}>
+            <div className="lyrics" style={{marginLeft: 0, paddingLeft: 0, width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : null}}>
               <Lyrics
                 sounds={songs}
                 currentLrcs={currentLrcs}
@@ -380,6 +382,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
                 noLrcs={noLrcs}
                 noTrackLrc={noTrackLrc}
                 setNoTrackLrc={setNoTrackLrc}
+                hideMixer={hideMixer}
               />
             </div> : noLrcs ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}><p style={{fontSize: "1.25rem", }}>No Lyrics for this song found</p><Link to={`/albums/${selectedAlbum}/${selectedSong}`}><button>Upload Lyrics</button></Link></div> : <div>
           <img src={loadingSpinner} alt="Loading" width={50} />

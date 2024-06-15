@@ -7,6 +7,7 @@ import UpdateAudioFile from '../components/UpdateAudioFile';
 import UpdateLrcFile from '../components/UpdateLrcFile';
 import DeleteTrack from '../components/DeleteTrack';
 import "./songDetailPage.css";
+import { useUser } from '../context/UserContext';
 
 const SongDetailPage = () => {
     const {songId, albumId} = useParams();
@@ -16,6 +17,8 @@ const SongDetailPage = () => {
     const [loading, setLoading] = useState(true);
     const [lrcs, setLrcs] = useState(null);
     const [fullSongData, setFullSongData] = useState(null)
+
+    const {user, authLoading} = useUser();
 
     const fetchSongs = async () => {
         setLoading(true);
@@ -75,7 +78,7 @@ const SongDetailPage = () => {
                         <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>Audio File</p>
                         <UpdateAudioFile albumId={albumId} songId={songId} trackId={track.id} />
                         {tracks.length > 1 ? 
-                            <DeleteTrack albumId={albumId} songId={songId} trackId={track.id} refetchSongs={fetchSongs} /> : 
+                           user.uid === track.ownerId ? <DeleteTrack albumId={albumId} songId={songId} trackId={track.id} refetchSongs={fetchSongs} /> : null : 
                             null
                         }
                         </div>

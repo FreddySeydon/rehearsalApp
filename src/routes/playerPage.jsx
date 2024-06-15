@@ -10,7 +10,6 @@ const PlayerPage = () => {
     const [songId, setSongId] = useState('')
     const [trackId, setTrackId] = useState('')
 
-    // const {songId, albumId, trackId} = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {

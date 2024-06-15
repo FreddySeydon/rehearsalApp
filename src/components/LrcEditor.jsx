@@ -51,9 +51,31 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
           setNoAlbums(true)
         }
         if (albumsList.length > 0) {
-        setSelectedAlbum(albumId);
-        // setSelectedAlbum(albumsList[0].id);
-      }
+          if(albumId){
+            const albumExists = albumsList.find((album) => album.id === albumId)
+            if(albumExists){
+              setSelectedAlbum(albumId);
+              return
+            }
+            console.log("You can't view this album.")
+            return
+          }
+          const lastAlbum = localStorage.getItem("selected-album")
+          if(lastAlbum) {
+            const albumExists = albumsList.find(
+              (album) => album.id === JSON.parse(lastAlbum)
+            );
+            if(albumExists){
+              const parsedAlbumId = JSON.parse(lastAlbum)
+              setSelectedAlbum(parsedAlbumId)
+              setSearchParams({...Object.fromEntries(searchParams), albumId: parsedAlbumId})
+              return
+            }
+            return
+          }
+          setSelectedAlbum(albumsList[0].id); // Set the first album as the default selected album
+          setSearchParams({...Object.fromEntries(searchParams), albumId: albumsList[0].id})
+        }
     } catch (error) {
       console.error('Error fetching albums:', error);
     }
@@ -71,18 +93,29 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
       setLrcs(lrcsList);
       fetchCurrentTracks();
       if (songsList.length > 0) {
-        setSelectedSong(songId);
-        trackId ? setSelectedTrack(trackId) : setSelectedTrack(songsList[0].tracks[0].id);
-        trackId ? fetchTrackLrcs(trackId) : fetchTrackLrcs(songsList[0].tracks[0].id);
-        // if(trackId){
-        //   setSelectedTrack(trackId);
-        //   fetchTrackLrcs(trackId);
-  
-        // } else {
-        //   setSelectedTrack(songsList[0].tracks[0].id);
-        //   fetchTrackLrcs(songsList[0].tracks[0].id);
-        // }
-        
+        if(songId){
+          const songExists = songsList.find((song) => song.id === songId)
+          if(songExists){
+            setSelectedSong(songId);
+            return
+          }
+          console.log("You can't view this song.")
+          return
+        }
+        const lastSong = localStorage.getItem("selected-song")
+        if(lastSong) {
+          const songExists = songsList.find((song) => {
+            song.id === JSON.parse(lastSong)
+          })
+          if(songExists){
+            const parsedSongId = JSON.parse(lastSong);
+            setSelectedSong(parsedSongId)
+            setSearchParams({...Object.fromEntries(searchParams), songId: parsedSongId})
+          return
+          }
+        }
+        setSelectedSong(songsList[0].id); // Set the first song as the default selected song
+        setSearchParams({...Object.fromEntries(searchParams), songId: songsList[0].id})
       }
     } catch (error) {
       console.error('Error fetching songs:', error);
@@ -104,7 +137,33 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
           return { ...track, src: blobURL };
         })
       );
-      setCurrentSources(currentSourcesArray);      
+      if(currentSourcesArray !== 0){
+        setCurrentSources(currentSourcesArray) // set the state with the new array
+        if(trackId){
+          const trackExists = currentSourcesArray.find((track) => track.id === trackId)
+          if(trackExists){
+            setSelectedTrack(trackId);
+            return
+          }
+          console.log("You can't view this album.")
+          return
+        }
+        const lastTrack = localStorage.getItem("selected-track")
+        if(lastTrack) {
+          const trackExists = currentSourcesArray.find(
+            (track) => track.id === JSON.parse(lastTrack)
+          );
+          if(trackExists){
+            const parsedTrackId = JSON.parse(lastTrack)
+            setSelectedTrack(parsedTrackId)
+            setSearchParams({...Object.fromEntries(searchParams), trackId: parsedTrackId})
+            return
+          }
+          return
+        }
+        setSelectedTrack(currentSourcesArray[0].id); // Set the first album as the default selected album
+        setSearchParams({...Object.fromEntries(searchParams), trackId: currentSourcesArray[0].id})
+      }    
     }
   };
 

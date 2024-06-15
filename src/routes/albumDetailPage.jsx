@@ -69,7 +69,7 @@ const AlbumDetailPage = () => {
                            <h4 style={{fontSize: 20, margin: 10, marginBottom: 15}}>{song.number} - {song.name}</h4>
                        </div>
                        <div style={{display: "flex", gap:10, justifyContent: "center", alignItems: "center", marginBottom: 10}}>
-                    <DeleteSong albumId={albumId} songId={song.id} refetchAlbum={fetchSongs} />
+                       {user.uid === song.ownerId ? <DeleteSong albumId={albumId} songId={song.id} refetchAlbum={fetchSongs} /> : null}
                         <Link to={song.id}>
                     <button>Show Tracks</button>
                     </Link>

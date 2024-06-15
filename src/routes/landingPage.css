@@ -1,7 +1,7 @@
 
 .landing-page {
     text-align: center;
-    padding: 2rem;
+    /* padding: 2rem; */
   }
   
   .navbar {
@@ -13,9 +13,9 @@
     color: white;
   }
   
-  .landing-header {
+  /* .landing-header {
     margin-top: 2rem;
-  }
+  } */
   
   button {
     padding: 0.5rem 1rem;

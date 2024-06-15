@@ -6,14 +6,19 @@ import { useParams, useSearchParams } from 'react-router-dom'
 const LyricsEditorPage = () => {
 
     const [loading, setLoading] = useState(false);
-    const [tracks, setTracks] = useState([]);
+    const [albumId, setAlbumId] = useState('')
+    const [songId, setSongId] = useState('')
+    const [trackId, setTrackId] = useState('')
 
-    // const {songId, albumId, trackId} = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
-    console.log("Search params: ",searchParams.get('albumId'))
-    const albumId = searchParams.get('albumId');
-    const songId = searchParams.get('songId');
-    const trackId = searchParams.get('trackId');
+
+    useEffect(() => {
+        if(searchParams){
+            setAlbumId(searchParams.get('albumId'))
+           setSongId(searchParams.get('songId'))
+            setTrackId(searchParams.get('trackId'))
+        }
+    }, [searchParams])
 
 
 
@@ -22,7 +27,9 @@ const LyricsEditorPage = () => {
         {
             loading ? 
                 <img src={loadingSpinner} width={50} alt="" /> : 
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%"}}>
                     <LrcEditor albumId={albumId} songId={songId} trackId={trackId} searchParams={searchParams} setSearchParams={setSearchParams}/>
+                    </div>
         }
     </div>
   )

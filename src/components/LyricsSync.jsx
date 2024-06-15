@@ -307,9 +307,9 @@ const LyricsSync = ({
                     </div>
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: 10}}>
                   {/* <button onClick={handlePreview}>Preview</button> */}
-                  <button onClick={handleStartEditing} style={{backgroundColor: "transparent"}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
-                  <button onClick={handleReset} style={{backgroundColor: "transparent", borderWidth: 3, border: "dashed", borderColor: "white", color: "white"}}>Reset</button>
-      <button
+                  <button onClick={handleStartEditing} style={{backgroundColor: "transparent", padding: 0}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
+                  <button onClick={handleReset} className='glass' style={{backgroundColor: "transparent", borderWidth: 3, border: "dashed", borderColor: "darkred", color: "white"}}>Reset</button>
+      {/* <button
         onClick={() => {
           const lrcContent = timestamps
             .map(({ time, line }) => {
@@ -327,8 +327,8 @@ const LyricsSync = ({
         style={{backgroundColor: "transparent"}}
       >
         <img src={iconDownload} alt="Download LRC" style={{ width: "3.75rem", marginBottom: 6}} />
-      </button>
-      <button onClick={handleSaveLyrics}>Save Lyrics</button>
+      </button> */}
+      <button onClick={handleSaveLyrics} className='glass' >Save Lyrics</button>
                     </div>
                 </div>
     </div>

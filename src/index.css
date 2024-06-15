@@ -1,11 +1,19 @@
-:root {
+#root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  /* min-width: 496px; */
+  /* height: 100vh; */
+  /* width: 100vw; */
 
-  color-scheme: light dark;
+  /* color-scheme: light dark; */
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* background-color: #242424; */
+  background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -25,13 +33,24 @@ a:hover {
 
 body {
   margin: 0;
+  /* min-width: 496px; */
   display: flex;
   /* place-items: center; */
-  min-width: 320px;
-  min-height: 100vh; 
-  background-color: #593263;
+  /* min-width: 320px; */
+  /* height: 100vh; */
+  /* background-color: #593263; */
+  /* width: 100vw; */
   background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
 
+}
+
+@media only screen and (min-width: 600px) {
+  body {
+    height: 100vh;
+  }
+  #root {
+    background-image: none;
+  }
 }
 
 h1 {

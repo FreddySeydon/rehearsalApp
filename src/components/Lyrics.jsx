@@ -25,7 +25,8 @@ const Lyrics = ({
   setNoLrcs,
   noLrcs,
   noTrackLrc,
-  setNoTrackLrc
+  setNoTrackLrc,
+  hideMixer
 }) => {
   const [displayedLyrics, setDisplayedLyrics] = useState("");
   const [currentLyrics, setCurrentLyrics] = useState([]);
@@ -99,17 +100,17 @@ const Lyrics = ({
 
   return (
     <>
-      <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : 0}}>
+      <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : 0}}>
         {/* <h3>Lyrics</h3> */}
         {loading ? (
           <div>Loading...</div>
         ) : (
           <div style={{ display: "none" }}>{displayedLyrics}</div>
         )}
-        <div ref={lyricsRef} className="lyricsdisplay">
+        <div ref={lyricsRef} className="lyricsdisplay" style={{width: hideMixer ? "100%" : "25rem"}}>
           {currentLyrics.map((line, index) => {
             return (
-              <div key={index} style={{width: isTabletOrMobile ? "100%" : "25rem"}}>
+              <div key={index} style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem"}}>
                 {" "}
                 <OneLine
                   line={line}

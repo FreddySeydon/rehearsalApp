@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, si
 import "../App.css";
 import loadingSpinner from '../assets/img/loading.gif';
 import Navbar from './Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ({mode, setMode}) => {
   const [email, setEmail] = useState('');
@@ -13,6 +14,8 @@ const Login = ({mode, setMode}) => {
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -26,6 +29,10 @@ const Login = ({mode, setMode}) => {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    navigate('/player')
+  }, [user])
 
   const handleLogin = async () => {
     setError('')
