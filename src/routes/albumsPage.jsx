@@ -16,6 +16,7 @@ const AlbumsPage = () => {
     const [selectedAlbum, setSelectedAlbum] = useState("")
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [noAlbums, setNoAlbums] = useState(true);
 
     const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
@@ -26,6 +27,10 @@ const AlbumsPage = () => {
           const albumsList = await fetchAlbumsList(user);
           setAlbums(albumsList);
           // console.log("Albums list: ",albumsList)
+          if(albumsList.length === 0){
+            setNoAlbums(true)
+            return
+          }
           if (albumsList.length > 0) {
             const lastUploadAlbum = localStorage.getItem("selected-upload-album")
             if(lastUploadAlbum) {
@@ -54,6 +59,10 @@ if(authLoading){
   return <div>Loading...</div>
 }
 
+if(noAlbums){
+  return <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by uploading your first album</h3><Link to={'/upload'}><button>Create First Album</button></Link></div>
+}
+
   return (
     <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "100%"}}>
       {/* <Navbar /> */}
@@ -66,16 +75,16 @@ if(authLoading){
               <div style={{display: 'flex', gap: 10, flexDirection: isTabletOrMobile ? "column" : 'row', justifyContent: 'space-evenly', flexWrap: "wrap"}}>
                    {albums.map((album) => {
                     return(
-                    <Link to={album.id} key={album.id}>
-                    <div  className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20, width: 200}}>
+                      <div  className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20, width: 200}}>
+                      <Link to={album.id} key={album.id}>
                        <div>
                       <img src={album.coverImg ? album.coverImg : albumPlaceholder} alt="Album art" width={200} height={200} />
                            <h4 style={{fontSize: 20, margin: 10, marginBottom: 15}}>{album.name}</h4>
                        </div>
+                    </Link>
                     {user.uid === album.ownerId ? <DeleteAlbum albumId={album.id} refetchAlbums={fetchAlbums}/> : null}
                     
                     </div>
-                    </Link>
                   )
                 })} 
               </div>

@@ -466,7 +466,7 @@ const FileUpload = () => {
           ownerId: user.uid,
           ownerName: user.displayName,
           sharedWith: [],
-        });
+        }, {merge: true});
       }
       for (const [songName, data] of Object.entries(songsData)) {
         const songsCollectionRef = collection(
@@ -481,7 +481,7 @@ const FileUpload = () => {
           ownerId: user.uid,
           ownerName: user.displayName,
           sharedWith: [],
-        });
+        }, {merge: true});
       }
       console.log("end of uploading reached");
       setUploadCompleted(true);
