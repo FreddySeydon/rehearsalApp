@@ -227,7 +227,7 @@ const LyricsSync = ({
     <textarea
       rows="10"
       cols="50"
-      placeholder="Paste your lyrics here..."
+      placeholder="Paste your lyrics here and press 'Done' to start..."
       value={lyrics}
       onChange={handleLyricsChange}
       className='lyricsinputarea glasstransparent'

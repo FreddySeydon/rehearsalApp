@@ -279,16 +279,22 @@ const FileUpload = () => {
         getDocs(albumsQuery),
         getDocs(ownedAlbumsQuery)
       ])
-      if (!albumsSnapshot.empty) {
+      if (albumsSnapshot && ownedAlbumsSnapshot) {
         const albumsList = [];
-        albumsSnapshot.forEach((doc) => {
-          albumsList.push({ id: doc.id, ...doc.data() });
-        });
-        ownedAlbumsSnapshot.forEach((doc) => {
-          albumsList.push({ id: doc.id, ...doc.data() });
-        })
+        if(!albumsSnapshot.empty){
+          albumsSnapshot.forEach((doc) => {
+            albumsList.push({ id: doc.id, ...doc.data() });
+          });
+        }
+        if(!ownedAlbumsSnapshot.empty){          
+          ownedAlbumsSnapshot.forEach((doc) => {
+            albumsList.push({ id: doc.id, ...doc.data() });
+          })
+        }
         setExistingAlbums(albumsList);
+        // setInitialAlbum(false)
         if (albumsList.length > 0) {
+          setInitialAlbum(false);
           const lastUploadAlbum = localStorage.getItem("selected-upload-album");
           if (lastUploadAlbum) {
             const currentAlbum = albumsList.find(
@@ -407,21 +413,6 @@ const FileUpload = () => {
             }
             setTransferredBytes(snapshot.bytesTransferred);
             setUploadedPercentage(snapshot.bytesTransferred / snapshot.totalBytes * 100);
-            console.log(
-              snapshot.bytesTransferred,
-              "/",
-              snapshot.totalBytes,
-              "State: ",
-              snapshot.state
-            );
-
-            uploadTask.on("complete", (snapshot) => {
-              setTotalBytes(0);
-              setTransferredBytes(0);
-              setUploadedPercentage(0);
-              // setUploadedTracks(uploadedFilesArray);
-            }
-            )
           },
           (error) => {
             console.error("Upload failed:", error);
@@ -430,6 +421,9 @@ const FileUpload = () => {
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             resolve({ downloadURL, file: compressedFile, trackName, songName });
+            setTotalBytes(0);
+            setTransferredBytes(0);
+            setUploadedPercentage(0);
           }
         );
       });
@@ -739,6 +733,9 @@ const FileUpload = () => {
           <Link to={`/albums/${albumUploadName}/${songUploadName}`}>
             <button style={{width: "100%"}}>Go to Song</button>
           </Link>
+          <Link to={`/lyricseditor?albumId=${albumUploadName}&songId=${songUploadName}`} style={{width: "100%"}}>
+                        <button style={{width: "100%"}}>Add Lyrics</button>
+                        </Link>
         </div>
       )}
     </>

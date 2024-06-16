@@ -32,6 +32,7 @@ const AlbumsPage = () => {
             return
           }
           if (albumsList.length > 0) {
+            setNoAlbums(false);
             const lastUploadAlbum = localStorage.getItem("selected-upload-album")
             if(lastUploadAlbum) {
               setSelectedAlbum(JSON.parse(localStorage.getItem('selected-album')))
@@ -75,8 +76,8 @@ if(noAlbums){
               <div style={{display: 'flex', gap: 10, flexDirection: isTabletOrMobile ? "column" : 'row', justifyContent: 'space-evenly', flexWrap: "wrap"}}>
                    {albums.map((album) => {
                     return(
-                      <div  className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20, width: 200}}>
-                      <Link to={album.id} key={album.id}>
+                      <div key={album.id}  className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20, width: 200}}>
+                      <Link to={album.id}>
                        <div>
                       <img src={album.coverImg ? album.coverImg : albumPlaceholder} alt="Album art" width={200} height={200} />
                            <h4 style={{fontSize: 20, margin: 10, marginBottom: 15}}>{album.name}</h4>

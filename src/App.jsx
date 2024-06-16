@@ -271,7 +271,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
           <img src={loadingSpinner} alt="Loading" width={"5rem"} />
         </div>
       ) : (
-        <div className="appWrapper" style={{ padding: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "0rem" : "0rem" }}>
+        <div className="appWrapper" style={{ paddingLeft: isTabletOrMobile ? "1rem" : "5rem", paddingRight: isTabletOrMobile ? "1rem" : "5rem", paddingBottom: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "0rem" : "0rem" }}>
           <h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1>
               <div className="selectBoxWrapper" style={{flexDirection: isTabletOrMobile ? "column" : "row", gap: isTabletOrMobile ? 5 : 0, display: hideSelects ? 'none' : 'flex'}}>
                 <div className="selectBox glasstransparent" style={{padding: 10}}>
@@ -318,8 +318,8 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
               {!blobsReady ? <div>
           <img src={loadingSpinner} alt="Loading" width={50} />
         </div> : 
-          <div className="audio-mixer" style={{ flexDirection: isTabletOrMobile ? "column" : "row", gap: 5 }}>
-            <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "60%", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "block", paddingBottom: 5}}>
+          <div className="audio-mixer" style={{display: "flex", flexDirection: isTabletOrMobile ? "column" : "row", gap: 5 }}>
+            <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "50rem", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "block", paddingBottom: 5}}>
               <div className="tracks" style={{width: "100%"}}>
                 <div className="singleTrack">
                   <Channel
@@ -357,7 +357,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
               </div>
             </div>
             <div className="lyricsWrapperr glasstransparent" style={{display: "flex", justifyContent: "center", alignItems: "center", order: isSwapped ? 1 : 2}}>
-            <div style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "30%", display:"flex", flexDirection:"column", justifyContent:"flex-start", alignItems:"center", marginTop: isTabletOrMobile ? 5 : 0, padding: 10}}>
+            <div style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginTop: isTabletOrMobile ? 5 : 0, padding: 10}}>
             <h3 style={{paddingLeft: isTabletOrMobile ? 0 : 0}}>Lyrics</h3>
             {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", paddingBottom: 10, height: 400 }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Lyrics</button></Link></div> :       
             <div className="lyrics" style={{marginLeft: 0, paddingLeft: 0, width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : null}}>
@@ -384,7 +384,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
                 setNoTrackLrc={setNoTrackLrc}
                 hideMixer={hideMixer}
               />
-            </div> : noLrcs ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "5rem"}}><p style={{fontSize: "1.25rem", }}>No Lyrics for this song found</p><Link to={`/albums/${selectedAlbum}/${selectedSong}`}><button>Upload Lyrics</button></Link></div> : <div>
+            </div> : noLrcs ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "0rem"}}><p style={{fontSize: "1.25rem", }}>No Lyrics for this song found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Lyrics</button></Link></div> : <div>
           <img src={loadingSpinner} alt="Loading" width={50} />
         </div>
           }
