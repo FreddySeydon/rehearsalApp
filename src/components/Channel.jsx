@@ -140,8 +140,8 @@ const Channel = ({
   }
 
   return (
-    <div className="controlsWrapper">
-    <div className="trackControls" style={{ display: "flex" }}>
+    <div className="controlsWrapper" >
+    <div className="trackControls" style={{ display: "flex", overflowX: 'scroll', scrollbarWidth: 'thin'}}>
       {false ? (
         <div>Loading...</div>
       ) : (

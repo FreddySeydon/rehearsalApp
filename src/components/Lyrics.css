@@ -5,11 +5,11 @@
 }
 
 .lyricsdisplay {
-    /* overflow-y: scroll; */
+    overflow-y: scroll;
     overflow: hidden;
     height: 430px;
     /* background-color: black; */
-    /* scrollbar-width: thin; */
+    scrollbar-width: thin;
     /* overflow: hidden; */
     mask-image: linear-gradient(to top, transparent 0%, black 10px, black calc(100% - 10px), transparent 100%);
 }

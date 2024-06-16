@@ -321,7 +321,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
           <div className="audio-mixer" style={{display: "flex", flexDirection: isTabletOrMobile ? "column" : "row", gap: 5 }}>
             <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "50rem", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "block", paddingBottom: 5}}>
               <div className="tracks" style={{width: "100%"}}>
-                <div className="singleTrack">
+                <div className="singleTrack" style={{overflowX: "scroll", scrollbarWidth: 'none'}}>
                   <Channel
                     sources={currentSources}
                     globalSeek={globalSeek}

@@ -96,7 +96,7 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName) =>
 
   if (songSnap.exists()) {
     const songData = songSnap.data();
-    const lrc = songData.lrcs.find((lrc) => lrc.trackId === trackIdInt);
+    const lrc = songData?.lrcs?.find((lrc) => lrc.trackId === trackIdInt);
 
     if (!lrc) {
       console.log("Lrc not found!");

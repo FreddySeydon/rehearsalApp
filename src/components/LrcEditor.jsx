@@ -305,10 +305,10 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
               <img src={loadingSpinner} alt="Loading" width={50} />
             </div>
           ) : (
-            <div className="syncWrapper" style={{width: "100%", display: "flex", justifyContent: "center", flexDirection: isTabletOrMobile ? 'column' : 'row' }}>
-              <div className="controlsWrapper" style={{display: hideMixer ? "none" : "block"}}>
-                <div className="tracks" >
-                  <div className="singleTrack">
+            <div className="syncWrapper" style={{width: "100%", display: "flex", justifyContent: "center", flexDirection: isTabletOrMobile ? 'column' : 'row', alignItems: "center" }}>
+              <div className="controlsWrapper" style={{display: hideMixer ? "none" : "block", width: isTabletOrMobile ? "30rem" : "30rem"}}>
+                <div className="tracks" style={{width: "100%"}} >
+                  <div className="singleTrack" style={{width: "100%"}}>
                     <button onClick={() => setHideMixer(!hideMixer)}>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
                     <Channel
                       sources={currentSources}

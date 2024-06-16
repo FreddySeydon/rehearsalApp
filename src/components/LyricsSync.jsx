@@ -185,9 +185,9 @@ const LyricsSync = ({
             .join('\n');
           const blob = new Blob([lrcContent], { type: 'text/plain' });
           const thisSong = songs.find((song) => selectedSong === song.id)
-          console.log(songs)
+          // console.log(songs)
           const thisTrack = thisSong.tracks.find((track) => selectedTrack === track.id)
-          console.log(thisTrack)
+          // console.log(thisTrack)
           const trackName = thisTrack.name
           await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName)
   }
@@ -237,7 +237,7 @@ const LyricsSync = ({
         </div>
 
     <div id='lyricssync'  style={{display: editing ? "none" : 'flex', flexDirection: "column"}}>
-      <div className='lyricsdisplay' ref={lyricsRef}>
+      <div className='lyricsdisplay' ref={lyricsRef} style={{overflowY: 'scroll', scrollbarWidth: 'none'}}>
         {lines.map((line, index) => (
           <div key={index} id={`line-${index}`} className="line"  style={{
             // paddingRight: "1rem",

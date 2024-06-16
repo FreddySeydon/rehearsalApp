@@ -107,7 +107,7 @@ const Lyrics = ({
         ) : (
           <div style={{ display: "none" }}>{displayedLyrics}</div>
         )}
-        <div ref={lyricsRef} className="lyricsdisplay" style={{width: hideMixer ? "100%" : "25rem"}}>
+        <div ref={lyricsRef} className="lyricsdisplay" style={{width: hideMixer ? "100%" : "25rem", overflowY: 'scroll', scrollbarWidth: 'none'}}>
           {currentLyrics.map((line, index) => {
             return (
               <div key={index} style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem"}}>

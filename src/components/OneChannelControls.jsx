@@ -34,7 +34,7 @@ useEffect(() => {
 }, [clearMute])
 
   return (
-    <div style={{display: "flex"}}>
+    <div style={{display: "flex", marginBottom: 7}}>
       <div key={index} className="track">
         <div className="sourceName">
           <h3>{track.name}</h3>
