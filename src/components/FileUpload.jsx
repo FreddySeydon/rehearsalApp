@@ -292,6 +292,9 @@ const FileUpload = () => {
           })
         }
         setExistingAlbums(albumsList);
+        if(albumsList.length === 0 ){
+          setInitialAlbum(true);
+        }
         // setInitialAlbum(false)
         if (albumsList.length > 0) {
           setInitialAlbum(false);
@@ -313,7 +316,6 @@ const FileUpload = () => {
           setAlbumName(albumsList[0].name);
         }
       }
-      setInitialAlbum(true);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching albums:", error);
