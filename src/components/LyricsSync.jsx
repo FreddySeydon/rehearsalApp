@@ -12,6 +12,7 @@ import iconEdit from "../assets/img/edit.svg"
 import iconDownload from "../assets/img/download.svg"
 import { updateLrc } from '../../utils/databaseOperations';
 import { InputMask } from '@react-input/mask';
+import { Link } from 'react-router-dom';
 
 const LyricsSync = ({
   statePlayers,
@@ -39,6 +40,9 @@ const LyricsSync = ({
   const [timestamps, setTimestamps] = useState([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [info, setInfo] = useState('')
+  const [error, setError] = useState('')
+  const [isSaving, setIsSaving] = useState(false);
+  const [doneSaving, setDoneSaving] = useState(false);
 
   const lyricsRef = useRef();
 
@@ -178,6 +182,7 @@ const LyricsSync = ({
   }
 
   const handleSaveLyrics = async () => {
+    setIsSaving(true);
     const lrcContent = timestamps
             .map(({ time, line }) => {
               return `[${time}]${line}`;
@@ -189,7 +194,15 @@ const LyricsSync = ({
           const thisTrack = thisSong.tracks.find((track) => selectedTrack === track.id)
           // console.log(thisTrack)
           const trackName = thisTrack.name
-          await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName)
+          try {
+            await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName)
+            setIsSaving(false)
+            setDoneSaving(true)
+          } catch (error) {
+            setError(error)
+            setIsSaving(false)
+            setDoneSaving(false)
+          }
   }
 
   const goToLyricsPosition = (position, index) => {
@@ -222,6 +235,12 @@ const LyricsSync = ({
   }, [currentLineIndex]);
 
   return (
+    <>
+    {isSaving ? 
+      <div>
+      Saving...
+      </div> : doneSaving ? <div> <p>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}}>Continue Editing</button> </div> </div> : error ? <div>There was an error saving your lyrics</div>  :
+    
     <div className="lyricsWrapper" style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '100%'}}>
         <div id='lyricsinput' style={{display: editing ? "flex" : "none", flexDirection: "column" }}>
     <textarea
@@ -309,7 +328,7 @@ const LyricsSync = ({
                   {/* <button onClick={handlePreview}>Preview</button> */}
                   <button onClick={handleStartEditing} style={{backgroundColor: "transparent", padding: 0}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
                   <button onClick={handleReset} className='glass' style={{backgroundColor: "transparent", borderWidth: 3, border: "dashed", borderColor: "darkred", color: "white"}}>Reset</button>
-      {/* <button
+      <button
         onClick={() => {
           const lrcContent = timestamps
             .map(({ time, line }) => {
@@ -327,7 +346,7 @@ const LyricsSync = ({
         style={{backgroundColor: "transparent"}}
       >
         <img src={iconDownload} alt="Download LRC" style={{ width: "3.75rem", marginBottom: 6}} />
-      </button> */}
+      </button>
       <button onClick={handleSaveLyrics} className='glass' >Save Lyrics</button>
                     </div>
                 </div>
@@ -335,6 +354,8 @@ const LyricsSync = ({
     {hideMixer ? <button onClick={() => setHideMixer(!hideMixer)} style={{width: "100%", marginTop: 5, color: 'whitesmoke'}} className='glasstransparent'>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button> : null}
 
     </div>
+    }
+    </>
   );
 };
 

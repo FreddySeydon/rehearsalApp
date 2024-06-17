@@ -37,7 +37,8 @@ const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
 
     if (songSnap.exists()) {
       const songData = songSnap.data();
-      const lrc = songData.lrcs.find((lrc) => lrc.trackId === parseInt(trackId));
+      const lrc = songData?.lrcs?.find((lrc) => lrc.trackId === parseInt(trackId));
+      const version = lrc ? parseInt(lrc.version) + 1 : 1
 
       if (!lrc) {
         console.log("Lrc not found!");
@@ -51,7 +52,7 @@ const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
       const thisTrack = songData.tracks.find((track) => parseInt(trackId) === track.id)
       console.log(thisTrack)
       const trackName = thisTrack.name
-      const newFileName = songId + "_" + trackName + "_track-" + trackId
+      const newFileName = songId + "_" + trackName + "_track-" + trackId + "_v" + version;
       const metadata = {
         name: newFileName,
         contentType: 'text/plain'
@@ -91,7 +92,7 @@ const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
           // Step 4: Update Firestore document with the new file path
           const updatedTracks = songData.lrcs.map((lrc) => {
             if (lrc.trackId === parseInt(trackId)) {
-              return { ...lrc, lrc: newSrc }; // Update the specific field
+              return { ...lrc, lrc: newSrc, version: version }; // Update the specific field
             }
             return lrc;
           });

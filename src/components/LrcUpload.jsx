@@ -35,7 +35,8 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
           return new Promise(async (resolve, reject) => {
             const ext = file.name.split('.').pop();
             const baseName = file.name.replace(`.${ext}`, '');
-            const fileName = baseName + "_" + trackName + "_" + trackId + "." + ext
+            const version = 1
+            const fileName = baseName + "_" + trackName + "_" + trackId + "_v" + version + "." + ext
             const parts = baseName.split('_');
             const metadata = {
               name: fileName,
@@ -72,7 +73,9 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
               lrcToUpload.push({
                 trackId: trackId,
                 trackName: trackName,
-                lrc: downloadURL})
+                lrc: downloadURL,
+                version: 1,
+              })
             } else if (ext !== 'lrc') {
               setInfo("Only lrc files are supported")
               throw new Error("Only lrc files are supported")

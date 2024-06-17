@@ -1,15 +1,40 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { useUser } from '../context/UserContext'
 import { signOut } from 'firebase/auth';
 import { auth } from '../../utils/firebase';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Logo from '../assets/img/logo.jpg'
 import './Navbar.css'
 
 const Navbar = () => {
     const {user, authLoading} = useUser();
     const navigate = useNavigate();
+    const [albumId, setAlbumId] = useState('');
+    const [songId, setSongId] = useState('');
+    const [trackId, setTrackId] = useState('');
+    const [paramsSet, setParamsSet] = useState(false);
+
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    useEffect(() => {
+      if(searchParams.get('albumId')){
+        setAlbumId(searchParams.get('albumId'))
+      }
+      if(searchParams.get('songId')){
+        setSongId(searchParams.get('songId'))
+      }
+      if(searchParams.get('trackId')){
+        setTrackId(searchParams.get('trackId'))
+      }
+      
+    }, [searchParams])
+
+    useEffect(() => {
+      if(albumId && songId && trackId){
+        setParamsSet(true);
+      }
+    }, [albumId, songId, trackId])
 
     const handleLogout = async () => {
         await signOut(auth);
@@ -30,16 +55,13 @@ const Navbar = () => {
         <Link to="/albums">
             Your Albums
         </Link>
-        {/* <Link to="/lyricseditor">
-            Lyrics Editor
-        </Link> */}
-        <Link to="/lyricseditor">
+        <Link to={paramsSet ? `/lyricseditor?albumId=${albumId}&songId=${songId}&trackId=${trackId}` : '/lyricseditor'}>
             Lyrics Editor
         </Link>
         {/* <Link to="/profile">
             Profile
         </Link> */}
-        <Link to="/player">
+        <Link to={paramsSet ? `/player?albumId=${albumId}&songId=${songId}&trackId=${trackId}` : '/player'}>
           Player
         </Link>
         <button onClick={handleLogout} className='glass' style={{fontSize: "medium"}}>Logout</button>

@@ -97,6 +97,7 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName) =>
   if (songSnap.exists()) {
     const songData = songSnap.data();
     const lrc = songData?.lrcs?.find((lrc) => lrc.trackId === trackIdInt);
+    const version = lrc ? parseInt(lrc.version) + 1 : 1
 
     if (!lrc) {
       console.log("Lrc not found!");
@@ -106,7 +107,7 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName) =>
     const oldSrc = lrc ? lrc.lrc : null;
 
     // Step 2: Upload the new file to Firebase Storage
-    const newFileName = songId + "_" + trackName + "_track-" + trackIdInt
+    const newFileName = songId + "_" + trackName + "_track-" + trackId + "_v" + version;
     const storageRef = ref(
       storage,
       `sounds/${albumId}/${songId}/${newFileName}.lrc`
@@ -146,14 +147,14 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName) =>
         if(oldSrc){
           const updatedLrcs = songData.lrcs.map((lrc) => {
             if(lrc.trackId === trackIdInt) {
-              return {...lrc, lrc: newSrc}
+              return {...lrc, lrc: newSrc, version: version}
             }
             return lrc;
           })
   
           await updateDoc(songRef, { lrcs: updatedLrcs });
         } else {
-          const lrcToUpload = {trackId: trackId, trackName: trackName, lrc: newSrc}
+          const lrcToUpload = {trackId: trackId, trackName: trackName, lrc: newSrc, version: version}
           await updateDoc(songRef, {
             lrcs: arrayUnion(lrcToUpload)
           })
