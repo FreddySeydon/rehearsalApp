@@ -76,7 +76,7 @@ export const deleteAlbum = async(albumId) => {
 }
 
 
-export const updateLrc = async (newFile, albumId, songId, trackId, trackName) => {
+export const updateLrc = async (newFile, albumId, songId, trackId, trackName, user) => {
   if (!newFile) {
     return console.log("You have to choose a file");
   }
@@ -113,6 +113,9 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName) =>
       `sounds/${albumId}/${songId}/${newFileName}.lrc`
     );
     const metadata = {
+      customMetadata: {
+        ownerId: user.uid,
+      ownerName: user.displayName},
       name: newFileName,
       contentType: 'text/plain'
     }

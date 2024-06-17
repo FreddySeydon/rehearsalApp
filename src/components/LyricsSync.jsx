@@ -33,7 +33,8 @@ const LyricsSync = ({
   lrcs,
   setSeekUpdateInterval,
   seekUpdateInterval,
-  songs
+  songs,
+  user
 }) => {
   const [lyrics, setLyrics] = useState('');
   const [lines, setLines] = useState([]);
@@ -195,7 +196,7 @@ const LyricsSync = ({
           // console.log(thisTrack)
           const trackName = thisTrack.name
           try {
-            await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName)
+            await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName, user)
             setIsSaving(false)
             setDoneSaving(true)
           } catch (error) {

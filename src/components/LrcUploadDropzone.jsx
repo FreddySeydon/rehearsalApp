@@ -19,7 +19,7 @@ const LrcUploadDropzone = ({setSelectedFiles, selectedFiles}) => {
     const {acceptedFiles, getRootProps, getInputProps} = useDropzone({onDrop, multiple: false});
   
     return (
-      <section className="container">
+      <section className="container" style={{cursor: 'pointer'}}>
         {noFiles ? 
         <div {...getRootProps({className: 'dropzone'})} style={{display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", border: "2px dashed #ccc" }}>
           <input {...getInputProps()} />

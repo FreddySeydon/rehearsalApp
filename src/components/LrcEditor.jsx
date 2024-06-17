@@ -364,6 +364,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   seekUpdateInterval={seekUpdateInterval}
                   setSeekUpdateInterval={setSeekUpdateInterval}
                   songs={songs}
+                  user={user}
                 />
               </div>
             </div>

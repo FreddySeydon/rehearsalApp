@@ -17,7 +17,7 @@ const FileUploadDropZone = ({setSelectedFiles, selectedFiles, initializeTrackNam
     const {acceptedFiles, getRootProps, getInputProps} = useDropzone({onDrop});
   
     return (
-      <section className="container" style={{maxWidth: isTabletOrMobile ? '100%' : '25rem'}}>
+      <section className="container" style={{maxWidth: isTabletOrMobile ? '100%' : '25rem', cursor: 'pointer'}}>
         {selectedFiles.length === 0 ? 
         <div {...getRootProps({className: 'dropzone'})} style={{minHeight: isTabletOrMobile ? 50 : 455, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", border: "2px dashed #ccc" }}>
           <input {...getInputProps()} />

@@ -9,12 +9,16 @@ import {
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import LrcUploadDropzone from "./LrcUploadDropzone";
+import { useUser } from "../context/UserContext";
+import loadingSpinner from '../assets/img/loading.gif'
 
 const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
   const [newFile, setNewFile] = useState(null);
   const [uploadStarted, setUploadStarted] = useState(false);
   const [uploadFinished, setUploadFinished] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
+
+  const {user, authLoading} = useUser();
 
   const updateLrc = async () => {
     const newSingleFile = newFile[0]
@@ -54,6 +58,9 @@ const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
       const trackName = thisTrack.name
       const newFileName = songId + "_" + trackName + "_track-" + trackId + "_v" + version;
       const metadata = {
+        customMetadata: {
+          ownerId: user.uid,
+        ownerName: user.displayName},
         name: newFileName,
         contentType: 'text/plain'
       }
@@ -117,6 +124,10 @@ const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
   const handleReplaceAfterUpload = () => {
     refetchSongs();
     // setShowUploadForm(true);
+  }
+
+  if(authLoading){
+    return <img src={loadingSpinner} alt="Loading" width={50} />
   }
 
   return (

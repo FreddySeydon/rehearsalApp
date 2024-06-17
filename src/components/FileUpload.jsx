@@ -429,7 +429,13 @@ const FileUpload = () => {
           storage,
           `sounds/${albumUploadName}/${songUploadName}/${compressedFile.name}`
         );
-        const uploadTask = uploadBytesResumable(storageRef, compressedFile);
+        const metadata = {
+          customMetadata: {
+            ownerId: user.uid,
+          ownerName: user.displayName},
+          name: compressedFile.name
+        }
+        const uploadTask = uploadBytesResumable(storageRef, compressedFile, metadata);
         localStorage.setItem(
           "selected-upload-album",
           JSON.stringify(albumUploadName)

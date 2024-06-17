@@ -4,6 +4,8 @@ import { db } from '../../utils/firebase';
 import { Link } from 'react-router-dom';
 import { getStorage, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import LrcUploadDropzone from './LrcUploadDropzone';
+import { useUser } from '../context/UserContext';
+import loadingSpinner from '../assets/img/loading.gif';
 
 const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
 
@@ -13,11 +15,7 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
     const [info, setInfo] = useState(null)
     const [error, setError] = useState(null)
 
-    const handleFileChange = (event) => {
-        const files = Array.from(event.target.files);
-        setSelectedFiles(files);
-
-      };
+    const {user, authLoading} = useUser();
 
     const resetSelect = () => {
       setSelectedFiles([])
@@ -39,6 +37,9 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
             const fileName = baseName + "_" + trackName + "_" + trackId + "_v" + version + "." + ext
             const parts = baseName.split('_');
             const metadata = {
+              customMetadata: {
+                ownerId: user.uid,
+              ownerName: user.displayName},
               name: fileName,
               contentType: 'text/plain'
             }
@@ -98,6 +99,10 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
           console.error("Error uploading files:", error);
         }
       };
+
+      if(authLoading){
+        return <img src={loadingSpinner} alt="Loading" width={50} />
+      }
 
       return (
           <div>
