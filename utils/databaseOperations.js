@@ -3,6 +3,8 @@ import { getStorage, ref, deleteObject, uploadBytesResumable, getDownloadURL } f
 import { doc, collection, getDoc, deleteDoc, getDocs, updateDoc, arrayUnion, where, query } from "firebase/firestore";
 import { db } from "./firebase";
 
+const MAX_STORAGE_LIMIT_MB = import.meta.env.VITE_MAX_STORAGE_LIMIT_MB
+
 export const deleteSong = async (albumId, songId) => {
   console.log("Delete Song invoked: ", albumId, songId)
 
@@ -92,7 +94,6 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName, us
   // Step 1: Read the document
   const songRef = doc(db, "albums", albumId, "songs", songId);
   const songSnap = await getDoc(songRef);
-  console.log("Song Snap: ", songSnap.data());
 
   if (songSnap.exists()) {
     const songData = songSnap.data();

@@ -5,6 +5,7 @@ import "../App.css";
 import loadingSpinner from '../assets/img/loading.gif';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
 
 const Login = ({mode, setMode}) => {
   const [email, setEmail] = useState('');
@@ -55,16 +56,26 @@ const Login = ({mode, setMode}) => {
       await updateProfile(userCredential.user, {
         displayName: displayName,
       });
-      setUser(userCredential.user);
+      currentUser = userCredential.user;
+      
+      //Create user document in Firestore
+      await setDoc(doc(db, "users", currentUser.uid), {
+        uid: currentUser.uid,
+        email: currentUser.email,
+        displayName: displayName,
+      });
+      
+      setUser(currentUser);
+
     } catch (error) {
       console.error('Error registering:', error);
       setError(`Error registering: ${error}`);
+      setUser(null);
     }
   };
 
   const handleLogout = async () => {
     await signOut(auth);
-    setUser(null);
   };
 
   const handleGoogleSignIn = async () => {
@@ -76,7 +87,20 @@ const Login = ({mode, setMode}) => {
           displayName: result.user.email.split('@')[0], // Set a default display name based on email if there is none
         });
       }
-      setUser(result.user);
+      const currentUser = result.user;
+      
+      //Check Firestore if user document exists
+      const userDocRef = doc(db, "users", currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if(!userDoc.exists()){
+        await setDoc(userDocRef, {
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName,
+        })
+      }
+      setUser(currentUser);
     } catch (error) {
       console.error('Error with Google Sign-In:', error);
       setError(`Error with Google Sign-In: ${error}`);
