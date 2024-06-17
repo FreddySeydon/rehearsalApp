@@ -222,10 +222,10 @@ const LyricsSync = ({
   }, [currentLineIndex]);
 
   return (
-    <div className="lyricsWrapper" style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '25rem'}}>
+    <div className="lyricsWrapper" style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '100%'}}>
         <div id='lyricsinput' style={{display: editing ? "flex" : "none", flexDirection: "column" }}>
     <textarea
-      rows="10"
+      rows="20"
       cols="50"
       placeholder="Paste your lyrics here and press 'Done' to start..."
       value={lyrics}
@@ -233,7 +233,7 @@ const LyricsSync = ({
       className='lyricsinputarea glasstransparent'
     />
     <p style={{color: "#fdc873", marginTop: 2, marginBottom: 5}}>{info ? info : null}</p>
-    <button onClick={handleDoneEditing}>Done</button>
+    <button onClick={handleDoneEditing} className='glass'>Done</button>
         </div>
 
     <div id='lyricssync'  style={{display: editing ? "none" : 'flex', flexDirection: "column"}}>
@@ -332,7 +332,7 @@ const LyricsSync = ({
                     </div>
                 </div>
     </div>
-    {hideMixer ? <button onClick={() => setHideMixer(!hideMixer)} style={{width: "100%", marginTop: 5}}>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button> : null}
+    {hideMixer ? <button onClick={() => setHideMixer(!hideMixer)} style={{width: "100%", marginTop: 5, color: 'whitesmoke'}} className='glasstransparent'>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button> : null}
 
     </div>
   );

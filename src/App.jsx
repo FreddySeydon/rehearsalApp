@@ -13,7 +13,6 @@ import { sortSongsList } from "../utils/utils";
 import { useUser } from "./context/UserContext";
 import { fetchAlbumsList } from "../utils/databaseOperations";
 import { fetchSongsList } from "../utils/databaseOperations";
-import Navbar from "./components/Navbar";
 
 const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
@@ -320,8 +319,8 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
         </div> : 
           <div className="audio-mixer" style={{display: "flex", flexDirection: isTabletOrMobile ? "column" : "row", gap: 5 }}>
             <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "50rem", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "block", paddingBottom: 5}}>
-              <div className="tracks" style={{width: "100%"}}>
-                <div className="singleTrack" style={{overflowX: "scroll", scrollbarWidth: 'none'}}>
+              <div className="tracks" style={{width: isTabletOrMobile ?  "50rem" : "100%"}}>
+                <div className="singleTrack" style={{overflowX: "scroll", scrollbarWidth: 'none', whiteSpace: 'nowrap'}}>
                   <Channel
                     sources={currentSources}
                     globalSeek={globalSeek}

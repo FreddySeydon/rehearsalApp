@@ -305,11 +305,11 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
               <img src={loadingSpinner} alt="Loading" width={50} />
             </div>
           ) : (
-            <div className="syncWrapper" style={{width: "100%", display: "flex", justifyContent: "center", flexDirection: isTabletOrMobile ? 'column' : 'row', alignItems: "center" }}>
+            <div className="syncWrapper" style={{width: "100%", display: "flex", justifyContent: "center", flexDirection: isTabletOrMobile ? 'column' : 'row', alignItems: "center", gap: isTabletOrMobile ? 0 : 50 }}>
               <div className="controlsWrapper" style={{display: hideMixer ? "none" : "block", width: isTabletOrMobile ? "30rem" : "30rem"}}>
                 <div className="tracks" style={{width: "100%"}} >
                   <div className="singleTrack" style={{width: "100%"}}>
-                    <button onClick={() => setHideMixer(!hideMixer)}>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
+                    <button onClick={() => setHideMixer(!hideMixer)} className='glass'>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
                     <Channel
                       sources={currentSources}
                       globalSeek={globalSeek}
@@ -342,8 +342,8 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   </div>
                 </div>
               </div>
-              <div style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '25rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginLeft: isTabletOrMobile ? 0 : hideMixer ? '0rem' : '5rem' }}>
-                <h3 style={{ paddingLeft: isTabletOrMobile ? 0 : 60 }}>Lyrics Sync</h3>
+              <div style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '25rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center' }}>
+                <h3 style={{ paddingLeft: isTabletOrMobile ? 0 : 0 }}>Lyrics</h3>
                 <LyricsSync
                   statePlayers={statePlayers}
                   globalSeek={globalSeek}
