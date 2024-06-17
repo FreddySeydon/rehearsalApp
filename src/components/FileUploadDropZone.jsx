@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import {useDropzone} from 'react-dropzone';
 
-const FileUploadDropZone = ({setSelectedFiles, selectedFiles, initializeTrackNames, initializeTrackNumbers}) => {
+const FileUploadDropZone = ({setSelectedFiles, selectedFiles, initializeTrackNames, initializeTrackNumbers, isTabletOrMobile}) => {
     const onDrop = useCallback((files) => {
       if(selectedFiles.length === 0){
         setSelectedFiles(files);
@@ -17,11 +17,11 @@ const FileUploadDropZone = ({setSelectedFiles, selectedFiles, initializeTrackNam
     const {acceptedFiles, getRootProps, getInputProps} = useDropzone({onDrop});
   
     return (
-      <section className="container">
+      <section className="container" style={{maxWidth: isTabletOrMobile ? '100%' : '25rem'}}>
         {selectedFiles.length === 0 ? 
-        <div {...getRootProps({className: 'dropzone'})} style={{minHeight: 250, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", border: "2px dashed #ccc" }}>
+        <div {...getRootProps({className: 'dropzone'})} style={{minHeight: isTabletOrMobile ? 50 : 455, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", border: "2px dashed #ccc" }}>
           <input {...getInputProps()} />
-          <p>Drag 'n' drop some files here, or click to select files</p>
+          <p>{isTabletOrMobile ? "Press here to upload files" : "Drag 'n' drop the tracks of your song here, or click to select files"}</p>
         </div> : null
         }
         {/* <aside>
