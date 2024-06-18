@@ -79,98 +79,95 @@ export const deleteAlbum = async(albumId) => {
 
 
 export const updateLrc = async (newFile, albumId, songId, trackId, trackName, user) => {
-  if (!newFile) {
-    return console.log("You have to choose a file");
-  }
+  try {
+    if (!newFile) {
+      throw new Error("You have to choose a file");
+    }
 
-  // const ext = newFile.name.split(".").pop();
-  // if (ext !== "lrc") {
-  //   return console.log("Choose an lrc file");
-  // }
+    const storage = getStorage();
+    const trackIdInt = trackId;
 
-  const storage = getStorage();
-  const trackIdInt = trackId;
+    // Step 1: Read the document
+    const songRef = doc(db, "albums", albumId, "songs", songId);
+    const songSnap = await getDoc(songRef);
 
-  // Step 1: Read the document
-  const songRef = doc(db, "albums", albumId, "songs", songId);
-  const songSnap = await getDoc(songRef);
+    if (!songSnap.exists()) {
+      throw new Error("No such document!");
+    }
 
-  if (songSnap.exists()) {
     const songData = songSnap.data();
     const lrc = songData?.lrcs?.find((lrc) => lrc.trackId === trackIdInt);
-    const version = lrc ? parseInt(lrc.version) + 1 : 1
-
-    if (!lrc) {
-      console.log("Lrc not found!");
-      // return;
-    }
+    const version = lrc ? parseInt(lrc.version) + 1 : 1;
 
     const oldSrc = lrc ? lrc.lrc : null;
 
+    const sharedWith = songData.sharedWith ? songData.sharedWith : [];
+
     // Step 2: Upload the new file to Firebase Storage
-    const newFileName = songId + "_" + trackName + "_track-" + trackId + "_v" + version;
+    const newFileName = `${songId}_${trackName}_track-${trackId}_v${version}.lrc`;
     const storageRef = ref(
       storage,
-      `sounds/${albumId}/${songId}/${newFileName}.lrc`
+      `sounds/${albumId}/${songId}/${newFileName}`
     );
-    const metadata = {
+
+    const uploadTask = uploadBytesResumable(storageRef, newFile, {
       customMetadata: {
         ownerId: user.uid,
-      ownerName: user.displayName},
-      name: newFileName,
+        ownerName: user.displayName,
+        sharedWith: sharedWith.join(',')
+      },
       contentType: 'text/plain'
-    }
-    const uploadTask = uploadBytesResumable(storageRef, newFile, metadata);
+    });
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        // Progress monitoring
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(progress);
-        console.log("Upload is " + progress + "% done");
-        // setUploadStarted(true);
-      },
-      (error) => {
-        console.error("Upload failed:", error);
-        // setUploadStarted(false);
-      },
-      async () => {
-        const newSrc = await getDownloadURL(uploadTask.snapshot.ref);
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Progress monitoring
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          console.error("Upload failed:", error);
+          reject({ result: 'error', message: `Upload failed: ${error.message}` });
+        },
+        async () => {
+          const newSrc = await getDownloadURL(uploadTask.snapshot.ref);
 
-        // Step 3: Delete the old file from Firebase Storage
-        if (oldSrc) {
-          const oldFileRef = ref(storage, oldSrc);
-          await deleteObject(oldFileRef).catch((error) => {
-            console.error("Error deleting old file:", error);
-          });
+          // Step 3: Delete the old file from Firebase Storage
+          if (oldSrc) {
+            const oldFileRef = ref(storage, oldSrc);
+            await deleteObject(oldFileRef).catch((error) => {
+              console.error("Error deleting old file:", error);
+            });
+          }
+
+          // Step 4: Update Firestore document with the new file path
+          if (oldSrc) {
+            const updatedLrcs = songData.lrcs.map((lrc) => {
+              if (lrc.trackId === trackIdInt) {
+                return { ...lrc, lrc: newSrc, version: version, updaterId: user.uid, updaterName: user.displayName };
+              }
+              return lrc;
+            });
+
+            await updateDoc(songRef, { lrcs: updatedLrcs });
+          } else {
+            const lrcToUpload = { trackId: trackId, trackName: trackName, lrc: newSrc, version: version, ownerId: user.uid, ownerName: user.displayName };
+            await updateDoc(songRef, {
+              lrcs: arrayUnion(lrcToUpload)
+            });
+          }
+
+          console.log("LRC updated successfully!");
+          resolve({ result: 'success', message: 'LRC updated successfully' });
         }
-
-        // Step 4: Update Firestore document with the new file path
-        if(oldSrc){
-          const updatedLrcs = songData.lrcs.map((lrc) => {
-            if(lrc.trackId === trackIdInt) {
-              return {...lrc, lrc: newSrc, version: version}
-            }
-            return lrc;
-          })
-  
-          await updateDoc(songRef, { lrcs: updatedLrcs });
-        } else {
-          const lrcToUpload = {trackId: trackId, trackName: trackName, lrc: newSrc, version: version}
-          await updateDoc(songRef, {
-            lrcs: arrayUnion(lrcToUpload)
-          })
-        }
-
-        console.log("LRC updated successfully!");
-        // setUploadStarted(false);
-        // setNewFile(null);
-      }
-    );
-  } else {
-    console.log("No such document!");
+      );
+    });
+  } catch (error) {
+    console.error("Error in updateLrc:", error);
+    return { result: 'error', message: error.message };
   }
 };
 

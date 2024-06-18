@@ -107,6 +107,10 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
       setLrcs(lrcsList);
       fetchCurrentTracks();
       fetchCurrentLrcs()
+      console.log("Lrcs list", lrcsList)
+      if(lrcsList.length === 0){
+        setNoLrcs(true);
+      }
       if (songsList.length > 0) {
         if(songId){
           const songExists = songsList.find((song) => song.id === songId)
@@ -144,7 +148,8 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
     const storage = getStorage();
     if(lrcs.length !== 0 && !loading){
       const currentLrcs = lrcs.find((song) => song.id === selectedSong)?.lrcs;
-      if(currentLrcs){
+      console.log("Current lrcs: ", currentLrcs)
+      if(currentLrcs.length !== 0){
         const currentLrcSourcesArray = await Promise.all(currentLrcs.map(async(lrc) => {
           const httpsReference = ref(storage, lrc.lrc);
           const blob = await getBlob(httpsReference);

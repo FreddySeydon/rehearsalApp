@@ -58,12 +58,12 @@ const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
       const trackName = thisTrack.name
       const newFileName = songId + "_" + trackName + "_track-" + trackId + "_v" + version;
       const metadata = {
-        customMetadata: {
+        metadata: {
           ownerId: user.uid,
-        ownerName: user.displayName},
-        name: newFileName,
+        ownerName: user.displayName,
+        // name: newFileName,
         contentType: 'text/plain'
-      }
+      }}
       const storageRef = ref(
         storage,
         `sounds/${albumId}/${songId}/${newFileName}.lrc`
@@ -99,7 +99,7 @@ const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
           // Step 4: Update Firestore document with the new file path
           const updatedTracks = songData.lrcs.map((lrc) => {
             if (lrc.trackId === parseInt(trackId)) {
-              return { ...lrc, lrc: newSrc, version: version }; // Update the specific field
+              return { ...lrc, lrc: newSrc, version: version, updaterId: user.uid, updaterName: user.displayName }; // Update the specific field
             }
             return lrc;
           });

@@ -185,26 +185,31 @@ const LyricsSync = ({
   const handleSaveLyrics = async () => {
     setIsSaving(true);
     const lrcContent = timestamps
-            .map(({ time, line }) => {
-              return `[${time}]${line}`;
-            })
-            .join('\n');
-          const blob = new Blob([lrcContent], { type: 'text/plain' });
-          const thisSong = songs.find((song) => selectedSong === song.id)
-          // console.log(songs)
-          const thisTrack = thisSong.tracks.find((track) => selectedTrack === track.id)
-          // console.log(thisTrack)
-          const trackName = thisTrack.name
-          try {
-            await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName, user)
-            setIsSaving(false)
-            setDoneSaving(true)
-          } catch (error) {
-            setError(error)
-            setIsSaving(false)
-            setDoneSaving(false)
-          }
-  }
+      .map(({ time, line }) => `[${time}]${line}`)
+      .join('\n');
+    const blob = new Blob([lrcContent], { type: 'text/plain' });
+    const thisSong = songs.find((song) => selectedSong === song.id);
+    const thisTrack = thisSong.tracks.find((track) => selectedTrack === track.id);
+    const trackName = thisTrack.name;
+  
+    try {
+      const updateLrcResult = await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName, user);
+      console.log("Update LRC result: ", updateLrcResult);
+      if (updateLrcResult.result === "success") {
+        setIsSaving(false);
+        setDoneSaving(true);
+      } else {
+        setError(updateLrcResult.message);
+        setIsSaving(false);
+        setDoneSaving(false);
+      }
+    } catch (error) {
+      setError(error.message);
+      setIsSaving(false);
+      setDoneSaving(false);
+    }
+  };
+  
 
   const goToLyricsPosition = (position, index) => {
     const secondsPosition = parseLrcTimeToSeconds(position);
@@ -240,7 +245,7 @@ const LyricsSync = ({
     {isSaving ? 
       <div>
       Saving...
-      </div> : doneSaving ? <div> <p>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}}>Continue Editing</button> </div> </div> : error ? <div>There was an error saving your lyrics</div>  :
+      </div> : doneSaving ? <div> <p>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}} onClick={() => {setDoneSaving(false)}}>Continue Editing</button> </div> </div> : error ? <div><p>There was an error saving your lyrics</p><button onClick={() => setError('')}>Try again</button></div>  :
     
     <div className="lyricsWrapper" style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '100%'}}>
         <div id='lyricsinput' style={{display: editing ? "flex" : "none", flexDirection: "column" }}>

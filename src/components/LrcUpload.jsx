@@ -37,12 +37,12 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
             const fileName = baseName + "_" + trackName + "_" + trackId + "_v" + version + "." + ext
             const parts = baseName.split('_');
             const metadata = {
-              customMetadata: {
+              metadata: {
                 ownerId: user.uid,
-              ownerName: user.displayName},
-              name: fileName,
+              ownerName: user.displayName,
+              // name: fileName,
               contentType: 'text/plain'
-            }
+            }}
     
             const storageRef = ref(storage, `sounds/${albumId}/${songId}/${fileName}`);
             const uploadTask = uploadBytesResumable(storageRef, file, metadata);
@@ -76,6 +76,8 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
                 trackName: trackName,
                 lrc: downloadURL,
                 version: 1,
+                ownerId: user.uid,
+                ownerName: user.displayName
               })
             } else if (ext !== 'lrc') {
               setInfo("Only lrc files are supported")
