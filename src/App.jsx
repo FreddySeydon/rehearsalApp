@@ -106,8 +106,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
       songsList.forEach((song) => lrcsList.push({id: song.id, lrcs: song.lrcs}))
       setLrcs(lrcsList);
       fetchCurrentTracks();
-      fetchCurrentLrcs()
-      console.log("Lrcs list", lrcsList)
+      // fetchCurrentLrcs()
       if(lrcsList.length === 0){
         setNoLrcs(true);
       }
@@ -148,8 +147,11 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
     const storage = getStorage();
     if(lrcs.length !== 0 && !loading){
       const currentLrcs = lrcs.find((song) => song.id === selectedSong)?.lrcs;
-      console.log("Current lrcs: ", currentLrcs)
-      if(currentLrcs.length !== 0){
+      if(!currentLrcs){
+        setNoLrcs(true);
+        return
+      }
+      if(currentLrcs?.length !== 0){
         const currentLrcSourcesArray = await Promise.all(currentLrcs.map(async(lrc) => {
           const httpsReference = ref(storage, lrc.lrc);
           const blob = await getBlob(httpsReference);
@@ -191,7 +193,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
             setSelectedTrack(trackId);
             return
           }
-          console.log("You can't view this album.")
+          // console.log("You can't view this album.")
           return
         }
         const lastTrack = localStorage.getItem("selected-track")
@@ -215,6 +217,12 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
       // setSelectedTrack(currentSourcesArray)
     }
   }
+
+  useEffect(() => {
+    if(lrcs.length !== 0){
+      fetchCurrentLrcs()
+    }
+  }, [lrcs])
 
   useEffect(() => {
     if(currentSources !== 0){

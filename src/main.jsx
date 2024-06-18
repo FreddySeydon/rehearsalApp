@@ -13,6 +13,7 @@ import SongDetailPage from './routes/songDetailPage.jsx'
 import LyricsEditorPage from './routes/lyricsEditorPage.jsx'
 import LoginPage from './routes/loginPage.jsx'
 import PlayerPage from './routes/playerPage.jsx'
+import ShareCodePage from './routes/shareCodePage.jsx'
 import Navbar from './components/Navbar.jsx'
 import { UserProvider } from './context/UserContext.jsx'
 import { authLoader } from './loaders/authLoader.js'
@@ -41,38 +42,51 @@ const router = createBrowserRouter([
         path: "/upload",
         element: <UploadPage />,
         loader: authLoader,
+        errorElement: <ErrorPage />
       },
       {
         path: "/albums",
         element: <AlbumsPage />,
         loader: authLoader,
+        errorElement: <ErrorPage />
       },
       {
         path: "/albums/:albumId",
         element: <AlbumDetailPage />,
         loader: authLoader,
+        errorElement: <ErrorPage />
         },
         
         {
           path: "/albums/:albumId/:songId",
           element: <SongDetailPage />,
           loader: authLoader,
+          errorElement: <ErrorPage />
         },
         {
           path: "/lyricseditor",
           element: <LyricsEditorPage />,
           loader: authLoader,
+          errorElement: <ErrorPage />
         },
         {
           path: "/player",
           element: <PlayerPage />,
           loader: authLoader,
+          errorElement: <ErrorPage />
+        },
+        {
+          path: "/sharecode",
+          element: <ShareCodePage />,
+          loader: authLoader,
+          errorElement: <ErrorPage />
         },
     ]
   },
     {
       path: "/login",
       element: <LoginPage />,
+      errorElement: <ErrorPage />
     }
 ])
 
