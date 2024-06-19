@@ -257,14 +257,14 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
   }
 
   if(noAlbums){
-    return <div><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button>Add First Album</button></Link></div>
+    return <div><h2>Welcome to Chord Chaos!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button className='glass'>Add First Album</button></Link></div>
   }
 
   return (
     <>
-      {loading && !songs ? (
+      {loading || !songs ? (
         <div>
-          <img src={loadingSpinner} alt="Loading" width={'5rem'} />
+          <img src={loadingSpinner} alt="Loading" width={50} />
         </div>
       ) : (
         <div className="appWrapper" style={{ padding: isTabletOrMobile ? '1rem' : '5rem' }}>

@@ -270,7 +270,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   } 
 
   if(authLoading){
-    return ( <div> <h2>Rehearsal Rocket</h2> <img src={loadingSpinner} alt="Loading" width={50} /> </div>
+    return ( <div><img src={loadingSpinner} alt="Loading" width={50} /> </div>
      )
   }
 
@@ -278,13 +278,12 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
     <>
     <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%"}}>
     {/* <Navbar /> */}
-      {noAlbums ? <div><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button className="glass">Add via Sharecode</button></Link></div> : loading && !songs ? (
+      {noAlbums ? <div><h2>Welcome to Chord Chaos!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button className="glass">Add First Album</button></Link></div> : loading && !songs ? (
         <div>
-          <img src={loadingSpinner} alt="Loading" width={"5rem"} />
+          <img src={loadingSpinner} alt="Loading" width={50} />
         </div>
       ) : (
         <div className="appWrapper" style={{ paddingLeft: isTabletOrMobile ? "1rem" : "5rem", paddingRight: isTabletOrMobile ? "1rem" : "5rem", paddingBottom: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "0rem" : "0rem" }}>
-          <h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1>
               <div className="selectBoxWrapper" style={{flexDirection: isTabletOrMobile ? "column" : "row", gap: isTabletOrMobile ? 5 : 0, display: hideSelects ? 'none' : 'flex'}}>
                 <div className="selectBox glasstransparent" style={{padding: 10}}>
                 <p style={{padding: 0, margin:0}}>Album: </p>
@@ -332,7 +331,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
         </div> : 
           <div className="audio-mixer" style={{display: "flex", flexDirection: isTabletOrMobile ? "column" : "row", gap: 5 }}>
             <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "50rem", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "block", paddingBottom: 5}}>
-              <div className="tracks" style={{width: isTabletOrMobile ?  "50rem" : "100%"}}>
+              <div className="tracks" style={{width: isTabletOrMobile ?  "100%" : "50rem"}}>
                 <div className="singleTrack" style={{overflowX: "scroll", scrollbarWidth: 'none', whiteSpace: 'nowrap'}}>
                   <Channel
                     sources={currentSources}

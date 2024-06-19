@@ -61,7 +61,7 @@ if(authLoading){
 }
 
 if(noAlbums){
-  return <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button className='glass'>Add Album</button></Link></div>
+  return <div><h2>Welcome to Chord Chaos!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button className='glass'>Add First Album</button></Link></div>
 }
 
   return (

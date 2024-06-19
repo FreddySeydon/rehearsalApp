@@ -73,22 +73,22 @@ const AlbumDetailPage = () => {
                        <div>
                            <h4 style={{fontSize: 25, margin: 10, marginBottom: 15}}>{song.number} - {song.name}</h4>
                        </div>
-                       <div style={{display: "flex", gap:10, justifyContent: "center", alignItems: "center", marginBottom: 10}}>
-                       {user.uid === song.ownerId ? <DeleteSong albumId={albumId} songId={song.id} refetchAlbum={fetchSongs} /> : null}
-                        <Link to={song.id}>
-                    <button className='glasstransparent'>Show Tracks</button>
+                       <div style={{display: "flex", flexDirection: isTabletOrMobile ? 'column' : 'row', width: '100%', gap:10, justifyContent: "center", alignItems: "center", marginBottom: 10}}>
+                       {user.uid === song.ownerId ? <div style={{order: isTabletOrMobile ? 3 : 1, width: "100%"}}><DeleteSong albumId={albumId} songId={song.id} refetchAlbum={fetchSongs} /></div> : null}
+                        <Link to={song.id} style={{order: isTabletOrMobile ? 2 : 1, width: "100%"}}>
+                    <button className='glasstransparent' style={{width: "100%"}}>Show Tracks</button>
                     </Link>
-                        <Link to={`/player?albumId=${albumId}&songId=${song.id}`}>
-                    <button className='glass'>Practice Song</button>
+                        <Link to={`/player?albumId=${albumId}&songId=${song.id}`} style={{order: isTabletOrMobile ? 1 : 2, width: "100%"}}>
+                    <button className='glass' style={{width: "100%"}}>Practice Song</button>
                     </Link>
                     </div>
                     </div>
                     
                   )
                 })} </div> }
-              <div id='detail'>
+              {/* <div id='detail'>
                 <Outlet />
-              </div>
+              </div> */}
     </div>
   )
 }

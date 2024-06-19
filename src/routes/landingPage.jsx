@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { auth } from '../../utils/firebase';
 import { signOut } from 'firebase/auth';
-import Logo from '../assets/img/logo.jpg'
+import Logo from '../assets/img/logo.svg'
 import './landingPage.css';
 import { useSearchParams } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
@@ -32,34 +32,13 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-        {/* <h1>Rehearsal Rocket</h1> */}
-      {/* <nav className="navbar glass">
-        <div style={{display: "flex", gap: 10, justifyContent: 'center', alignItems: 'center'}}>
-        <img src={Logo} alt="" width={60} height={60} style={{borderRadius: 10}} />
-        <h2 style={{margin: 0}}>Rehearsal Rocket</h2>
-        </div>
-        <div className='navbuttons' style={{gap: 10}}>
-        {user ? (
-            <div style={{display: 'flex', gap: 10}}>
-        <Link to="/player">
-          <button className='glassCard'>Start</button>
-        </Link>
-        <button onClick={handleLogout} className='glassCard'>Logout</button>
-        </div>
-        ) : (
-          <Link to="/login?mode=login">
-            <button className='glassCard'>Login</button>
-          </Link>
-        )}
-        </div>
-      </nav> */}
       {info ? <div className='glassCard' style={{marginBottom: 10}}><h2>{info}</h2></div> : null }
       <header className="landing-header">
         <div className='hero glasstransparent' style={{padding: 15, display: "flex", flexDirection: isTabletOrMobile ? 'column': 'row'}}>
         <img src={Logo} alt="Rehearsal Rocket Logo" width={"50%"} style={{borderRadius: 30}}/>
         <div style={{width: isTabletOrMobile ? "100%" : "50%", display: "flex", flexDirection: "column", justifyContent: 'flex-start', alignItems: 'center'}}>
             <p style={{fontSize: "xx-large", padding: 0, margin: 0   }}>Welcome to</p>
-        <h1 style={{paddingTop: 0, marginTop: 0, marginBottom: 0}}>Rehearsal Rocket</h1>
+        <h1 style={{paddingTop: 0, marginTop: 0, marginBottom: 0}}>Chord Chaos</h1>
         <h2 style={{marginBottom: 0}}>
           Your ultimate music rehearsal companion. 
         </h2>

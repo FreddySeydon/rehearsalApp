@@ -17,15 +17,48 @@ import ShareCodePage from './routes/shareCodePage.jsx'
 import Navbar from './components/Navbar.jsx'
 import { UserProvider } from './context/UserContext.jsx'
 import { authLoader } from './loaders/authLoader.js'
+import { useMediaQuery } from 'react-responsive'
 
 function NavbarWrapper(){
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
+
+  // Define styles for desktop and mobile
+  const navbarStyle = isTabletOrMobile ? {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: '100%', // Full width on mobile
+    zIndex: 1000
+  } : {
+    position: 'fixed',
+    top: "1%",
+    left: "5%",
+    right: "5%",
+    // textAlign: 'center',
+    width: '90%',
+    zIndex: 1000,
+    // margin: "auto"
+  };
+
+  const outletStyle = isTabletOrMobile ? {
+    paddingTop: 90 // Adjust padding for mobile navbar height
+  } : {
+    paddingTop: 90
+  };
+
   return(
-    <div style={{display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
-      <Navbar />
-      <Outlet />
+    <div style={{width: "100%"}}>
+      <div style={navbarStyle}>
+        <Navbar />
+      </div>
+      <div style={outletStyle}>
+        <Outlet />
+      </div>
     </div>
   )
 }
+
 
 const router = createBrowserRouter([
   {
