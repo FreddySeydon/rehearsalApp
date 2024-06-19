@@ -44,6 +44,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 
   const fetchAlbums = async () => {
+    setAlbums([]);
     try {
       const albumsList = await fetchAlbumsList(user);
         setAlbums(albumsList);
@@ -138,7 +139,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
         })
       );
       if(currentSourcesArray !== 0){
-        setCurrentSources(currentSourcesArray) // set the state with the new array
+        setCurrentSources(currentSourcesArray)
         if(trackId){
           const trackExists = currentSourcesArray.find((track) => track.id === trackId)
           if(trackExists){
@@ -365,6 +366,8 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   setSeekUpdateInterval={setSeekUpdateInterval}
                   songs={songs}
                   user={user}
+                  currentTrackLrc={currentTrackLrc}
+                  fetchAlbums={fetchAlbums}
                 />
               </div>
             </div>

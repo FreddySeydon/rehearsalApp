@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { collection, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import { Link } from 'react-router-dom';
 import { getStorage, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
@@ -28,6 +28,10 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
         return
       }
         setUploadStarted(true);
+        const songRef = doc(db, "albums", albumId, "songs", songId);
+        const songSnap = await getDoc(songRef);
+        const songData = songSnap.data();
+        const sharedWith = songData.sharedWith ? songData.sharedWith : [];
         const storage = getStorage();
         const promises = selectedFiles.map(async (file) => {
           return new Promise(async (resolve, reject) => {
@@ -45,7 +49,14 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
             }}
     
             const storageRef = ref(storage, `sounds/${albumId}/${songId}/${fileName}`);
-            const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+            const uploadTask = uploadBytesResumable(storageRef, file, {
+              customMetadata: {
+                ownerId: user.uid,
+                ownerName: user.displayName,
+                sharedWith: sharedWith.join(',')
+              },
+              contentType: 'text/plain'
+            });
     
             uploadTask.on(
               "state_changed",

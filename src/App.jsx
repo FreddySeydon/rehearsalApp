@@ -395,6 +395,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
                 noTrackLrc={noTrackLrc}
                 setNoTrackLrc={setNoTrackLrc}
                 hideMixer={hideMixer}
+                selectedAlbum={selectedAlbum}
               />
             </div> : noLrcs ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : "0rem"}}><p style={{fontSize: "1.25rem", }}>No Lyrics for this song found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Lyrics</button></Link></div> : <div>
           <img src={loadingSpinner} alt="Loading" width={50} />

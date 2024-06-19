@@ -34,7 +34,9 @@ const LyricsSync = ({
   setSeekUpdateInterval,
   seekUpdateInterval,
   songs,
-  user
+  user,
+  currentTrackLrc,
+  fetchAlbums
 }) => {
   const [lyrics, setLyrics] = useState('');
   const [lines, setLines] = useState([]);
@@ -48,52 +50,121 @@ const LyricsSync = ({
   const lyricsRef = useRef();
 
   const handleLyricsChange = (e) => {
-    setLyrics(e.target.value);
-    setLines(e.target.value.split('\n'));
+    const newLyrics = e.target.value;
+    const newLines = newLyrics.split('\n');
+    setLyrics(newLyrics);
+    setLines(newLines);
+
+    // Adjust timestamps based on changes in lines
+    setTimestamps((prevTimestamps) => {
+      const newTimestamps = [];
+      newLines.forEach((line, index) => {
+        if (index < prevTimestamps.length) {
+          newTimestamps.push(prevTimestamps[index]);
+        }
+      });
+      return newTimestamps;
+    });
   };
 
   useEffect(() => {
-    if(existingLyrics){      
+    if (existingLyrics) {      
+      const cleanLyrics = [];
+      const existingTimestamps = [];
+      const linesSet = new Set();
+      let repeatedTimestamp = false;
+  
       // Parse existing lyrics to timestamps
-      const cleanLyrics = []
-      const existingTimestamps = existingLyrics.split('\n').map(line => {
+      existingLyrics.split('\n').forEach((line, index) => {
         const match = line.match(/^\[(?<time>\d{2}:\d{2}(.\d{2})?)\](?<text>.*)/);
         if (match) {
-          const {time, text} = match.groups;
+          const { time, text } = match.groups;
           cleanLyrics.push(text);
-          // const [, min, sec, ms, text] = match;
-          // const time = `${min}:${sec}.${ms}`;
-          return { time, line: text.trim() };
+          if (!repeatedTimestamp) {
+            if (linesSet.has(time)) {
+              repeatedTimestamp = true;
+            } else {
+              linesSet.add(time);
+              existingTimestamps.push({ time, line: text.trim() });
+            }
+          }
         }
-        return null;
-      }).filter(Boolean);
+      });
+  
       setLines(cleanLyrics);
-      setLyrics(cleanLyrics.join("\n"))
-      setTimestamps(existingTimestamps);
+      setLyrics(cleanLyrics.join("\n"));
+      setCurrentLineIndex(existingTimestamps.length)
+  
+      if (currentTrackLrc.fullySynced) {
+        setTimestamps(existingTimestamps);
+      } else {
+        // Handle the case when lyrics are not fully synced
+        setTimestamps(existingTimestamps);
+      }
     } else {
       setLyrics("");
       setLines([]);
       setTimestamps([]);
     }
-  }, [existingLyrics]);
+  }, [existingLyrics, currentTrackLrc]);
+  
+  
   
 
   const handleSync = () => {
-    if(!playing){
-        handlePlay()
+    setInfo('')
+    if (!playing) {
+      handlePlay();
+      return;
     }
-    const now = globalSeek.toFixed(2)
+    
+    const now = parseFloat(globalSeek).toFixed(2);
     const minutes = Math.floor(now / 60);
     const seconds = Math.floor(now % 60);
     const milliseconds = Math.floor((now % 1) * 100);
-    const time = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`
+    const time = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
+  
     setTimestamps((prev) => {
-        const newTimestamps = [...prev];
-        newTimestamps[currentLineIndex] = {time: time, line: lines[currentLineIndex]};
-        return newTimestamps;
+      const newTimestamps = [...prev];
+  
+      // Check if the new timestamp is greater than the previous one
+      const lastTimestamp = newTimestamps[currentLineIndex - 1];
+      const lastTimeInSeconds = lastTimestamp ? parseLrcTimeToSeconds(lastTimestamp.time) : 0;
+      const newTimeInSeconds = parseLrcTimeToSeconds(time);
+  
+      if (newTimeInSeconds >= lastTimeInSeconds) {
+        newTimestamps[currentLineIndex] = { time: time, line: lines[currentLineIndex] };
+        setCurrentLineIndex((prev) => prev + 1);
+      } else {
+        console.warn("New timestamp is less than the previous one. Ignoring this sync.");
+        setInfo("Next timestamp can't be lower than the previous one.")
+      }
+  
+      return newTimestamps;
     });
-    setCurrentLineIndex((prev) => prev + 1);
+  
   };
+
+  const handleUnsyncedLines = () => {
+    if (timestamps.length !== lines.length) {
+      console.log("Timestamps length: ",timestamps.length)
+      const unsyncedLines = lines.length - timestamps.length;
+      console.log(`Handling ${unsyncedLines} unsynced lines`);
+      let lastTimestampTime = '00:00.00'
+      if(timestamps.length !== 0){
+        lastTimestampTime = timestamps.at(-1).time;
+      }
+      const currentTimestamps = [...timestamps];
+  
+      for (let lineIndex = currentTimestamps.length; lineIndex < lines.length; lineIndex++) {
+        currentTimestamps[lineIndex] = { time: lastTimestampTime, line: lines[lineIndex] };
+      }
+      setTimestamps(currentTimestamps);
+      return currentTimestamps;
+    }
+    return
+  };
+  
 
   const handlePreviousLine = () => {
     if(currentLineIndex - 1 >= 1){
@@ -183,17 +254,19 @@ const LyricsSync = ({
   }
 
   const handleSaveLyrics = async () => {
+    handlePause()
     setIsSaving(true);
-    const lrcContent = timestamps
-      .map(({ time, line }) => `[${time}]${line}`)
-      .join('\n');
+    const currentTimestamps = handleUnsyncedLines();
+    const fullySynced = currentTimestamps ? false : true;
+    const usedTimestamps = currentTimestamps ? currentTimestamps : timestamps
+    const lrcContent = usedTimestamps.map(({ time, line }) => `[${time}]${line}`).join('\n');
     const blob = new Blob([lrcContent], { type: 'text/plain' });
     const thisSong = songs.find((song) => selectedSong === song.id);
     const thisTrack = thisSong.tracks.find((track) => selectedTrack === track.id);
     const trackName = thisTrack.name;
   
     try {
-      const updateLrcResult = await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName, user);
+      const updateLrcResult = await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName, user, fullySynced);
       console.log("Update LRC result: ", updateLrcResult);
       if (updateLrcResult.result === "success") {
         setIsSaving(false);
@@ -240,12 +313,19 @@ const LyricsSync = ({
     scrollToCurrentLine();
   }, [currentLineIndex]);
 
+  const handleContinueEditing = () => {
+    window.location.reload()
+    // handleReset()
+    // setDoneSaving(false)
+    // fetchAlbums()
+  }
+
   return (
     <>
     {isSaving ? 
       <div>
       Saving...
-      </div> : doneSaving ? <div> <p>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}} onClick={() => {setDoneSaving(false)}}>Continue Editing</button> </div> </div> : error ? <div><p>There was an error saving your lyrics</p><button onClick={() => setError('')}>Try again</button></div>  :
+      </div> : doneSaving ? <div> <p>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}} onClick={handleContinueEditing}>Continue Editing</button> </div> </div> : error ? <div><p>There was an error saving your lyrics</p><button onClick={() => setError('')}>Try again</button></div>  :
     
     <div className="lyricsWrapper" style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '100%'}}>
         <div id='lyricsinput' style={{display: editing ? "flex" : "none", flexDirection: "column" }}>
@@ -259,6 +339,11 @@ const LyricsSync = ({
     />
     <p style={{color: "#fdc873", marginTop: 2, marginBottom: 5}}>{info ? info : null}</p>
     <button onClick={handleDoneEditing} className='glass'>Done</button>
+    <Link to={`/albums/${selectedAlbum}/${selectedSong}`} style={{marginTop: 5, fontSize: 'small'}}>
+    <p style={{textDecoration: "underline", margin: 0.5, color: 'whitesmoke'}}>Already have synced lyrics in .lrc format?</p>
+    <p style={{textDecoration: "underline", margin: 0.5, color: 'whitesmoke'}}>Upload them!</p>
+    
+    </Link>
         </div>
 
     <div id='lyricssync'  style={{display: editing ? "none" : 'flex', flexDirection: "column"}}>
@@ -301,6 +386,7 @@ const LyricsSync = ({
         ))}
       </div>
                 <div style={{display: "flex", flexDirection: "column", gap:10, paddingTop: 10}}>
+                  <p style={{margin: 0, color: '#fdc873'}}>{info ? info : null}</p>
                     <div style={{display: 'flex', flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                   {<button onClick={handlePreviousLine} style={{
                     marginRight: "0.25rem",
@@ -333,7 +419,7 @@ const LyricsSync = ({
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: 10}}>
                   {/* <button onClick={handlePreview}>Preview</button> */}
                   <button onClick={handleStartEditing} style={{backgroundColor: "transparent", padding: 0}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
-                  <button onClick={handleReset} className='glass' style={{backgroundColor: "transparent", borderWidth: 3, border: "dashed", borderColor: "darkred", color: "white"}}>Reset</button>
+                  <button onClick={handleReset} className='glass' style={{backgroundColor: "transparent", borderWidth: 3, border: "dashed", borderColor: "darkred", color: "white"}}>Reset Sync</button>
       <button
         onClick={() => {
           const lrcContent = timestamps

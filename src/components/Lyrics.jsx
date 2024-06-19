@@ -4,6 +4,7 @@ import { parseLyrics, syncLyrics } from "../../utils/lrcParser";
 import OneLine from "./OneLine";
 import "./Lyrics.css";
 import { Transport } from "tone";
+import { Link } from "react-router-dom";
 
 const Lyrics = ({
   sounds,
@@ -22,15 +23,17 @@ const Lyrics = ({
   isDesktopOrLaptop,
   isTabletOrMobile,
   selectedTrack,
+  selectedAlbum,
   setNoLrcs,
   noLrcs,
   noTrackLrc,
   setNoTrackLrc,
-  hideMixer
+  hideMixer,
 }) => {
   const [displayedLyrics, setDisplayedLyrics] = useState("");
   const [currentLyrics, setCurrentLyrics] = useState([]);
   const [displayedLyricsIndex, setDisplayedLyricsIndex] = useState(0);
+  const [currentLrc, setCurrentLrc] = useState({})
 
   const lyricsRef = useRef();
   
@@ -49,6 +52,7 @@ const Lyrics = ({
       if(currentLrc){
         const lrcLocation = currentLrc.lrc
       const lrc = await lrcLocation.text();
+      setCurrentLrc(currentLrc);
       setLrcContent(lrc);
       setLoading(false);
       return
@@ -126,6 +130,12 @@ const Lyrics = ({
             );
           })}
         </div>
+        {!currentLrc.fullySynced ?         
+        <Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}>
+          <p style={{textDecoration: "underline", margin: 0.5, color: 'whitesmoke'}}>Lyrics are not synced completely yet.</p>
+          {/* <p style={{textDecoration: "underline", margin: 0.5, color: 'whitesmoke'}}>Click here to go to Sync</p> */}
+        </Link> : null
+      }
       </div>
     </>
   );

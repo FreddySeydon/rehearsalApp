@@ -54,6 +54,8 @@ const AlbumDetailPage = () => {
       return <div>Loading...</div>
     }
 
+    console.log(songs)
+
   return (
     <div style={{display: "flex", gap: 20}}>
         {loading ? 
@@ -62,7 +64,7 @@ const AlbumDetailPage = () => {
             <div className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20}}>
                 {/* TODO: Fetch Album metadata to display here */}
                   <h2>Album: {albumId.split("_").map(word=>word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}</h2>
-                   {songs.map((song) => {
+                   {songs.length === 0 ? <div><p>This album is empty</p></div> : songs.map((song) => {
                     return(
                       <div key={song.id} className='glassCard' style={{padding: 15}}>
                        <div>

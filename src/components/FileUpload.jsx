@@ -269,7 +269,7 @@ const FileUpload = () => {
         const maxSongNumber = Math.max(...songNumbers);
         if (maxSongNumber) {
           setSelectedAlbumNextSongNumber(maxSongNumber + 1);
-          setSongNumber(Math.max(maxSongNumber + 1));
+          setSongNumber(Math.max(1, maxSongNumber + 1));
         }
         const sortedSongsList = sortSongsList(songsList);
         const existingSongNumbers = songsList.map((song) => {

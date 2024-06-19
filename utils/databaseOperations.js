@@ -78,7 +78,7 @@ export const deleteAlbum = async(albumId) => {
 }
 
 
-export const updateLrc = async (newFile, albumId, songId, trackId, trackName, user) => {
+export const updateLrc = async (newFile, albumId, songId, trackId, trackName, user, fullySynced) => {
   try {
     if (!newFile) {
       throw new Error("You have to choose a file");
@@ -147,14 +147,14 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName, us
           if (oldSrc) {
             const updatedLrcs = songData.lrcs.map((lrc) => {
               if (lrc.trackId === trackIdInt) {
-                return { ...lrc, lrc: newSrc, version: version, updaterId: user.uid, updaterName: user.displayName };
+                return { ...lrc, lrc: newSrc, version: version, updaterId: user.uid, updaterName: user.displayName, fullySynced: fullySynced };
               }
               return lrc;
             });
 
             await updateDoc(songRef, { lrcs: updatedLrcs });
           } else {
-            const lrcToUpload = { trackId: trackId, trackName: trackName, lrc: newSrc, version: version, ownerId: user.uid, ownerName: user.displayName };
+            const lrcToUpload = { trackId: trackId, trackName: trackName, lrc: newSrc, version: version, ownerId: user.uid, ownerName: user.displayName, fullySynced: fullySynced };
             await updateDoc(songRef, {
               lrcs: arrayUnion(lrcToUpload)
             });
