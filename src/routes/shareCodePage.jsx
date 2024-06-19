@@ -7,8 +7,8 @@ const ShareCodePage = () => {
     const {user, authLoading} = useUser();
 
   return (
-    <div>
-        <h2>Enter your share code below</h2>
+    <div style={{width: 400}}>
+        <h2>Enter your share code below to add a shared Album</h2>
         {
             authLoading ? <div>Loading</div> : 
             <div>

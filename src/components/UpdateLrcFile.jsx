@@ -147,17 +147,17 @@ const UpdateLrcFile = ({ albumId, songId, trackId, refetchSongs }) => {
           {/* <label htmlFor="Files">Lyrics present</label> */}
           <LrcUploadDropzone setSelectedFiles={setNewFile} selectedFiles={newFile} />
           <div style={{gap: 10}}>
-          <button onClick={updateLrc} disabled={uploadStarted} style={{marginRight: 5}}>
+          <button className="glass" onClick={updateLrc} disabled={uploadStarted} style={{marginRight: 5}}>
             {uploadStarted ? "Uploading..." : "Upload"}
           </button>
-          <button onClick={() => setShowUploadForm(false)}>Cancel</button>
+          <button className="glasstransparent" onClick={() => setShowUploadForm(false)}>Cancel</button>
           <button onClick={handleReset} style={{background: "transparent", color: "darkred"}}>Reset</button>
           </div>
           <div>
 
           </div>
         </div>
-      ) : <button style={{width: "100%"}} onClick={() => setShowUploadForm(true)}>Replace Lyrics</button>}
+      ) : <button className="glasstransparent" style={{width: "100%"}} onClick={() => setShowUploadForm(true)}>Replace Lyrics</button>}
     </div>
   );
 };

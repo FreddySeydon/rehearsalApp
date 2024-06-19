@@ -53,7 +53,7 @@ const Navbar = () => {
         {user ? (
             <div style={{display: 'flex', gap: 20, justifyContent: "center", alignItems: "center", fontSize: "large"}}>
         <Link to="/albums">
-            Your Albums
+            Albums
         </Link>
         <Link to={paramsSet ? `/lyricseditor?albumId=${albumId}&songId=${songId}&trackId=${trackId}` : '/lyricseditor'}>
             Lyrics Editor

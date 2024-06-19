@@ -73,6 +73,7 @@ const SongDetailPage = () => {
             <div key={track.id} className='glasstransparent' style={{marginBottom: 10, padding: 20}}>
                 <h2>Track {track.number} - {track.name}</h2>
                 <div className='trackcardcontent' style={{marginBottom: 25, gap:40}}>
+                      {user.uid === track.ownerId ?                       
                     <div>
                       <div style={{display:"flex", flexDirection: "column", gap: 10, minWidth: 285, padding: 15, minHeight: 140}} className='glassCard'>
                         <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>Audio File</p>
@@ -81,18 +82,19 @@ const SongDetailPage = () => {
                            user.uid === track.ownerId ? <DeleteTrack albumId={albumId} songId={songId} trackId={track.id} refetchSongs={fetchSongs} /> : null : 
                             null
                         }
-                        </div>
-                    </div>
+                        </div> 
+                    </div> : null
+                    }
                     <div className='glassCard' style={{ display: 'flex', flexDirection:"column", padding: 15, minWidth: 285, maxWidth: 285, minHeight: 140, gap: 10}}>
                       <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>Lyrics</p>
                         {/* <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>{getLRCForTrack(track.id) ? "Lyrics" : null}</p>  */}
+                        <Link to={`/lyricseditor?albumId=${albumId}&songId=${songId}&trackId=${track.id}`} style={{width: "100%"}}>
+                        <button className='glass' style={{width: "100%"}}>{getLRCForTrack(track.id) ? `Edit Lyrics` : `Add Lyrics`}</button>
+                        </Link>
                         {getLRCForTrack(track.id) ? 
                             <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} refetchSongs={fetchSongs} /> : 
                             <LrcUpload albumId={albumId} songId={songId} trackId={track.id} trackName={track.name} refetchSongs={fetchSongs}/>
                         }
-                        <Link to={`/lyricseditor?albumId=${albumId}&songId=${songId}&trackId=${track.id}`} style={{width: "100%"}}>
-                        <button style={{width: "100%"}}>{getLRCForTrack(track.id) ? `Edit Lyrics` : `Add Lyrics`}</button>
-                        </Link>
                     </div>
                 </div>
             </div>
@@ -100,7 +102,7 @@ const SongDetailPage = () => {
     );
 
     return (
-        <div className='glasstransparent' style={{padding: 20}}>
+        <div className='glasstransparent' style={{padding: 20, width:"100%"}}>
             <h2 style={{marginBottom: 0}}>{loading || error ? null : fullSongData.tracks.length} Tracks</h2>
             {loading ? renderLoading() : error ? null : <h2 style={{marginTop: 0}}>{`${fullSongData.number}. ${fullSongData.name}`}</h2>}
             {loading ? renderLoading() : error ? renderError() : renderTracks()}

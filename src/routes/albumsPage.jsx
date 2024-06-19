@@ -61,18 +61,26 @@ if(authLoading){
 }
 
 if(noAlbums){
-  return <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by uploading your first album</h3><Link to={'/upload'}><button>Create First Album</button></Link></div>
+  return <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button className='glass'>Add Album</button></Link></div>
 }
 
   return (
     <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "100%"}}>
       {/* <Navbar /> */}
-    <div style={{display: "flex", gap: 20}}>
+    <div style={{display: "flex", gap: 20, width: '100%'}}>
         {loading ? 
             <div>Loading...</div> : error ? 
             <div>There was an error: {error}</div> : 
-            <div className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20, width: isTabletOrMobile ? "100%" : 600}}>
-                  <h3>Albums</h3>
+            <div className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 20, padding: 20, width: isTabletOrMobile ? "100%" : "100%"}}>
+              <div>
+                  <h3 style={{fontSize: "x-large", margin: 0}}>Albums</h3>
+                  
+                  <Link to='/sharecode'>
+                  <button className='glass'>
+              Add Album
+                  </button>
+              </Link>
+              </div>
               <div style={{display: 'flex', gap: 10, flexDirection: isTabletOrMobile ? "column" : 'row', justifyContent: 'space-evenly', flexWrap: "wrap"}}>
                    {albums.map((album) => {
                     return(

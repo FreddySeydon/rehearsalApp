@@ -278,7 +278,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
     <>
     <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%"}}>
     {/* <Navbar /> */}
-      {noAlbums ? <div><h1 style={{ fontSize: isTabletOrMobile ? "1.5rem" : "2rem" }}>Rehearsal Rocket</h1><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by uploading your first album</h3><Link to={'/upload'}><button>Create First Album</button></Link></div> : loading && !songs ? (
+      {noAlbums ? <div><h2>Welcome to Rehearsal Rocket!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button className="glass">Add via Sharecode</button></Link></div> : loading && !songs ? (
         <div>
           <img src={loadingSpinner} alt="Loading" width={"5rem"} />
         </div>
@@ -370,8 +370,8 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
             </div>
             <div className="lyricsWrapperr glasstransparent" style={{display: "flex", justifyContent: "center", alignItems: "center", order: isSwapped ? 1 : 2}}>
             <div style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginTop: isTabletOrMobile ? 5 : 0, padding: 10}}>
-            <h3 style={{paddingLeft: isTabletOrMobile ? 0 : 0}}>Lyrics</h3>
-            {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", paddingBottom: 10, height: 400 }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Lyrics</button></Link></div> :       
+            <h3 style={{margin: 0}}>Lyrics</h3>
+            {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", paddingBottom: 10, height: 400 }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Album</button></Link></div> :       
             <div className="lyrics" style={{marginLeft: 0, paddingLeft: 0, width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : null}}>
               <Lyrics
                 sounds={songs}

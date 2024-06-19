@@ -111,11 +111,11 @@ const UpdateAudioFile = ({ albumId, songId, trackId }) => {
     >
       {/* <label htmlFor="Files">Update the audio file here:</label> */}
       <input type="file" onChange={(e) => handleFileChange(e)} />
-      <button onClick={updateTrack}>
+      <button className="glass" onClick={updateTrack}>
         {uploadStarted ? !uploadDone ? "Uploading..." : "Done!" : "Upload"}
       </button>
     </div> : 
-    <button onClick={() => setShowUploadForm(true)}>Replace audio file</button>
+    <button className="glass" onClick={() => setShowUploadForm(true)}>Replace audio file</button>
     }
     </>
   );

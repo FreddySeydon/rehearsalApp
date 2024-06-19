@@ -7,6 +7,7 @@ import { sortSongsList } from '../../utils/utils';
 import "./albumDetailPage.css";
 import { useUser } from '../context/UserContext';
 import { fetchSongsList } from '../../utils/databaseOperations';
+import { useMediaQuery } from 'react-responsive';
 
 const AlbumDetailPage = () => {
     
@@ -16,6 +17,8 @@ const AlbumDetailPage = () => {
     // const [fullAlbumData, setFullAlbumData] = useState();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
     const {user, authLoading} = useUser();
 
@@ -57,23 +60,26 @@ const AlbumDetailPage = () => {
     console.log(songs)
 
   return (
-    <div style={{display: "flex", gap: 20}}>
+    <div style={{display: "flex", gap: 20, width: isTabletOrMobile ? "100%" : 600}}>
         {loading ? 
             <div>Loading...</div> : error ? 
             <div>There was an error: {error}</div> : 
-            <div className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20}}>
+            <div className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20, width: isTabletOrMobile ? "100%" : 600}}>
                 {/* TODO: Fetch Album metadata to display here */}
                   <h2>Album: {albumId.split("_").map(word=>word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}</h2>
                    {songs.length === 0 ? <div><p>This album is empty</p></div> : songs.map((song) => {
                     return(
                       <div key={song.id} className='glassCard' style={{padding: 15}}>
                        <div>
-                           <h4 style={{fontSize: 20, margin: 10, marginBottom: 15}}>{song.number} - {song.name}</h4>
+                           <h4 style={{fontSize: 25, margin: 10, marginBottom: 15}}>{song.number} - {song.name}</h4>
                        </div>
                        <div style={{display: "flex", gap:10, justifyContent: "center", alignItems: "center", marginBottom: 10}}>
                        {user.uid === song.ownerId ? <DeleteSong albumId={albumId} songId={song.id} refetchAlbum={fetchSongs} /> : null}
                         <Link to={song.id}>
-                    <button>Show Tracks</button>
+                    <button className='glasstransparent'>Show Tracks</button>
+                    </Link>
+                        <Link to={`/player?albumId=${albumId}&songId=${song.id}`}>
+                    <button className='glass'>Practice Song</button>
                     </Link>
                     </div>
                     </div>
