@@ -42,13 +42,14 @@ function NavbarWrapper(){
   };
 
   const outletStyle = isTabletOrMobile ? {
-    paddingTop: 90 // Adjust padding for mobile navbar height
+    // paddingTop: 90, 
+    overflow: 'hidden'
   } : {
     paddingTop: 90
   };
 
   return(
-    <div style={{width: "100%"}}>
+    <div style={{overflow: 'hidden'}}>
       <div style={navbarStyle}>
         <Navbar />
       </div>

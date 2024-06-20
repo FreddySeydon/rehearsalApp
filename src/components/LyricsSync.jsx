@@ -416,10 +416,12 @@ const LyricsSync = ({
                     backgroundColor: "transparent",
                     }}><img src={iconStop} alt="Stop" style={{ width: "3rem"}}  /></button>
                     </div>
-                    <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: 10}}>
+                    <div style={{display: "flex", flexDirection: 'column', alignItems: "center", justifyContent: "center", gap: 10}}>
+                  <button onClick={handleSaveLyrics} className='glass' style={{width: "100%"}}>Save Lyrics</button>
                   {/* <button onClick={handlePreview}>Preview</button> */}
+                  <div style={{display: 'flex'}}>
                   <button onClick={handleStartEditing} style={{backgroundColor: "transparent", padding: 0}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
-                  <button onClick={handleReset} className='glass' style={{backgroundColor: "transparent", borderWidth: 3, border: "dashed", borderColor: "darkred", color: "white"}}>Reset Sync</button>
+                  <button onClick={handleReset} className='glass' style={{backgroundColor: "transparent", borderWidth: 3, margin: 0, padding: 5, border: "dashed", borderColor: "darkred", color: "white"}}>Reset Sync</button>
       <button
         onClick={() => {
           const lrcContent = timestamps
@@ -439,7 +441,7 @@ const LyricsSync = ({
       >
         <img src={iconDownload} alt="Download LRC" style={{ width: "3.75rem", marginBottom: 6}} />
       </button>
-      <button onClick={handleSaveLyrics} className='glass' >Save Lyrics</button>
+                  </div>
                     </div>
                 </div>
     </div>

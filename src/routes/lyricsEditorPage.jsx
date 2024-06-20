@@ -23,11 +23,11 @@ const LyricsEditorPage = () => {
 
 
   return (
-    <div>
+    <div style={{width: '90vw', overflow: 'hidden', paddingTop: 90}}>
         {
             loading ? 
-                <img src={loadingSpinner} width={50} alt="" /> : 
-                <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%"}}>
+                <img src={loadingSpinner} width={50} alt="Loading" /> : 
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%", overflow: 'hidden'}}>
                     <LrcEditor albumId={albumId} songId={songId} trackId={trackId} searchParams={searchParams} setSearchParams={setSearchParams}/>
                     </div>
         }

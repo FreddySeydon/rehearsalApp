@@ -41,6 +41,12 @@ const ShareCodeInput = ({user}) => {
         setAdded(true)
       }
     } catch (error) {
+      if(error.message === 'Unexpected end of JSON input'){
+        setResponseMessage('There was an error. Please try again later.')
+        setStartedAdding(false)
+        setAdded(false);
+        return
+      }
       setResponseMessage(error.message);
       setStartedAdding(false);
       setAdded(false);

@@ -55,6 +55,10 @@ const Login = ({mode, setMode}) => {
           setError('This Email Address is already in use');
           setUser(null);
           break;
+        case 'auth/invalid-credential':
+          setError("The Email and password combination didn't match");
+          setUser(null);
+          break;
         default:
           setError(`There was an error logging you in. Please try again`);
           setUser(null);
@@ -147,11 +151,11 @@ const Login = ({mode, setMode}) => {
 
   return (
     <>
-    <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+    <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", width: "100%"}}>
     <p style={{margin:0, fontSize: "xx-large"}}>Welcome to</p>
     <h1 style={{marginTop: 0}}>Chord Chaos</h1>
     {user ? ( <div> <Navbar /> <h2> Welcome, {user.displayName} </h2> <button onClick={handleLogout} className='glass'>Logout</button></div> ) : 
-    (<div style={{display: 'flex', flexDirection: "column", gap: 10, padding: 15, height: "fit-content", width: 400}} className='glasstransparent'>
+    (<div style={{display: 'flex', flexDirection: "column", gap: 10, padding: 15, height: "fit-content", width: isTabletOrMobile ? '90%' : 400}} className='glasstransparent'>
       <h2>{mode === 'login' ? "Login" : "Sign Up"}</h2>
       {mode === 'login' ? null : 
       <input

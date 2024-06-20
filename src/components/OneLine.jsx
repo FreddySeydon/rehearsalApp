@@ -19,7 +19,7 @@ const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition, isBigS
   }, [displayedLyricsIndex]);
 
   return (
-    <div ref={lineRef} style={{width: isTabletOrMobile ? "100%" : "25rem" }}>
+    <div ref={lineRef} >
       <a
         onClick={() => goToLyricsPosition(line.time)}
         style={{
@@ -27,7 +27,7 @@ const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition, isBigS
           // paddingLeft: "1rem",
           margin: "1rem",
           cursor: "pointer",
-          fontSize: isTabletOrMobile ? "2rem" : "1.5rem",
+          fontSize: isTabletOrMobile ? "1.5rem" : "1.5rem",
           fontWeight: lineActive ? "bold" : "normal",
           color: lineActive ? "#fdc873" : "white",
         }}

@@ -1,18 +1,14 @@
 #root {
-  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 1rem;
-  /* min-width: 496px; */
+  padding: 0.5rem;
+  padding-top: 0rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  /* height: 100%; */
-  /* background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%); */
   background-repeat: no-repeat;
   background-size: cover;
-  
 }
 
 .tracks {
@@ -26,58 +22,53 @@
 
 .audio-mixer {
   width: 100%;
-  display: flex;  
+  display: flex;
   justify-content: center;
-  /* align-items: flex-start; */
   flex-wrap: wrap;
 }
 
 .globalSeek input {
-  width: 100%
-
+  width: 100%;
 }
 
 .controls-wrapper {
   width: 100%;
 }
-.tracks{
+
+.tracks {
   display: flex;
   align-items: center;
   width: 100%;
   justify-content: space-evenly;
-  /* background-color: black; */
 }
 
-.controls{
+.controls {
   margin-top: 2rem;
 }
 
-.globalSeek{
+.globalSeek {
   margin-top: 1rem;
-  width: 100%
+  width: 100%;
 }
 
 .appWrapper {
   width: 100%;
   height: auto;
-  /* background-color: rgba(245, 40, 145, 0.3); */
   border-radius: 50px;
-  /* Padding in element styling for responsiveness */
 }
 
 .selectBoxWrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  /* margin-top: 1rem; */
   margin-bottom: 1rem;
-  color: "black";
+  color: black;
 }
 
 .selectBox p {
-font-weight: bold;
-font-size: large;
-margin-bottom: 0;
+  font-weight: bold;
+  font-size: large;
+  margin-bottom: 0;
 }
 
 .glass {
@@ -105,4 +96,32 @@ margin-bottom: 0;
   backdrop-filter: blur(2.7px);
   -webkit-backdrop-filter: blur(2.7px);
   border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 600px) {
+  .appWrapper {
+    padding: 0.5rem;
+  }
+
+  .controls {
+    margin-top: 1rem;
+  }
+
+  .globalSeek {
+    margin-top: 0.5rem;
+  }
+
+  .selectBoxWrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .navbar {
+    width: 100%;
+  }
+
+  .navbuttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }

@@ -13,7 +13,7 @@ const LoginPage = () => {
     }
   }, [])
   return (
-    <div>
+    <div style={{width: '90vw', overflow: 'hidden'}}>
       <Login mode={mode} setMode={setMode} />
     </div>
   )

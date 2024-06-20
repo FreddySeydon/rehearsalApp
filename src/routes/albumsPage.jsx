@@ -65,21 +65,23 @@ if(noAlbums){
 }
 
   return (
-    <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "100%"}}>
-      {/* <Navbar /> */}
+    <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "90vw"}}>
     <div style={{display: "flex", gap: 20, width: '100%'}}>
         {loading ? 
             <div>Loading...</div> : error ? 
             <div>There was an error: {error}</div> : 
-            <div className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 20, padding: 20, width: isTabletOrMobile ? "100%" : "100%"}}>
-              <div>
-                  <h3 style={{fontSize: "x-large", margin: 0}}>Albums</h3>
-                  
-                  <Link to='/sharecode'>
+            <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', width: "100%"}}>
+
+            
+                  <Link style={{margin: 10}} to='/sharecode'>
                   <button className='glass'>
               Add Album
                   </button>
               </Link>
+            <div className='glasstransparent' style={{display: 'flex', justifyContent: 'center', alignItems:'center', flexDirection: "column", gap: 20, padding: 20, marginTop: 10, width: "85%"}}>
+              <div>
+                  <h3 style={{fontSize: "x-large", margin: 0}}>Albums</h3>
+                  
               </div>
               <div style={{display: 'flex', gap: 10, flexDirection: isTabletOrMobile ? "column" : 'row', justifyContent: 'space-evenly', flexWrap: "wrap"}}>
                    {albums.map((album) => {
@@ -97,8 +99,8 @@ if(noAlbums){
                   )
                 })} 
               </div>
-                </div> }
-                <Outlet/>
+                </div> </div> }
+                {/* <Outlet/> */}
     </div>
     </div>
   )

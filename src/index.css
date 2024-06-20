@@ -2,25 +2,24 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  /* height: 100vh; */
-  /* min-width: 496px; */
-  /* height: 100vh; */
-  /* width: 100vw; */
-
-  /* color-scheme: light dark; */
   color: rgba(255, 255, 255, 0.87);
-  /* background-color: #242424; */
   background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
   background-repeat: no-repeat;
   background-size: cover;
+  min-height: 100vh; /* Ensures the background covers the full height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+body {
+  margin: 0;
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 a {
@@ -30,19 +29,6 @@ a {
 }
 a:hover {
   color: #fdc873;
-}
-
-body {
-  margin: 0;
-  /* min-width: 496px; */
-  display: flex;
-  /* place-items: center; */
-  /* min-width: 320px; */
-  /* height: 100vh; */
-  /* background-color: #593263; */
-  /* width: 100vw; */
-  background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
-
 }
 
 @media only screen and (min-width: 600px) {

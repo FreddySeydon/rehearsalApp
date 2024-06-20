@@ -31,7 +31,7 @@ const LandingPage = () => {
 
 
   return (
-    <div className="landing-page">
+    <div className="landing-page" style={{width: "90vw", overflow: 'hidden'}}>
       {info ? <div className='glassCard' style={{marginBottom: 10}}><h2>{info}</h2></div> : null }
       <header className="landing-header">
         <div className='hero glasstransparent' style={{padding: 15, display: "flex", flexDirection: isTabletOrMobile ? 'column': 'row'}}>

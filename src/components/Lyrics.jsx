@@ -104,17 +104,17 @@ const Lyrics = ({
 
   return (
     <>
-      <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : 0}}>
+      <div className="lyricsWrapper" style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginLeft: isTabletOrMobile ? 0 : 0}}>
         {/* <h3>Lyrics</h3> */}
         {loading ? (
           <div>Loading...</div>
         ) : (
           <div style={{ display: "none" }}>{displayedLyrics}</div>
         )}
-        <div ref={lyricsRef} className="lyricsdisplay" style={{width: hideMixer ? "100%" : "25rem", overflowY: 'scroll', scrollbarWidth: 'none'}}>
+        <div ref={lyricsRef} className="lyricsdisplay" style={{width: "100%", overflowY: 'scroll', scrollbarWidth: 'none'}}>
           {currentLyrics.map((line, index) => {
             return (
-              <div key={index} style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem"}}>
+              <div key={index}>
                 {" "}
                 <OneLine
                   line={line}

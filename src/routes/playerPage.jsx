@@ -23,7 +23,7 @@ const PlayerPage = () => {
 
 
   return (
-    <div>
+    <div style={{width: '90vw', overflow: 'hidden', paddingTop: 100}}>
         {
             loading ? 
                 <img src={loadingSpinner} width={50} alt="Loading" /> : 

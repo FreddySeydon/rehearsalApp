@@ -274,20 +274,21 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
      )
   }
 
+
   return (
     <>
-    <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%"}}>
+    <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%", overflow: 'hidden'}}>
     {/* <Navbar /> */}
       {noAlbums ? <div><h2>Welcome to Chord Chaos!</h2><h3>Start by adding your first album</h3><Link to={'/sharecode'}><button className="glass">Add First Album</button></Link></div> : loading && !songs ? (
         <div>
           <img src={loadingSpinner} alt="Loading" width={50} />
         </div>
       ) : (
-        <div className="appWrapper" style={{ paddingLeft: isTabletOrMobile ? "1rem" : "5rem", paddingRight: isTabletOrMobile ? "1rem" : "5rem", paddingBottom: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "0rem" : "0rem" }}>
+        <div className="appWrapper" style={{ paddingLeft: isTabletOrMobile ? "1rem" : "5rem", paddingRight: isTabletOrMobile ? "1rem" : "5rem", paddingBottom: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "0rem" : "0rem", overflow: 'hidden' }}>
               <div className="selectBoxWrapper" style={{flexDirection: isTabletOrMobile ? "column" : "row", gap: isTabletOrMobile ? 5 : 0, display: hideSelects ? 'none' : 'flex'}}>
                 <div className="selectBox glasstransparent" style={{padding: 10}}>
                 <p style={{padding: 0, margin:0}}>Album: </p>
-                <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black" }}>
+                <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black", width: isTabletOrMobile ? '100%' : null }}>
                   {albums.map((album) => (
                     <option key={album.id} value={album.id}>
                       {album.name}
@@ -301,7 +302,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
                   value={selectedSong}
                   onChange={(e) => handleSongChange(e.target.value)}
                   onClick={() => setIsStopped(!isStopped)}
-                  style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black" }}
+                  style={{ minWidth: "10rem", minHeight: "2.5rem", textAlign: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black", width: isTabletOrMobile ? '100%' : null }}
                 >
                   {songs.map((song) => (
                     <option key={song.id} value={song.id}>
@@ -312,7 +313,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
                 </div>
                 <div className="selectBox glasstransparent" style={{padding: 10}}>
               <p style={{padding: 0, margin:0}}>Lyrics:</p>
-              <select value={selectedTrack} onChange={(e) => handleTrackChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black' }}>
+              <select value={selectedTrack} onChange={(e) => handleTrackChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black', width: isTabletOrMobile ? '100%' : null  }}>
                 {currentSources.map((track) => (
                   <option key={track.id} value={track.id}>
                     {track.number} - {track.name}
@@ -322,17 +323,17 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
             </div>
               </div>
               {isTabletOrMobile ? <div style={{display: "flex", margin: 10, gap: 10, justifyContent: "center", alignItems: "center"}}>
-          <button onClick={() => setIsSwapped(!isSwapped)} className="glassCard" style={{color: "white"}} >Swap Lyircs and Mixer</button>
+          <button onClick={() => setIsSwapped(!isSwapped)} className="glassCard" style={{color: "white"}} >Swap View</button>
           <button onClick={() => setHideMixer(!hideMixer)} className="glassCard" style={{color: "white"}} >{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
           <button onClick={() => setHideSelects(!hideSelects)} className="glassCard" style={{color: "white"}} >{hideSelects ? "Show Selects" : "Hide Selects"}</button>
         </div> : null}
               {!blobsReady ? <div>
           <img src={loadingSpinner} alt="Loading" width={50} />
         </div> : 
-          <div className="audio-mixer" style={{display: "flex", flexDirection: isTabletOrMobile ? "column" : "row", gap: 5 }}>
-            <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "50rem", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "block", paddingBottom: 5}}>
+          <div className="audio-mixer" style={{display: "flex", flexDirection: isTabletOrMobile ? "column" : "row", gap: 5, width: '98%' }}>
+            <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "50%", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "flex", paddingBottom: 5}}>
               <div className="tracks" style={{width: isTabletOrMobile ?  "100%" : "50rem"}}>
-                <div className="singleTrack" style={{overflowX: "scroll", scrollbarWidth: 'none', whiteSpace: 'nowrap'}}>
+                <div className="singleTrack" style={{width: "100%"}}>
                   <Channel
                     sources={currentSources}
                     globalSeek={globalSeek}
@@ -367,11 +368,11 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
                 </div>
               </div>
             </div>
-            <div className="lyricsWrapperr glasstransparent" style={{display: "flex", justifyContent: "center", alignItems: "center", order: isSwapped ? 1 : 2}}>
+            <div className="lyricsWrapperr glasstransparent" style={{display: "flex", width: '100%', justifyContent: "center", alignItems: "center", order: isSwapped ? 1 : 2}}>
             <div style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginTop: isTabletOrMobile ? 5 : 0, padding: 10}}>
             <h3 style={{margin: 0}}>Lyrics</h3>
             {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", paddingBottom: 10, height: 400 }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Album</button></Link></div> :       
-            <div className="lyrics" style={{marginLeft: 0, paddingLeft: 0, width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : null}}>
+            <div className="lyrics" style={{marginLeft: 0, paddingLeft: 0, width: "100%"}}>
               <Lyrics
                 sounds={songs}
                 currentLrcs={currentLrcs}
@@ -404,8 +405,8 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
           </div>
           </div>
         }
-        {!isTabletOrMobile ? <div style={{display: "flex", marginTop: 10, gap: 10, justifyContent: "center", alignItems: "center"}}>
-          <button onClick={() => setIsSwapped(!isSwapped)} className="glassCard" style={{color: "white"}} >Swap Lyircs and Mixer</button>
+        {!isTabletOrMobile ? <div style={{display: "flex", marginTop: 10, gap: isTabletOrMobile ? 5 : 10, justifyContent: "center", alignItems: "center"}}>
+          <button onClick={() => setIsSwapped(!isSwapped)} className="glassCard" style={{color: "white"}} >Swap View</button>
           <button onClick={() => setHideMixer(!hideMixer)} className="glassCard" style={{color: "white"}} >{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
         </div> : null }
         </div>
