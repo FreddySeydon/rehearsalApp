@@ -284,7 +284,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
           <img src={loadingSpinner} alt="Loading" width={50} />
         </div>
       ) : (
-        <div className="appWrapper" style={{ paddingLeft: isTabletOrMobile ? "1rem" : "5rem", paddingRight: isTabletOrMobile ? "1rem" : "5rem", paddingBottom: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "0rem" : "0rem", overflow: 'hidden' }}>
+        <div className="appWrapper" style={{ paddingLeft: isTabletOrMobile ? "1rem" : "0rem", paddingRight: isTabletOrMobile ? "1rem" : "0rem", paddingBottom: isTabletOrMobile ? "1rem" : "5rem", paddingTop: isTabletOrMobile ? "0rem" : "0rem", overflow: 'hidden' }}>
               <div className="selectBoxWrapper" style={{flexDirection: isTabletOrMobile ? "column" : "row", gap: isTabletOrMobile ? 5 : 0, display: hideSelects ? 'none' : 'flex'}}>
                 <div className="selectBox glasstransparent" style={{padding: 10}}>
                 <p style={{padding: 0, margin:0}}>Album: </p>
@@ -368,7 +368,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
                 </div>
               </div>
             </div>
-            <div className="lyricsWrapperr glasstransparent" style={{display: "flex", width: '100%', justifyContent: "center", alignItems: "center", order: isSwapped ? 1 : 2}}>
+            <div className="lyricsWrapperr glasstransparent" style={{display: "flex", width: isTabletOrMobile ? '100%' : '40%', justifyContent: "center", alignItems: "center", order: isSwapped ? 1 : 2}}>
             <div style={{width: isTabletOrMobile ? "100%" : hideMixer ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginTop: isTabletOrMobile ? 5 : 0, padding: 10}}>
             <h3 style={{margin: 0}}>Lyrics</h3>
             {lrcsReady ? noTrackLrc ? <div style={{width: isTabletOrMobile ? "100%" : "25rem", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", paddingBottom: 10, height: 400 }}><p style={{fontSize: "1.25rem", }}>No Lyrics for this track found</p><Link to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}><button>Add Album</button></Link></div> :       

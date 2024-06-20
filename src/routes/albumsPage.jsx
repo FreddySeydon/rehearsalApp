@@ -66,7 +66,7 @@ if(noAlbums){
 
   return (
     <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "90vw"}}>
-    <div style={{display: "flex", gap: 20, width: '100%'}}>
+    <div style={{display: "flex", gap: 20, width: isTabletOrMobile ? '100%' : "70%"}}>
         {loading ? 
             <div>Loading...</div> : error ? 
             <div>There was an error: {error}</div> : 

@@ -327,7 +327,7 @@ const LyricsSync = ({
       Saving...
       </div> : doneSaving ? <div> <p>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}} onClick={handleContinueEditing}>Continue Editing</button> </div> </div> : error ? <div><p>There was an error saving your lyrics</p><button onClick={() => setError('')}>Try again</button></div>  :
     
-    <div className="lyricsWrapper" style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '100%'}}>
+    <div className="lyricsWrapper" style={{ width: '100%'}}>
         <div id='lyricsinput' style={{display: editing ? "flex" : "none", flexDirection: "column" }}>
     <textarea
       rows="20"

@@ -272,7 +272,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
           <div className="selectBoxWrapper" style={{ flexDirection: isTabletOrMobile ? 'column' : 'row' }}>
             <div className="selectBox glass" style={{paddingRight: 10, paddingBottom: 10, paddingLeft: 10}}>
               <p>Select Album: </p>
-              <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black', width: isTabletOrMobile ? '100%' : null  }}>
+              <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black', width: isTabletOrMobile ? '100%' : '100%'  }}>
                 {albums.map((album) => (
                   <option key={album.id} value={album.id}>
                     {album.name}
@@ -306,8 +306,8 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
               <img src={loadingSpinner} alt="Loading" width={50} />
             </div>
           ) : (
-            <div className="syncWrapper" style={{width: "100%", display: "flex", justifyContent: "center", flexDirection: isTabletOrMobile ? 'column' : 'row', alignItems: "center", gap: isTabletOrMobile ? 0 : 50 }}>
-              <div className="controlsWrapper glasstransparent" style={{display: hideMixer ? "none" : "block", width: "100%", padding: 10}}>
+            <div className="syncWrapper" style={{width: "100%", display: "flex", justifyContent: "center", flexDirection: isTabletOrMobile ? 'column' : 'row', alignItems: "center", gap: isTabletOrMobile ? 0 : 5 }}>
+              <div className="controlsWrapper glasstransparent" style={{display: hideMixer ? "none" : "block", width: isTabletOrMobile ? "100%" : '40%', padding: 10}}>
                 <div className="tracks" style={{width: "100%"}} >
                   <div className="singleTrack" style={{width: "100%"}}>
                     <button onClick={() => setHideMixer(!hideMixer)} className='glass'>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
@@ -343,7 +343,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   </div>
                 </div>
               </div>
-              <div className='glasstransparent' style={{ width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '25rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginTop: isTabletOrMobile ? 5 : 0 }}>
+              <div className='glasstransparent' style={{padding: 10, width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '50%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginTop: isTabletOrMobile ? 5 : 0 }}>
                 <h3 style={{ marginBottom:  0, marginTop: 5 }}>Lyrics</h3>
                 <LyricsSync
                   statePlayers={statePlayers}

@@ -8,6 +8,7 @@ import UpdateLrcFile from '../components/UpdateLrcFile';
 import DeleteTrack from '../components/DeleteTrack';
 import "./songDetailPage.css";
 import { useUser } from '../context/UserContext';
+import { useMediaQuery } from 'react-responsive';
 
 const SongDetailPage = () => {
     const {songId, albumId} = useParams();
@@ -19,6 +20,8 @@ const SongDetailPage = () => {
     const [fullSongData, setFullSongData] = useState(null)
 
     const {user, authLoading} = useUser();
+
+    const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
     const fetchSongs = async () => {
         setLoading(true);
@@ -72,10 +75,10 @@ const SongDetailPage = () => {
         tracks.map((track, index) => (
             <div key={track.id} className='glasstransparent' style={{marginBottom: 10, padding: 20, width: '90%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                 <h2>Track {track.number} - {track.name}</h2>
-                <div className='trackcardcontent' style={{marginBottom: 25, gap:40, width: '100%'}}>
+                <div className='trackcardcontent' style={{display: 'flex', flexDirection: isTabletOrMobile ? 'column' : 'row', marginBottom: 25, gap: isTabletOrMobile ? 5 : 40, width: '100%'}}>
                       {user.uid === track.ownerId ?                       
                     <div>
-                      <div style={{display:"flex", flexDirection: "column", gap: 10, minWidth: 285, padding: 15, minHeight: 140}} className='glassCard'>
+                      <div style={{display:"flex", flexDirection: "column", gap: 10, padding: 15, minHeight: 140, width: isTabletOrMobile ? '112%' : '50%'}} className='glassCard'>
                         <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>Audio File</p>
                         <UpdateAudioFile albumId={albumId} songId={songId} trackId={track.id} />
                         {tracks.length > 1 ? 
@@ -85,7 +88,7 @@ const SongDetailPage = () => {
                         </div> 
                     </div> : null
                     }
-                    <div className='glassCard' style={{ display: 'flex', flexDirection:"column", padding: 15, minHeight: 140, gap: 10, width: "100%"}}>
+                    <div className='glassCard' style={{ display: 'flex', flexDirection:"column", padding: 15, minHeight: 140, gap: 10, width: isTabletOrMobile ? '90%' : "50%"}}>
                       <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>Lyrics</p>
                         {/* <p style={{fontWeight: "bold", fontSize: "1.2rem", marginBottom: 2, marginTop: 0}}>{getLRCForTrack(track.id) ? "Lyrics" : null}</p>  */}
                         <Link to={`/lyricseditor?albumId=${albumId}&songId=${songId}&trackId=${track.id}`} style={{width: "100%"}}>
@@ -102,7 +105,7 @@ const SongDetailPage = () => {
     );
 
     return (
-        <div className='glasstransparent' style={{marginTop: 100,padding: 20, width:"80vw"}}>
+        <div className='glasstransparent' style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginTop: 100,padding: 20, width:"80vw"}}>
             <h2 style={{marginBottom: 0}}>{loading || error ? null : fullSongData.tracks.length} Tracks</h2>
             {loading ? renderLoading() : error ? null : <h2 style={{marginTop: 0}}>{`${fullSongData.number}. ${fullSongData.name}`}</h2>}
             {loading ? renderLoading() : error ? renderError() : renderTracks()}
