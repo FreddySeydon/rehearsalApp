@@ -142,7 +142,7 @@ const Channel = ({
   return (
     <div className="controlsWrapper" style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: "100%", whiteSpace: 'nowrap'}}>
       <div className="trackControlsContainer" style={{ display: "flex", overflowX: 'auto', scrollbarWidth: 'thin', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-    <div className="trackControls" style={{ display: "flex", width: "max-content" }}>
+    <div className="trackControls" style={{ display: "flex", width: 'max-content'}}>
       {false ? (
         <div>Loading...</div>
       ) : (

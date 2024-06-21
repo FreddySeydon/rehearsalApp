@@ -3,7 +3,7 @@ import FileUpload from '../components/FileUpload'
 
 const UploadPage = () => {
   return (
-    <div>
+    <div style={{width: '90vw', overflow: 'hidden', paddingTop: 5}}>
       <FileUpload />
     </div>
   )

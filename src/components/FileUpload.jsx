@@ -436,8 +436,9 @@ const FileUpload = () => {
       formData.append('songNumber', songNumber);
   
       const idToken = await user.getIdToken();
-  
-      const response = await fetch('http://localhost:3000/upload-audio', {
+
+      const currentServer = import.meta.env.VITE_SERVER_ADDRESS
+      const response = await fetch(`${currentServer}/upload-audio`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${idToken}`,
@@ -524,7 +525,7 @@ const FileUpload = () => {
             <img src={loadingSpinner} alt="Loading" width={"30rem"} />
           </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: isTabletOrMobile ? 'column' : "row", gap: 20, padding: 50, minHeight: 500, minWidth: isTabletOrMobile ? '100%' : 1200 }} className="glasstransparent">
+          <div style={{ display: "flex", flexDirection: isTabletOrMobile ? 'column' : "row", gap: 20, padding: 50, minHeight: 500, minWidth: isTabletOrMobile ? '90%' : 1200 }} className="glasstransparent">
             <div style={{ display: "flex", flexDirection: "column", width: isTabletOrMobile ? "100%" : "33%" }}>
               <div style={{ display: "flex", flexDirection: "column", marginBottom: 20 }}>
                 {loading ? (
