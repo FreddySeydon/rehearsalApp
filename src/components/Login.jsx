@@ -59,6 +59,10 @@ const Login = ({mode, setMode}) => {
           setError("The Email and password combination didn't match");
           setUser(null);
           break;
+          case 'auth/popup-closed-by-user':
+            setError('You closed the popup.');
+            setUser(null);
+            break;
         default:
           setError(`There was an error logging you in. Please try again`);
           setUser(null);
@@ -101,6 +105,10 @@ const Login = ({mode, setMode}) => {
           setError('This Email Address is already in use');
           setUser(null);
           break;
+        case 'auth/popup-closed-by-user':
+          setError('You closed the popup.');
+          setUser(null);
+          break;
         default:
           setError(`There was an error signing up. Please try again`);
           setUser(null);
@@ -138,7 +146,7 @@ const Login = ({mode, setMode}) => {
       setUser(currentUser);
     } catch (error) {
       console.error('Error with Google Sign-In:', error);
-      setError(`There was an error signing you in with Google. Please try again. ${error}`);
+      // setError(`There was an error signing you in with Google. Please try again. ${error}`);
     }
   };
 
