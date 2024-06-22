@@ -331,7 +331,7 @@ const App = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
           <img src={loadingSpinner} alt="Loading" width={50} />
         </div> : 
           <div className="audio-mixer" style={{display: "flex", flexDirection: isTabletOrMobile ? "column" : "row", gap: 5, width: '98%' }}>
-            <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "50%", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "flex", paddingBottom: 5}}>
+            <div className="controlsWrapper glasstransparent" style={{width: isTabletOrMobile ? "100%" : "50%", order: isSwapped ? 2 : 1, display: hideMixer ? "none" : "flex", paddingBottom: 5, justifyContent: 'center', alignItems: 'center'}}>
               <div className="tracks" style={{width: "100%"}}>
                 <div className="singleTrack" style={{width: "100%"}}>
                   <Channel

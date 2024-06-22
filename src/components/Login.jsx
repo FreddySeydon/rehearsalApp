@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import GoogleSignInIcon from '../assets/img/googlesignin.svg'
 import { useMediaQuery } from 'react-responsive';
+import { db } from '../../utils/firebase';
 
 const Login = ({mode, setMode}) => {
   const [email, setEmail] = useState('');

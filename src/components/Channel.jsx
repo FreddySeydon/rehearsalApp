@@ -140,9 +140,9 @@ const Channel = ({
   }
 
   return (
-    <div className="controlsWrapper" style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: "100%", whiteSpace: 'nowrap'}}>
-      <div className="trackControlsContainer" style={{ display: "flex", overflowX: 'auto', scrollbarWidth: 'thin', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-    <div className="trackControls" style={{ display: "flex", width: 'max-content'}}>
+    <div className="controlsWrapper" style={{ width: '95%'}}>
+      <div className="trackControlsContainer" style={{overflowX: 'scroll', whiteSpace: 'nowrap'}}>
+    <div className="trackControls" style={{width: 'max-content'}} >
       {false ? (
         <div>Loading...</div>
       ) : (
@@ -165,7 +165,7 @@ const Channel = ({
       )}
       </div>
       </div>
-      <div className="globalControls" style={{justifyContent: 'center', display: 'flex', alignItems:'center', width: "65%"}}>
+      <div className="globalControls" style={{justifyContent: 'center', display: 'flex', alignItems:'center', width: "100%"}}>
 
         <div className="controls">
           <button
