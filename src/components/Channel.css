@@ -1,9 +1,10 @@
 .volumeSlider {
     width: 2px;
     height: 175px;
-    -webkit-appearance: slider-vertical;
+    /* -webkit-appearance: slider-vertical; */
     /* -webkit-appearance: none; */
-    writing-mode: bt-lr;
+    writing-mode: vertical-lr;
+    direction:rtl;
 }
 
 /* .volumeSlider {
@@ -14,9 +15,9 @@
     outline: none;
     overflow: hidden;
     border-radius: 16px;
-}
+} */
 
-.volumeSlider::-webkit-slider-runnable-track {
+/* .volumeSlider::-webkit-slider-runnable-track {
     height: 15px;
     border-radius: 16px;
   }
@@ -34,7 +35,7 @@
         background-color: #fff;
         border-radius: 50%;
         border: 2px solid #f50;
-        box-shadow: -407px 0 0 400px #f50;
+        box-shadow: -407px 0 0 2px #f50;
       }
       .volumeSlider::-moz-range-thumb {
         height: 15px;
