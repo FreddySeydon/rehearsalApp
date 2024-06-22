@@ -262,8 +262,12 @@ const LyricsSync = ({
     const lrcContent = usedTimestamps.map(({ time, line }) => `[${time}]${line}`).join('\n');
     const blob = new Blob([lrcContent], { type: 'text/plain' });
     const thisSong = songs.find((song) => selectedSong === song.id);
-    const thisTrack = thisSong.tracks.find((track) => selectedTrack === track.id);
-    const trackName = thisTrack.name;
+    const thisTrack = thisSong?.tracks?.find((track) => selectedTrack === track.id);
+    let trackName = thisTrack?.name;
+    if(!trackName){
+      const date = new Date();
+      trackName = `NoName ${date}`
+    }
   
     try {
       const updateLrcResult = await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName, user, fullySynced);
