@@ -49,6 +49,8 @@ const LyricsSync = ({
 
   const lyricsRef = useRef();
 
+  // console.log("Selected: ", "A: ",selectedAlbum, "S: ", selectedSong,"T: ", selectedTrack)
+
   const handleLyricsChange = (e) => {
     const newLyrics = e.target.value;
     const newLines = newLyrics.split('\n');
@@ -265,8 +267,10 @@ const LyricsSync = ({
     const thisTrack = thisSong?.tracks?.find((track) => selectedTrack === track.id);
     let trackName = thisTrack?.name;
     if(!trackName){
-      const date = new Date();
-      trackName = `NoName ${date}`
+      console.log("Error: Track name missing", trackName, "Selected Track: ", selectedTrack)
+      setError('Track name missing')
+      setIsSaving(false)
+      return
     }
   
     try {

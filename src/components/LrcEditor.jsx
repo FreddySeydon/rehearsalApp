@@ -59,7 +59,6 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
               return
             }
             console.log("You can't view this album.")
-            return
           }
           const lastAlbum = localStorage.getItem("selected-album")
           if(lastAlbum) {
@@ -72,7 +71,6 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
               setSearchParams({...Object.fromEntries(searchParams), albumId: parsedAlbumId})
               return
             }
-            return
           }
           setSelectedAlbum(albumsList[0].id); // Set the first album as the default selected album
           setSearchParams({...Object.fromEntries(searchParams), albumId: albumsList[0].id})
@@ -101,7 +99,6 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
             return
           }
           console.log("You can't view this song.")
-          return
         }
         const lastSong = localStorage.getItem("selected-song")
         if(lastSong) {
@@ -147,7 +144,6 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
             return
           }
           console.log("You can't view this album.")
-          return
         }
         const lastTrack = localStorage.getItem("selected-track")
         if(lastTrack) {
@@ -160,7 +156,6 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
             setSearchParams({...Object.fromEntries(searchParams), trackId: parsedTrackId})
             return
           }
-          return
         }
         setSelectedTrack(currentSourcesArray[0].id); // Set the first album as the default selected album
         setSearchParams({...Object.fromEntries(searchParams), trackId: currentSourcesArray[0].id})

@@ -273,22 +273,22 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
     }
   }, [selectedAlbum]);
 
-  const handleAlbumChange = (albumId) => {
-    setSelectedAlbum(albumId);
-    localStorage.setItem("selected-album", JSON.stringify(albumId));
-    setSearchParams({ ...Object.fromEntries(searchParams), albumId: albumId });
+  const handleAlbumChange = (newAlbumId) => {
+    setSelectedAlbum(newAlbumId);
+    localStorage.setItem("selected-album", JSON.stringify(newAlbumId));
+    setSearchParams({ ...Object.fromEntries(searchParams), albumId: newAlbumId });
   };
 
-  const handleSongChange = (songId) => {
-    setSelectedSong(songId);
-    localStorage.setItem("selected-song", JSON.stringify(songId));
-    setSearchParams({ ...Object.fromEntries(searchParams), songId: songId });
+  const handleSongChange = (newSongId) => {
+    setSelectedSong(newSongId);
+    localStorage.setItem("selected-song", JSON.stringify(newSongId));
+    setSearchParams({ ...Object.fromEntries(searchParams), songId: newSongId });
   };
 
-  const handleTrackChange = (trackId) => {
-    setSelectedTrack(trackId);
-    localStorage.setItem("selected-track", JSON.stringify(trackId));
-    setSearchParams({ ...Object.fromEntries(searchParams), trackId: trackId });
+  const handleTrackChange = (newTrackId) => {
+    setSelectedTrack(newTrackId);
+    localStorage.setItem("selected-track", JSON.stringify(newTrackId));
+    setSearchParams({ ...Object.fromEntries(searchParams), trackId: newTrackId });
   };
 
   //Clean up on unmount
