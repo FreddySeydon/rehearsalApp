@@ -33,6 +33,10 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
         const songSnap = await getDoc(songRef);
         const songData = songSnap.data();
         const sharedWith = songData.sharedWith ? songData.sharedWith : [];
+        const songOwner = songData.ownerId
+        if(songOwner !== user.uid){
+          sharedWith.push(songOwner);
+        }
         const storage = getStorage();
         const promises = selectedFiles.map(async (file) => {
           return new Promise(async (resolve, reject) => {
