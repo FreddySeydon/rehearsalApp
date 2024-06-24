@@ -14,6 +14,8 @@ import { updateLrc } from '../../utils/databaseOperations';
 import { InputMask } from '@react-input/mask';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
+import { formatTimeMilliseconds } from '../../utils/lrcParser';
+import resetIcon from '../assets/img/reset.svg'
 
 const LyricsSync = ({
   statePlayers,
@@ -51,8 +53,7 @@ const LyricsSync = ({
   const [lyricsLoading, setLyricsLoading] = useState(true);
 
   const lyricsRef = useRef();
-
-  // console.log("Selected: ", "A: ",selectedAlbum, "S: ", selectedSong,"T: ", selectedTrack)
+  const currentLineRef = useRef();
 
   const handleLyricsChange = (e) => {
     const newLyrics = e.target.value;
@@ -72,7 +73,7 @@ const LyricsSync = ({
     });
   };
 
-  useEffect(() => {
+  const initializeLyrics = () => {
     if (existingLyrics) {      
       const cleanLyrics = [];
       const existingTimestamps = [];
@@ -98,7 +99,7 @@ const LyricsSync = ({
   
       setLines(cleanLyrics);
       setLyrics(cleanLyrics.join("\n"));
-      setCurrentLineIndex(existingTimestamps.length)
+      setCurrentLineIndex(0)
   
       if (currentTrackLrc.fullySynced) {
         setTimestamps(existingTimestamps);
@@ -111,6 +112,10 @@ const LyricsSync = ({
       setLines([]);
       setTimestamps([]);
     }
+  }
+
+  useEffect(() => {
+    initializeLyrics();
   }, [existingLyrics, currentTrackLrc]);
 
 
@@ -157,6 +162,20 @@ const LyricsSync = ({
   
   };
 
+  const handleGlobalSeek = (value) => {
+    if (Tone.Transport.state === "started") {
+      Tone.Transport.pause();
+      Object.values(statePlayers._players).forEach((player) => player.sync());
+      setGlobalSeek(value);
+      Tone.Transport.seconds = value;
+      Tone.Transport.start();
+    } else {
+      Object.values(statePlayers._players).forEach((player) => player.sync());
+      setGlobalSeek(value);
+      Tone.Transport.seconds = value;
+    }
+  };
+
   const handleUnsyncedLines = () => {
     if (timestamps.length !== lines.length) {
       console.log("Timestamps length: ",timestamps.length)
@@ -180,11 +199,11 @@ const LyricsSync = ({
 
   const handlePreviousLine = () => {
     if(currentLineIndex - 1 >= 1){
-        setTimestamps((prev) => {
-            const newTimestamps = [...prev];
-            newTimestamps.pop();
-            return newTimestamps;
-        });
+        // setTimestamps((prev) => {
+        //     const newTimestamps = [...prev];
+        //     newTimestamps.pop();
+        //     return newTimestamps;
+        // });
         setCurrentLineIndex((prev) => prev - 1);
 
     }
@@ -244,8 +263,12 @@ const LyricsSync = ({
   };
 
   const handleReset = () => {
-    setTimestamps([]);
     handleStop();
+    if(existingLyrics){
+      initializeLyrics();
+      return
+    }
+    setTimestamps([])
   }
 
   const handleDoneEditing = () => {
@@ -324,8 +347,11 @@ const LyricsSync = ({
   useEffect(() => {
     const scrollToCurrentLine = () => {
       const currentLine = document.getElementById(`line-${currentLineIndex}`);
+      console.log("Current line: ",currentLine)
       if (currentLine) {
-        currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        currentLineRef.current = currentLine;
+        currentLineRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        // currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     };
     scrollToCurrentLine();
@@ -437,13 +463,25 @@ const LyricsSync = ({
                     marginLeft: "0.25rem",
                     backgroundColor: "transparent",
                     }}><img src={iconStop} alt="Stop" style={{ width: "3rem"}}  /></button>
+                            <div className="globalSeek">
+                      <input
+                        type="range"
+                        min="0"
+                        max={trackDuration || 0}
+                        value={Tone.Transport.seconds || 0}
+                        onChange={(e) => {
+                          handleGlobalSeek(e.target.value);
+                        }}
+                      />
+                      <div style={{ fontWeight: "bold", fontSize: isTabletOrMobile ? "1.5rem" : "1.1rem" }}>{formatTimeMilliseconds(globalSeek)}</div>
+                    </div>
                     </div>
                     <div style={{display: "flex", flexDirection: 'column', alignItems: "center", justifyContent: "center", gap: 10}}>
                   <button onClick={handleSaveLyrics} className='glass' style={{width: "100%"}}>Save Lyrics</button>
                   {/* <button onClick={handlePreview}>Preview</button> */}
                   <div style={{display: 'flex'}}>
                   <button onClick={handleStartEditing} style={{backgroundColor: "transparent", padding: 0}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
-                  <button onClick={handleReset} className='glass' style={{backgroundColor: "transparent", borderWidth: 3, margin: 0, padding: 5, border: "dashed", borderColor: "darkred", color: "white"}}>Reset Sync</button>
+                  <button onClick={handleReset} style={{backgroundColor: "transparent", borderWidth: 3, margin: 0, padding: 5, color: "#fdc873"}}> <img src={resetIcon} alt="Reset Sync" style={{ width: "3.5rem", marginBottom: 6}} /> </button>
       <button
         onClick={() => {
           const lrcContent = timestamps

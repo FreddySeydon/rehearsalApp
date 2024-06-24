@@ -230,7 +230,7 @@ const Channel = ({
             type="range"
             min="0"
             max={trackDuration || 0}
-            value={Tone.Transport.seconds}
+            value={Tone.Transport.seconds || 0}
             onChange={(e) => {
               handleGlobalSeek(e.target.value);
             }}

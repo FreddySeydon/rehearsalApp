@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import LrcEditor from '../components/LrcEditor'
 import loadingSpinner from '../assets/img/loading.gif'
 import { useParams, useSearchParams } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
 
 const LyricsEditorPage = () => {
 
@@ -11,6 +12,8 @@ const LyricsEditorPage = () => {
     const [trackId, setTrackId] = useState('')
 
     const [searchParams, setSearchParams] = useSearchParams();
+
+    const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
     useEffect(() => {
         if(searchParams){
@@ -23,7 +26,7 @@ const LyricsEditorPage = () => {
 
 
   return (
-    <div style={{width: '90vw', overflow: 'hidden', paddingTop: 90}}>
+    <div style={{width: '90vw', overflow: 'hidden', paddingTop: isTabletOrMobile ? 80 : 0, maxHeight: isTabletOrMobile ? null : "90vh"}}>
         {
             loading ? 
                 <img src={loadingSpinner} width={50} alt="Loading" /> : 

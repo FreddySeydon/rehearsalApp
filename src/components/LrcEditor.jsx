@@ -266,7 +266,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
           <img src={loadingSpinner} alt="Loading" width={50} />
         </div>
       ) : (
-        <div className="appWrapper" style={{ padding: isTabletOrMobile ? '1rem' : '5rem' }}>
+        <div className="appWrapper" style={{ padding: isTabletOrMobile ? '1rem' : '1rem' }}>
           <h1 style={{ fontSize: isTabletOrMobile ? '1.5rem' : '2rem' }}>Sync Lyrics</h1>
           <div className="selectBoxWrapper" style={{ flexDirection: isTabletOrMobile ? 'column' : 'row' }}>
             <div className="selectBox glass" style={{paddingRight: 10, paddingBottom: 10, paddingLeft: 10}}>
