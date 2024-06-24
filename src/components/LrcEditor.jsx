@@ -14,6 +14,7 @@ import { fetchAlbumsList } from '../../utils/databaseOperations';
 import { fetchSongsList } from '../../utils/databaseOperations';
 import { Link } from 'react-router-dom';
 import { sortArrayByNumberKey } from '../../utils/utils';
+import LoadingSpinner from './LoadingSpinner';
 
 const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
@@ -252,7 +253,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
   }
 
   if(authLoading){
-    return <div>Loading...</div>
+    return <LoadingSpinner />
   }
 
   if(noAlbums){
@@ -370,6 +371,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   currentTrackLrc={currentTrackLrc}
                   fetchAlbums={fetchAlbums}
                   noTrackLrc={noTrackLrc}
+                  playersLoaded={playersLoaded}
                 />
               </div>
             </div>

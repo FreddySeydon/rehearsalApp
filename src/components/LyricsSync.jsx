@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
 import { formatTimeMilliseconds } from '../../utils/lrcParser';
 import resetIcon from '../assets/img/reset.svg'
+import loadingIcon from '../assets/img/loading.gif'
 
 const LyricsSync = ({
   statePlayers,
@@ -40,7 +41,8 @@ const LyricsSync = ({
   user,
   currentTrackLrc,
   fetchAlbums,
-  noTrackLrc
+  noTrackLrc,
+  playersLoaded
 }) => {
   const [lyrics, setLyrics] = useState('');
   const [lines, setLines] = useState([]);
@@ -178,7 +180,6 @@ const LyricsSync = ({
 
   const handleUnsyncedLines = () => {
     if (timestamps.length !== lines.length) {
-      console.log("Timestamps length: ",timestamps.length)
       const unsyncedLines = lines.length - timestamps.length;
       console.log(`Handling ${unsyncedLines} unsynced lines`);
       let lastTimestampTime = '00:00.00'
@@ -308,7 +309,6 @@ const LyricsSync = ({
   
     try {
       const updateLrcResult = await updateLrc(blob, selectedAlbum, selectedSong, selectedTrack, trackName, user, fullySynced);
-      console.log("Update LRC result: ", updateLrcResult);
       if (updateLrcResult.result === "success") {
         setIsSaving(false);
         setDoneSaving(true);
@@ -347,7 +347,6 @@ const LyricsSync = ({
   useEffect(() => {
     const scrollToCurrentLine = () => {
       const currentLine = document.getElementById(`line-${currentLineIndex}`);
-      console.log("Current line: ",currentLine)
       if (currentLine) {
         currentLineRef.current = currentLine;
         currentLineRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -450,13 +449,14 @@ const LyricsSync = ({
                     }}><img src={iconRight} alt="Next Line" style={{ width: "3rem"}} /></button>}
                     </div>
                     <div>
-                  <button onClick={handlePlayPause}             
+                  <button onClick={handlePlayPause} 
+                  disabled={!playersLoaded}            
                   style={{
                     marginRight: "0.25rem",
                     marginLeft: "0.25rem",
                     backgroundColor: "transparent",
                     }}>
-                <img src={playing ? iconPause : iconPlay} alt={playing ? "Pause" : "Play"} style={{ width: "3rem"}} />
+                <img src={!playersLoaded ? loadingIcon : playing ? iconPause : iconPlay} alt={playing ? "Pause" : "Play"} style={{ width: "3rem"}} />
                 </button>
                   <button onClick={handleStop} style={{
                     marginRight: "0.25rem",
