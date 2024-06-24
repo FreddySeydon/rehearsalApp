@@ -9,6 +9,8 @@ import DeleteTrack from '../components/DeleteTrack';
 import "./songDetailPage.css";
 import { useUser } from '../context/UserContext';
 import { useMediaQuery } from 'react-responsive';
+import { sortArrayByNumberKey } from '../../utils/utils';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const SongDetailPage = () => {
     const {songId, albumId} = useParams();
@@ -30,11 +32,9 @@ const SongDetailPage = () => {
           const songSnapshot = await getDoc(doc(db, `albums/${albumId}/songs/${songId}`));
           const songData = songSnapshot.data()
           setFullSongData(songData);
-          console.log("Song Data: ",songData)
           const tracksList = songData.tracks
           // console.log(song)
           const lrcList = songData.lrcs
-          console.log("lrc list: ",lrcList)
           if(lrcList){
               const lrcMap = lrcList.reduce((acc, lrcData) => {
                 acc[lrcData.trackId] = lrcData.lrc;
@@ -42,8 +42,8 @@ const SongDetailPage = () => {
             }, {});
             setLrcs(lrcMap);
           }
-          console.log(tracksList)
-          setTracks(tracksList);
+          const sortedTracksList = sortArrayByNumberKey(tracksList)
+          setTracks(sortedTracksList);
         } catch (error) {
           console.error("Error fetching songs:", error);
           setError(error)
@@ -64,7 +64,7 @@ const SongDetailPage = () => {
       }
 
       const renderLoading = () => (
-        <div>Loading...</div>
+        <LoadingSpinner/>
     );
 
     const renderError = () => (
@@ -95,7 +95,7 @@ const SongDetailPage = () => {
                         <button className='glass' style={{width: "100%"}}>{getLRCForTrack(track.id) ? `Edit Lyrics` : `Add Lyrics`}</button>
                         </Link>
                         {getLRCForTrack(track.id) ? 
-                            <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} refetchSongs={fetchSongs} /> : 
+                            <UpdateLrcFile albumId={albumId} songId={songId} trackId={track.id} refetchSongs={fetchSongs} trackName={track.name} user={user} authLoading={authLoading} /> : 
                             <LrcUpload albumId={albumId} songId={songId} trackId={track.id} trackName={track.name} refetchSongs={fetchSongs}/>
                         }
                     </div>
@@ -107,7 +107,7 @@ const SongDetailPage = () => {
     return (
         <div className='glasstransparent' style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginTop: 100,padding: 20, width:"80vw"}}>
             <h2 style={{marginBottom: 0}}>{loading || error ? null : fullSongData.tracks.length} Tracks</h2>
-            {loading ? renderLoading() : error ? null : <h2 style={{marginTop: 0}}>{`${fullSongData.number}. ${fullSongData.name}`}</h2>}
+            {loading ? null : error ? null : <h2 style={{marginTop: 0}}>{`${fullSongData.number}. ${fullSongData.name}`}</h2>}
             {loading ? renderLoading() : error ? renderError() : renderTracks()}
         </div>
     );

@@ -14,6 +14,7 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
     const [uploadCompleted, setUploadCompleted] = useState(false);
     const [info, setInfo] = useState(null)
     const [error, setError] = useState(null)
+    const [showUploadForm, setShowUploadForm] = useState(false);
 
     const {user, authLoading} = useUser();
 
@@ -88,7 +89,8 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
                 lrc: downloadURL,
                 version: 1,
                 ownerId: user.uid,
-                ownerName: user.displayName
+                ownerName: user.displayName,
+                fullySynced: true
               })
             } else if (ext !== 'lrc') {
               setInfo("Only lrc files are supported")
@@ -119,6 +121,9 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
 
       return (
           <div>
+            {!showUploadForm ? <button className="glasstransparent" style={{width: "100%"}} onClick={() => setShowUploadForm(true)}>Upload LRC File</button> :
+            
+            <div>
         {uploadCompleted ? error ? (<div>{`An error occurred: ${error}`}</div>) : (<div style={{color: "white"}}><p style={{fontSize: 20}}>Lyrics uploaded successfully</p><button onClick={refetchSongs}>Reload</button></div>) : 
             <div style={{display: "flex",flexDirection:"column", gap: 10, justifyContent: "center", alignItems: "center"}}>
               <LrcUploadDropzone setSelectedFiles={setSelectedFiles} selectedFiles={selectedFiles} />
@@ -126,11 +131,13 @@ const LrcUpload = ({albumId, songId, trackName, trackId, refetchSongs}) => {
               <input type="file" multiple onChange={handleFileChange} /> */}
               {info ? info : null}
               <div>
-              <button onClick={handleUpload}>{uploadStarted ? !uploadCompleted ? "Uploading..." : "Done!" : "Upload"}</button>
+              <button onClick={handleUpload} className='glass'>{uploadStarted ? !uploadCompleted ? "Uploading..." : "Done!" : "Upload"}</button>
+              <button onClick={() => setShowUploadForm(false)} style={{marginLeft: 10}} className='glasstransparent'>Cancel</button>
               <button onClick={resetSelect} style={{background: "transparent", color: "darkred"}}>Reset</button>
               </div>
             </div>
         }
+        </div>}
         </div>
   )
 }

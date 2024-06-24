@@ -8,6 +8,7 @@ import "./albumDetailPage.css";
 import { useUser } from '../context/UserContext';
 import { fetchSongsList } from '../../utils/databaseOperations';
 import { useMediaQuery } from 'react-responsive';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const AlbumDetailPage = () => {
     
@@ -62,7 +63,7 @@ const AlbumDetailPage = () => {
   return (
     <div style={{display: "flex", gap: 20, width: isTabletOrMobile ? "100%" : 600}}>
         {loading ? 
-            <div>Loading...</div> : error ? 
+            <LoadingSpinner /> : error ? 
             <div>There was an error: {error}</div> : 
             <div className='glasstransparent' style={{display: 'flex', flexDirection: "column", gap: 10, padding: 20, width: isTabletOrMobile ? "100%" : 600}}>
                 {/* TODO: Fetch Album metadata to display here */}
