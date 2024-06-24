@@ -12,7 +12,7 @@ const OneLine = ({ line, index, displayedLyricsIndex, goToLyricsPosition, isBigS
     }
     if (displayedLyricsIndex == index) {
       setLineActive(true);
-      lineRef.current.scrollIntoView({behavior:"smooth", block:"center", inline:"center"})
+      lineRef.current.scrollIntoView({behavior:"smooth", block:"center", inline:"nearest"})
       return;
     }
     setLineActive(false);

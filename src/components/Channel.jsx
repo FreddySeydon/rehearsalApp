@@ -34,7 +34,10 @@ const Channel = ({
   setPlayersLoaded,
   clearMute,
   setClearMute,
-  isStopped
+  isStopped,
+  setIsStopped,
+  setPlayerStopped,
+  playerStopped
 }) => {
   useEffect(() => {
     // console.log("Channel sources",sources)
@@ -121,23 +124,29 @@ const Channel = ({
       await Tone.start();
       handlePlay();
       setPlaying(true);
+      setPlayerStopped(false)
     }
   };
   const handlePause = () => {
     Tone.Transport.pause();
     setPlaying(false);
   };
-  const handleStop = () => {
-    Tone.Transport.stop();
-    setGlobalSeek(0);
-    setPlaying(false);
-    clearInterval(seekUpdateInterval);
-  };
 
-  const handleSongChange = (e) => {
-    setSelectedSong(e.target.value);
-    localStorage.setItem('selected-song', JSON.stringify(e.target.value));
-  }
+  const handleStop = () => {
+    if(playing){
+      Tone.Transport.stop();
+      setPlayerStopped(true)
+      setGlobalSeek(0);
+      setPlaying(false);
+      clearInterval(seekUpdateInterval);
+      return
+    }
+      Tone.Transport.stop();
+      setPlayerStopped(true);
+      setGlobalSeek(0);
+      clearInterval(seekUpdateInterval);
+
+  };
 
   return (
     <div className="controlsWrapper" style={{ width: '95%'}}>
@@ -191,10 +200,10 @@ const Channel = ({
               backgroundColor: "transparent",
             }}
             onClick={handleStop}
-            disabled={playersLoaded ? false : true}
+            disabled={!playersLoaded || playerStopped ? true : false}
           >
             <img
-              style={{ width: "3rem", opacity: playersLoaded ? 1 : 0.5 }}
+              style={{ width: "3rem", opacity: !playersLoaded || playerStopped ? 0.5 : 1 }}
               src={iconStop}
               alt="Stop Button"
             />
