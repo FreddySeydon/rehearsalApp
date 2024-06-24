@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Channel.css";
 import * as Tone from "tone";
 import OneChannelControls from "./OneChannelControls";
-import iconPlay from "../assets/img/play.png"
-import iconPause from "../assets/img/pause.png"
-import iconStop from "../assets/img/stop.png"
-import loadingSpinner from "../assets/img/loading.gif"
+import iconPlay from "../assets/img/play.png";
+import iconPause from "../assets/img/pause.png";
+import iconStop from "../assets/img/stop.png";
+import loadingSpinner from "../assets/img/loading.gif";
 
 const Channel = ({
   formatTime,
@@ -39,82 +39,95 @@ const Channel = ({
   setPlayerStopped,
   playerStopped
 }) => {
+  const playersRef = useRef(null);
+  const solosRef = useRef({});
+  const intervalRef = useRef(null);
+
   useEffect(() => {
-    // console.log("Channel sources",sources)
-    if(stateSolos) {
-      const solos = Object.values(stateSolos)
-      solos.forEach((solo) => {
-        solo.solo = false;
-        solo.dispose();
-      })
+    if (playersRef.current) {
+      playersRef.current.dispose();
     }
-    const players = new Tone.Players();
-    loadTracks(players);
+    if (stateSolos) {
+      Object.values(stateSolos).forEach((solo) => solo.dispose());
+    }
+
+    playersRef.current = new Tone.Players();
+    solosRef.current = {};
+    loadTracks(playersRef.current);
+
     setClearMute(!clearMute);
 
     return () => {
-      players.dispose();
-      clearInterval(seekUpdateInterval);
+      if (Tone.Transport.state === "started") {
+        Tone.Transport.stop();
+        setPlaying(false);
+      }
+      if (playersRef.current) {
+        playersRef.current.dispose();
+      }
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
       setPlayersLoaded(false);
+      setStatePlayers(null);
+      setStateSolos(null);
     };
   }, [selectedSong]);
 
   const loadTracks = (players) => {
-    const solos = {}
-    if (players._players.size === 0) {
-      sources?.forEach((track, index) => {
-        players.add(`${index}`, track.src);
-        solos[index] = new Tone.Solo().toDestination();
-        players.player(`${index}`).connect(solos[index])
-          players.player(`${index}`).buffer.onload = () => {
-            setTrackDuration(players.player(`${index}`).buffer.duration);
-            setPlayersLoaded(true)
-          }
-        players.player(`${index}`).sync().start(0);
-        players.player(`${index}`).volume.value = -10
-      });
-      setStatePlayers(players);
-      setStateSolos(solos);
-    }
+    const solos = {};
+    sources?.forEach((track, index) => {
+      players.add(`${index}`, track.src);
+      solos[index] = new Tone.Solo().toDestination();
+      players.player(`${index}`).connect(solos[index]);
+      players.player(`${index}`).buffer.onload = () => {
+        setTrackDuration(players.player(`${index}`).buffer.duration);
+        setPlayersLoaded(true);
+      };
+      players.player(`${index}`).sync().start(0);
+      players.player(`${index}`).volume.value = -10;
+    });
+    setStatePlayers(players);
+    setStateSolos(solos);
   };
 
   const handleGlobalSeek = (value) => {
     if (Tone.Transport.state === "started") {
       Tone.Transport.pause();
-      Object.values(statePlayers._players).forEach((player) => player.sync());
+      Object.values(playersRef.current._players).forEach((player) => player.sync());
       setGlobalSeek(value);
       Tone.Transport.seconds = value;
       Tone.Transport.start();
     } else {
-      Object.values(statePlayers._players).forEach((player) => player.sync());
+      Object.values(playersRef.current._players).forEach((player) => player.sync());
       setGlobalSeek(value);
       Tone.Transport.seconds = value;
     }
   };
 
   useEffect(() => {
-    if(Tone.Transport.state==="started"){
-      setPlaying(true)
+    if (Tone.Transport.state === "started") {
+      setPlaying(true);
     } else {
-      setPlaying(false)
+      setPlaying(false);
     }
-  },[globalSeek])
+  }, [globalSeek]);
 
   useEffect(() => {
-    handleStop()
-  }, [isStopped])
+    handleStop();
+  }, [isStopped]);
 
   const handlePlay = () => {
-    if(statePlayers._buffers.loaded){
-    const intervalId = setInterval(() => {
-      setGlobalSeek(Tone.Transport.seconds);
-      if(Tone.Transport.seconds >= trackDuration){
-        Tone.Transport.stop()
-      }
-    }, 10);
-    Tone.Transport.start();
-    setSeekUpdateInterval(intervalId);
-  }
+    if (playersRef.current._buffers.loaded) {
+      intervalRef.current = setInterval(() => {
+        setGlobalSeek(Tone.Transport.seconds);
+        if (Tone.Transport.seconds >= trackDuration) {
+          Tone.Transport.stop();
+        }
+      }, 10);
+      Tone.Transport.start();
+      setSeekUpdateInterval(intervalRef.current);
+    }
   };
 
   const handlePlayPause = async () => {
@@ -124,58 +137,61 @@ const Channel = ({
       await Tone.start();
       handlePlay();
       setPlaying(true);
-      setPlayerStopped(false)
+      setPlayerStopped(false);
     }
   };
+
   const handlePause = () => {
     Tone.Transport.pause();
     setPlaying(false);
   };
 
   const handleStop = () => {
-    if(playing){
-      Tone.Transport.stop();
-      setPlayerStopped(true)
-      setGlobalSeek(0);
-      setPlaying(false);
-      clearInterval(seekUpdateInterval);
-      return
-    }
+    if (playing) {
       Tone.Transport.stop();
       setPlayerStopped(true);
       setGlobalSeek(0);
-      clearInterval(seekUpdateInterval);
-
+      setPlaying(false);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      return;
+    }
+    if (setPlayerStopped) {
+      Tone.Transport.stop();
+      setPlayerStopped(true);
+      setGlobalSeek(0);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
   };
 
   return (
-    <div className="controlsWrapper" style={{ width: '95%'}}>
-      <div className="trackControlsContainer" style={{overflowX: 'scroll', whiteSpace: 'nowrap'}}>
-    <div className="trackControls" style={{width: 'max-content'}} >
-      {false ? (
-        <div>Loading...</div>
-      ) : (
-        sources?.map((track, index) => {
-          return (
-            <OneChannelControls
-              key={index}
-              players={statePlayers}
-              track={track}
-              index={index}
-              sources={sources}
-              isTabletOrMobile={isTabletOrMobile}
-              isDesktopOrLaptop={isDesktopOrLaptop}
-              statePlayers={statePlayers}
-              clearMute={clearMute}
-              stateSolos={stateSolos}
-            />
-          );
-        })
-      )}
+    <div className="controlsWrapper" style={{ width: '95%' }}>
+      <div className="trackControlsContainer" style={{ overflowX: 'scroll', whiteSpace: 'nowrap' }}>
+        <div className="trackControls" style={{ width: 'max-content' }}>
+          {false ? (
+            <div>Loading...</div>
+          ) : (
+            sources?.map((track, index) => (
+              <OneChannelControls
+                key={index}
+                players={statePlayers}
+                track={track}
+                index={index}
+                sources={sources}
+                isTabletOrMobile={isTabletOrMobile}
+                isDesktopOrLaptop={isDesktopOrLaptop}
+                statePlayers={statePlayers}
+                clearMute={clearMute}
+                stateSolos={stateSolos}
+              />
+            ))
+          )}
+        </div>
       </div>
-      </div>
-      <div className="globalControls" style={{justifyContent: 'center', display: 'flex', alignItems:'center', width: "100%"}}>
-
+      <div className="globalControls" style={{ justifyContent: 'center', display: 'flex', alignItems: 'center', width: "100%" }}>
         <div className="controls">
           <button
             style={{
@@ -184,7 +200,7 @@ const Channel = ({
               backgroundColor: "transparent",
               opacity: playersLoaded ? 1 : 0.5
             }}
-            disabled={playersLoaded ? false : true}
+            disabled={!playersLoaded}
             onClick={handlePlayPause}
           >
             <img
@@ -200,7 +216,7 @@ const Channel = ({
               backgroundColor: "transparent",
             }}
             onClick={handleStop}
-            disabled={!playersLoaded || playerStopped ? true : false}
+            disabled={!playersLoaded || playerStopped}
           >
             <img
               style={{ width: "3rem", opacity: !playersLoaded || playerStopped ? 0.5 : 1 }}
@@ -218,9 +234,8 @@ const Channel = ({
             onChange={(e) => {
               handleGlobalSeek(e.target.value);
             }}
-            // onInput={() => setUserSeek(!userSeek)}
           />
-          <div style={{fontWeight: "bold", fontSize: isTabletOrMobile ? "1.5rem" : "1.1rem"}}>{formatTime(globalSeek)}</div>
+          <div style={{ fontWeight: "bold", fontSize: isTabletOrMobile ? "1.5rem" : "1.1rem" }}>{formatTime(globalSeek)}</div>
         </div>
       </div>
     </div>

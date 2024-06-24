@@ -291,6 +291,15 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
     setSearchParams({ ...Object.fromEntries(searchParams), trackId: trackId });
   };
 
+  //Clean up on unmount
+  useEffect(() => {
+    return () => {
+      // setPlaying(false);
+      setGlobalSeek(0);
+      setTrackDuration(0);
+    };
+  }, []);
+
   if (authLoading) {
     return (
       <div>

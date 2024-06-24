@@ -38,8 +38,6 @@ const Lyrics = ({
 
   const lyricsRef = useRef();
 
-  console.log("lyrics index: ", displayedLyricsIndex)
-
   useEffect(() => {
     const loadLrc = async () => {
       if (currentLrcs.length && selectedTrack) {
