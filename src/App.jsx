@@ -13,6 +13,7 @@ import { sortSongsList } from "../utils/utils";
 import { useUser } from "./context/UserContext";
 import { fetchAlbumsList } from "../utils/databaseOperations";
 import { fetchSongsList } from "../utils/databaseOperations";
+import { sortArrayByNumberKey } from "../utils/utils";
 
 const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
@@ -203,7 +204,8 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
         })
       );
       if (currentSourcesArray !== 0) {
-        setCurrentSources(currentSourcesArray); // set the state with the new array
+        const sortedCurrentSourcesArray = sortArrayByNumberKey(currentSourcesArray)
+        setCurrentSources(sortedCurrentSourcesArray); // set the state with the new array
         if (trackId) {
           const trackExists = currentSourcesArray.find(
             (track) => track.id === trackId

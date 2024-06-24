@@ -13,3 +13,9 @@ export const sortSongsList = (songsList) => {
     });
     return songsList;
   }
+
+export const sortArrayByNumberKey = (array) => {
+  return array.sort((a, b) => {
+    return parseInt(a.number) - parseInt(b.number);
+  });
+}

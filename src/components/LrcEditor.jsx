@@ -13,6 +13,7 @@ import { useUser } from '../context/UserContext';
 import { fetchAlbumsList } from '../../utils/databaseOperations';
 import { fetchSongsList } from '../../utils/databaseOperations';
 import { Link } from 'react-router-dom';
+import { sortArrayByNumberKey } from '../../utils/utils';
 
 const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
@@ -34,10 +35,12 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
   const [lrcsReady, setLrcsReady] = useState(false);
   const [lrcs, setLrcs] = useState([]);
   const [currentTrackLrc, setCurrentTrackLrc] = useState([]);
-  const [noTrackLrc, setNoTrackLrc] = useState(true);
+  const [noTrackLrc, setNoTrackLrc] = useState(false);
   const [editing, setEditing] = useState(true);
   const [seekUpdateInterval, setSeekUpdateInterval] = useState(null)
   const [noAlbums, setNoAlbums] = useState(false);
+  const [isStopped, setIsStopped] = useState(false);
+  const [playerStopped, setPlayerStopped] = useState(true);
 
   const {user, authLoading} = useUser();
 
@@ -136,7 +139,8 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
         })
       );
       if(currentSourcesArray !== 0){
-        setCurrentSources(currentSourcesArray)
+        const sortedCurrentSourcesArray = sortArrayByNumberKey(currentSourcesArray);
+        setCurrentSources(sortedCurrentSourcesArray)
         if(trackId){
           const trackExists = currentSourcesArray.find((track) => track.id === trackId)
           if(trackExists){
@@ -267,7 +271,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
           <div className="selectBoxWrapper" style={{ flexDirection: isTabletOrMobile ? 'column' : 'row' }}>
             <div className="selectBox glass" style={{paddingRight: 10, paddingBottom: 10, paddingLeft: 10}}>
               <p>Select Album: </p>
-              <select value={selectedAlbum} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black', width: isTabletOrMobile ? '100%' : '100%'  }}>
+              <select value={selectedAlbum} onClick={() => setIsStopped(!isStopped)} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black', width: isTabletOrMobile ? '100%' : '100%'  }}>
                 {albums.map((album) => (
                   <option key={album.id} value={album.id}>
                     {album.name}
@@ -277,7 +281,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
             </div>
             <div className="selectBox glass" style={{paddingRight: 10, paddingBottom: 10, paddingLeft: 10}}>
               <p>Song:</p>
-              <select value={selectedSong} onChange={(e) => handleSongChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black', width: isTabletOrMobile ? '100%' : null  }}>
+              <select value={selectedSong} onClick={() => setIsStopped(!isStopped)} onChange={(e) => handleSongChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black', width: isTabletOrMobile ? '100%' : null  }}>
                 {songs.map((song) => (
                   <option key={song.id} value={song.id}>
                     {song.number} - {song.name}
@@ -328,12 +332,14 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                       sounds={songs}
                       clearMute={false}
                       setClearMute={() => {}}
-                      isStopped={false}
-                      setIsStopped={() => {}}
+                      isStopped={isStopped}
+                      setIsStopped={setIsStopped}
                       setSeekUpdateInterval={setSeekUpdateInterval}
                       seekUpdateInterval={seekUpdateInterval}
                       playersLoaded={playersLoaded}
                       setPlayersLoaded={setPlayersLoaded}
+                      setPlayerStopped={setPlayerStopped}
+                      playerStopped={playerStopped}
                     />
                   </div>
                 </div>
@@ -363,6 +369,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   user={user}
                   currentTrackLrc={currentTrackLrc}
                   fetchAlbums={fetchAlbums}
+                  noTrackLrc={noTrackLrc}
                 />
               </div>
             </div>

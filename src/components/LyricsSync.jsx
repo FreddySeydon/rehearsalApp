@@ -13,6 +13,7 @@ import iconDownload from "../assets/img/download.svg"
 import { updateLrc } from '../../utils/databaseOperations';
 import { InputMask } from '@react-input/mask';
 import { Link } from 'react-router-dom';
+import LoadingSpinner from './LoadingSpinner';
 
 const LyricsSync = ({
   statePlayers,
@@ -36,7 +37,8 @@ const LyricsSync = ({
   songs,
   user,
   currentTrackLrc,
-  fetchAlbums
+  fetchAlbums,
+  noTrackLrc
 }) => {
   const [lyrics, setLyrics] = useState('');
   const [lines, setLines] = useState([]);
@@ -46,6 +48,7 @@ const LyricsSync = ({
   const [error, setError] = useState('')
   const [isSaving, setIsSaving] = useState(false);
   const [doneSaving, setDoneSaving] = useState(false);
+  const [lyricsLoading, setLyricsLoading] = useState(true);
 
   const lyricsRef = useRef();
 
@@ -109,9 +112,16 @@ const LyricsSync = ({
       setTimestamps([]);
     }
   }, [existingLyrics, currentTrackLrc]);
+
+
   
-  
-  
+  useEffect(() => {
+    setLyricsLoading(true);
+    if(existingLyrics && lines.length || noTrackLrc){
+      setLyricsLoading(false);
+    }
+
+  }, [existingLyrics, noTrackLrc, lines])
 
   const handleSync = () => {
     setInfo('')
@@ -328,13 +338,17 @@ const LyricsSync = ({
     // fetchAlbums()
   }
 
+  // if(lyricsLoading){
+  //   return <LoadingSpinner />
+  // }
+
   return (
     <>
     {isSaving ? 
       <div>
       Saving...
       </div> : doneSaving ? <div> <p>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}} onClick={handleContinueEditing}>Continue Editing</button> </div> </div> : error ? <div><p>There was an error saving your lyrics</p><button onClick={() => setError('')}>Try again</button></div>  :
-    
+    lyricsLoading ? <LoadingSpinner /> :
     <div className="lyricsWrapper" style={{ width: '100%'}}>
         <div id='lyricsinput' style={{display: editing ? "flex" : "none", flexDirection: "column" }}>
     <textarea
