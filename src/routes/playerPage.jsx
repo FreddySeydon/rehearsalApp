@@ -27,7 +27,7 @@ const PlayerPage = () => {
         {
             loading ? 
                 <img src={loadingSpinner} width={50} alt="Loading" /> : 
-                    <App albumId={albumId} songId={songId} trackId={trackId} searchParams={searchParams} setSearchParams={setSearchParams}/>
+                    <App albumId={albumId} songId={songId} trackId={trackId} searchParams={searchParams} setSearchParams={setSearchParams} />
         }
     </div>
   )

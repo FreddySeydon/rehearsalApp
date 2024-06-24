@@ -238,7 +238,8 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
           trackId: currentSourcesArray[0].id,
         });
       }
-
+      setSearchParams({...Object.fromEntries(searchParams), songId: selectedSong})
+      setSearchParams({...Object.fromEntries(searchParams), trackId: selectedTrack})
       // console.log(currentSourcesArray)
       // setSelectedTrack(currentSourcesArray)
     }
@@ -259,10 +260,11 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
   }, [currentSources]);
 
   useEffect(() => {
+    // setSongId(selectedSong)
     fetchCurrentTracks();
     fetchCurrentLrcs();
   }, [selectedSong]);
-
+  
   useEffect(() => {
     if (user) {
       fetchAlbums();
@@ -271,9 +273,16 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
 
   useEffect(() => {
     if (selectedAlbum) {
+      // setAlbumId(selectedAlbum);
       fetchSongs(selectedAlbum);
     }
   }, [selectedAlbum]);
+
+  // useEffect(() => {
+  //   if(selectedTrack){
+  //     setTrackId(selectedTrack)
+  //   }
+  // }, [selectedTrack])
 
   const handleAlbumChange = (newAlbumId) => {
     setSelectedAlbum(newAlbumId);
