@@ -35,7 +35,7 @@ const LandingPage = () => {
       {info ? <div className='glassCard' style={{marginBottom: 10}}><h2>{info}</h2></div> : null }
       <header className="landing-header">
         <div className='hero glasstransparent' style={{padding: 15, display: "flex", flexDirection: isTabletOrMobile ? 'column': 'row'}}>
-        <img src={Logo} alt="Rehearsal Rocket Logo" width={"50%"} style={{borderRadius: 30}}/>
+        <img src={Logo} alt="Rehearsal Rocket Logo" width={"50%"} style={{borderRadius: 30, maxWidth: 600}}/>
         <div style={{width: isTabletOrMobile ? "100%" : "50%", display: "flex", flexDirection: "column", justifyContent: 'flex-start', alignItems: 'center'}}>
             <p style={{fontSize: "xx-large", padding: 0, margin: 0   }}>Welcome to</p>
         <h1 style={{paddingTop: 0, marginTop: 0, marginBottom: 0}}>Chord Chaos</h1>
