@@ -42,10 +42,11 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
   const [noAlbums, setNoAlbums] = useState(false);
   const [isStopped, setIsStopped] = useState(false);
   const [playerStopped, setPlayerStopped] = useState(true);
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
+  const [hideSelects, setHideSelects] = useState(false);
 
   const {user, authLoading} = useUser();
 
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 
   const fetchAlbums = async () => {
     setAlbums([]);
@@ -277,7 +278,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
       ) : (
         <div className="appWrapper" style={{ padding: isTabletOrMobile ? '1rem' : '1rem' }}>
           <h1 style={{ fontSize: isTabletOrMobile ? '1.5rem' : '2rem' }}>Sync Lyrics</h1>
-          <div className="selectBoxWrapper" style={{ flexDirection: isTabletOrMobile ? 'column' : 'row' }}>
+          <div className="selectBoxWrapper" style={{ flexDirection: isTabletOrMobile ? 'column' : 'row', display: hideSelects ? 'none' : 'flex', gap: 5 }}>
             <div className="selectBox glass" style={{paddingRight: 10, paddingBottom: 10, paddingLeft: 10}}>
               <p>Select Album: </p>
               <select value={selectedAlbum} onClick={() => setIsStopped(!isStopped)} onChange={(e) => handleAlbumChange(e.target.value)} style={{ minWidth: '10rem', minHeight: '2.5rem', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold', color: 'black', width: isTabletOrMobile ? '100%' : '100%'  }}>
@@ -309,6 +310,10 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
               </select>
             </div>
           </div>
+          <div style={{display: 'flex', flexDirection: 'row', gap: 10, marginBottom: 10, justifyContent: 'center', alignItems: 'center'}}>
+          <button className='glass' onClick={() => setHideSelects(!hideSelects)}>{hideSelects ? "Show Selects" : "Hide Selects"}</button>
+          <button onClick={() => setHideMixer(!hideMixer)} className='glass'>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
+          </div>
           {!blobsReady ? (
             <div>
               <img src={loadingSpinner} alt="Loading" width={50} />
@@ -318,7 +323,6 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
               <div className="controlsWrapper glasstransparent" style={{display: hideMixer ? "none" : "block", width: isTabletOrMobile ? "100%" : '40%', padding: 10}}>
                 <div className="tracks" style={{width: "100%"}} >
                   <div className="singleTrack" style={{width: "100%"}}>
-                    <button onClick={() => setHideMixer(!hideMixer)} className='glass'>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button>
                     <Channel
                       sources={currentSources}
                       globalSeek={globalSeek}

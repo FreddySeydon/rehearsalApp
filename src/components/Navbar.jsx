@@ -59,10 +59,14 @@ const Navbar = () => {
   if (isTabletOrMobile) {
     return (
       <>
-        <nav className="navbar glassCard" style={{ flexDirection: 'column', alignItems: 'center', marginBottom: 10, width: '95%' }}>
-          <div style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center', alignItems: 'center' }}>
-            <img src={Logo} alt="" width={60} height={60} style={{ borderRadius: 10 }} />
+        <nav className="navbar glassCard" style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, width: '100%', padding: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-between', alignItems: 'center', width: "90%" }}>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            </div>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <img src={Logo} alt="Chord Chaos Logo" width={40} height={40} style={{ borderRadius: 10, paddingRight: 10 }} />
             <h2 style={{ margin: 0 }}>Chord Chaos</h2>
+            </div>
             {user ? (
               <button
                 style={{ fontSize: 'xx-large', backgroundColor: 'transparent', color: 'white', marginRight: 0, marginTop: 0, marginBottom: 0, padding: 0, marginLeft: menuOpen ? 12 : 0, outlineColor: 'transparent', borderColor: 'transparent', outline: 'none' }}

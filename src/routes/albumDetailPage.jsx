@@ -61,7 +61,7 @@ const AlbumDetailPage = () => {
     console.log(songs)
 
   return (
-    <div style={{display: "flex", gap: 20, width: isTabletOrMobile ? "100%" : 600}}>
+    <div style={{display: "flex", gap: 20, width: isTabletOrMobile ? "100%" : 600, marginTop: isTabletOrMobile ? 30 : 120}}>
         {loading ? 
             <LoadingSpinner /> : error ? 
             <div>There was an error: {error}</div> : 

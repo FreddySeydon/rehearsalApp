@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import App from '../App'
 import loadingSpinner from '../assets/img/loading.gif'
 import { useParams, useSearchParams } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
 
 const PlayerPage = () => {
 
@@ -11,6 +12,8 @@ const PlayerPage = () => {
     const [trackId, setTrackId] = useState('')
 
     const [searchParams, setSearchParams] = useSearchParams();
+
+    const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
     useEffect(() => {
         if(searchParams){
@@ -22,7 +25,7 @@ const PlayerPage = () => {
 
 
   return (
-    <div style={{width: '90vw', overflow: 'hidden', paddingTop: 100}}>
+    <div style={{width: '90vw', overflow: 'hidden', paddingTop: isTabletOrMobile ? 55 : 100}}>
         {
             loading ? 
                 <img src={loadingSpinner} width={50} alt="Loading" /> : 

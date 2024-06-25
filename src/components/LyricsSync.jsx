@@ -17,6 +17,7 @@ import LoadingSpinner from './LoadingSpinner';
 import { formatTimeMilliseconds } from '../../utils/lrcParser';
 import resetIcon from '../assets/img/reset.svg'
 import loadingIcon from '../assets/img/loading.gif'
+import OneSyncLine from './OneSyncLine';
 
 const LyricsSync = ({
   statePlayers,
@@ -344,17 +345,17 @@ const LyricsSync = ({
     }
   };
 
-  useEffect(() => {
-    const scrollToCurrentLine = () => {
-      const currentLine = document.getElementById(`line-${currentLineIndex}`);
-      if (currentLine) {
-        currentLineRef.current = currentLine;
-        currentLineRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        // currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    };
-    scrollToCurrentLine();
-  }, [currentLineIndex]);
+  // useEffect(() => {
+  //   const scrollToCurrentLine = () => {
+  //     const currentLine = document.getElementById(`line-${currentLineIndex}`);
+  //     if (currentLine) {
+  //       currentLineRef.current = currentLine;
+  //       currentLineRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  //       currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  //     }
+  //   };
+  //   scrollToCurrentLine();
+  // }, [currentLineIndex]);
 
   const handleContinueEditing = () => {
     window.location.reload()
@@ -386,7 +387,7 @@ const LyricsSync = ({
     />
     <p style={{color: "#fdc873", marginTop: 2, marginBottom: 5}}>{info ? info : null}</p>
     <button onClick={handleDoneEditing} className='glass'>Done</button>
-    <Link to={`/albums/${selectedAlbum}/${selectedSong}`} style={{marginTop: 5, fontSize: 'small'}}>
+    <Link to={`/albums/${selectedAlbum}/${selectedSong}`} style={{marginTop: 20, marginBottom: 15, fontSize: 'small'}}>
     <p style={{textDecoration: "underline", margin: 0.5, color: 'whitesmoke'}}>Already have synced lyrics in .lrc format?</p>
     <p style={{textDecoration: "underline", margin: 0.5, color: 'whitesmoke'}}>Upload them!</p>
     
@@ -396,52 +397,19 @@ const LyricsSync = ({
     <div id='lyricssync'  style={{display: editing ? "none" : 'flex', flexDirection: "column"}}>
       <div className='lyricsdisplay' ref={lyricsRef} style={{overflowY: 'scroll', scrollbarWidth: 'none'}}>
         {lines.map((line, index) => (
-          <div key={index} id={`line-${index}`} className="line"  style={{
-            // paddingRight: "1rem",
-            // paddingLeft: "1rem",
-            margin: "1rem",
-            // cursor: "pointer",
-            fontSize: "1.5rem", //isTabletOrMobile ? "2rem" : "1.5rem"
-            fontWeight: currentLineIndex -1 === index ? "bold" : "normal",
-            color: currentLineIndex -1 === index ? "#fdc873" : "white",
-          }}>
-            <span style={{display: 'flex', flexDirection: "row", gap: 10}}>
-              {!timestamps[index] ? <div style={{minWidth: 90}}></div> : (
-                <InputMask
-                // ref={timestampInputRef}
-                // type="text"
-                value={timestamps[index].time}
-                mask= 'ab:ab.cc' 
-                replacement= {{a: /[0-5]/, b: /[0-9]|0?[0-9]/, c:/[0-9]/}}
-                onChange={(e) => handleEditTimestamp(index, e.target.value)}
-                style={{minWidth: 70, maxWidth: 70, textAlign: 'center'}}
-                className='timestamp glasstransparent'
-                // showMask
-                separate
-                />
-              )}
-              {" "} {timestamps[index] ? <a style={{
-                fontWeight: currentLineIndex -1 === index ? "bold" : "normal",
-                color: currentLineIndex -1 === index ? "#fdc873" : "white",
-                cursor: "pointer",
-                textAlign: "left"
-            }} 
-                onClick={() => goToLyricsPosition(timestamps[index].time, index)} 
-                >{line}</a> : <p style={{margin: 0, padding: 0, textAlign: "left"}}>{line}</p>}
-            </span>
-          </div>
+          <OneSyncLine key={index} index={index} line={line} currentLineIndex={currentLineIndex} timestamps={timestamps} handleEditTimestamp={handleEditTimestamp} goToLyricsPosition={goToLyricsPosition}  />
         ))}
       </div>
                 <div style={{display: "flex", flexDirection: "column", gap:10, paddingTop: 10}}>
                   <p style={{margin: 0, color: '#fdc873'}}>{info ? info : null}</p>
                     <div style={{display: 'flex', flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                  {<button onClick={handlePreviousLine} style={{
+                  {<button onClick={handlePreviousLine} disabled={currentLineIndex - 1 <= 0 ? true : false} style={{
                     marginRight: "0.25rem",
                     marginLeft: "0.25rem",
                     backgroundColor: "transparent",
                     }}><img src={iconLeft} alt="Previous Line" style={{ width: "1.5rem", opacity: currentLineIndex - 1 <= 0 ? 0.5 : 1 }} /></button>}
 
-                  {<button onClick={handleSync} style={{
+                  {<button onClick={handleSync} disabled={currentLineIndex + 1 > lines.length ? true : false} style={{
                     marginRight: "0.25rem",
                     marginLeft: "0.25rem",
                     backgroundColor: "transparent",
@@ -463,7 +431,7 @@ const LyricsSync = ({
                     marginLeft: "0.25rem",
                     backgroundColor: "transparent",
                     }}><img src={iconStop} alt="Stop" style={{ width: "3rem"}}  /></button>
-                            <div className="globalSeek">
+                            <div className="globalSeek" style={{width: "95%", marginLeft: "2.5%"}}>
                       <input
                         type="range"
                         min="0"
@@ -477,35 +445,36 @@ const LyricsSync = ({
                     </div>
                     </div>
                     <div style={{display: "flex", flexDirection: 'column', alignItems: "center", justifyContent: "center", gap: 10}}>
-                  <button onClick={handleSaveLyrics} className='glass' style={{width: "100%"}}>Save Lyrics</button>
+                  <button onClick={handleSaveLyrics} className='glass' style={{width: 200, height: "50%", marginLeft: 10}}>Save Lyrics</button>
                   {/* <button onClick={handlePreview}>Preview</button> */}
-                  <div style={{display: 'flex'}}>
-                  <button onClick={handleStartEditing} style={{backgroundColor: "transparent", padding: 0}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
-                  <button onClick={handleReset} style={{backgroundColor: "transparent", borderWidth: 3, margin: 0, padding: 5, color: "#fdc873"}}> <img src={resetIcon} alt="Reset Sync" style={{ width: "3.5rem", marginBottom: 6}} /> </button>
-      <button
+                  <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 5}}>
+                  <button onClick={handleStartEditing} style={{backgroundColor: "transparent", borderWidth: 3, padding: 0}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
+                  <button onClick={handleReset} style={{backgroundColor: "transparent", borderWidth: 3, margin: 0, padding: 5}}> <img src={resetIcon} alt="Reset Sync" style={{ width: "3.5rem", marginBottom: 6}} /> </button>
+      {lines.length === timestamps.length ? <button
         onClick={() => {
+          handleUnsyncedLines()
           const lrcContent = timestamps
-            .map(({ time, line }) => {
-              return `[${time}]${line}`;
-            })
-            .join('\n');
+          .map(({ time, line }) => {
+            return `[${time}]${line}`;
+          })
+          .join('\n');
           const blob = new Blob([lrcContent], { type: 'text/plain' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${selectedSong}.lrc`;
+          a.download = `${selectedSong}_${selectedTrack}.lrc`;
           a.click();
           URL.revokeObjectURL(url);
         }}
-        style={{backgroundColor: "transparent"}}
-      >
-        <img src={iconDownload} alt="Download LRC" style={{ width: "3.75rem", marginBottom: 6}} />
-      </button>
+        style={{backgroundColor: "transparent", padding: 5, borderWidth: 3,}}
+        >
+        <img src={iconDownload} alt="Download LRC" style={{ width: "3.5rem", marginBottom: 6}} />
+      </button> : null}
                   </div>
                     </div>
                 </div>
     </div>
-    {hideMixer ? <button onClick={() => setHideMixer(!hideMixer)} style={{width: "100%", marginTop: 5, color: 'whitesmoke'}} className='glasstransparent'>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button> : null}
+    {/* {hideMixer ? <button onClick={() => setHideMixer(!hideMixer)} style={{width: "100%", marginTop: 5, color: 'whitesmoke'}} className='glasstransparent'>{hideMixer ? "Show Mixer" : "Hide Mixer"}</button> : null} */}
 
     </div>
     }

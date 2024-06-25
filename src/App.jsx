@@ -625,7 +625,7 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
                         <Link
                           to={`/lyricseditor?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}
                         >
-                          <button>Add Lyrics</button>
+                          <button className="glass">Add Lyrics</button>
                         </Link>
                       </div>
                     ) : (

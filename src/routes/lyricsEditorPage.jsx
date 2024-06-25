@@ -26,11 +26,11 @@ const LyricsEditorPage = () => {
 
 
   return (
-    <div style={{width: '90vw', overflow: 'hidden', paddingTop: isTabletOrMobile ? 80 : 0, maxHeight: isTabletOrMobile ? null : "90vh"}}>
+    <div style={{width: '90vw', paddingTop: isTabletOrMobile ? 30 : 80}}>
         {
             loading ? 
                 <img src={loadingSpinner} width={50} alt="Loading" /> : 
-                <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%", overflow: 'hidden'}}>
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: 'column', width: "100%"}}>
                     <LrcEditor albumId={albumId} songId={songId} trackId={trackId} searchParams={searchParams} setSearchParams={setSearchParams}/>
                     </div>
         }

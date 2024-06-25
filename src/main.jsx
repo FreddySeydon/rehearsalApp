@@ -43,13 +43,13 @@ function NavbarWrapper(){
 
   const outletStyle = isTabletOrMobile ? {
     // paddingTop: 90, 
-    overflow: 'hidden'
+    // overflow: 'hidden'
   } : {
-    paddingTop: 90
+    paddingTop: 0
   };
 
   return(
-    <div style={{overflow: 'hidden'}}>
+    <div>
       <div style={navbarStyle}>
         <Navbar />
       </div>
