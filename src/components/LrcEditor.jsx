@@ -234,6 +234,14 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
     }
   }, [currentSources]);
 
+  useEffect(() => {
+    if(blobsReady){
+      setTimeout(() => {
+        setSearchParams({...Object.fromEntries(searchParams), songId: selectedSong, trackId: selectedTrack})
+      }, 500)
+    }
+  }, [blobsReady])
+
   const handleAlbumChange = (albumId) => {
     setSelectedAlbum(albumId);
     setSearchParams({...Object.fromEntries(searchParams), albumId: albumId})
