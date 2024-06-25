@@ -5,9 +5,7 @@ import { formatTime } from "../utils/lrcParser";
 import Lyrics from "./components/Lyrics";
 import { useMediaQuery } from "react-responsive";
 import loadingSpinner from "./assets/img/loading.gif";
-import { collection, getDocs } from "firebase/firestore";
 import { getStorage, getBlob, ref } from "firebase/storage";
-import { db } from "../utils/firebase";
 import { Link } from "react-router-dom";
 import { sortSongsList } from "../utils/utils";
 import { useUser } from "./context/UserContext";
@@ -134,18 +132,18 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
           if (songExists) {
             const parsedSongId = JSON.parse(lastSong);
             setSelectedSong(parsedSongId);
-            setSearchParams({
-              ...Object.fromEntries(searchParams),
-              songId: parsedSongId,
-            });
+            // setSearchParams({
+            //   ...Object.fromEntries(searchParams),
+            //   songId: parsedSongId,
+            // });
             return;
           }
         }
         setSelectedSong(songsList[0].id); // Set the first song as the default selected song
-        setSearchParams({
-          ...Object.fromEntries(searchParams),
-          songId: songsList[0].id,
-        });
+        // setSearchParams({
+        //   ...Object.fromEntries(searchParams),
+        //   songId: songsList[0].id,
+        // });
       }
     } catch (error) {
       console.error("Error fetching songs:", error);
@@ -238,8 +236,7 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
           trackId: currentSourcesArray[0].id,
         });
       }
-      setSearchParams({...Object.fromEntries(searchParams), songId: selectedSong})
-      setSearchParams({...Object.fromEntries(searchParams), trackId: selectedTrack})
+
       // console.log(currentSourcesArray)
       // setSelectedTrack(currentSourcesArray)
     }
@@ -260,10 +257,28 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
   }, [currentSources]);
 
   useEffect(() => {
+    if(blobsReady){
+      setTimeout(() => {
+        setSearchParams({...Object.fromEntries(searchParams), songId: selectedSong, trackId: selectedTrack})
+      }, 500)
+    }
+  }, [blobsReady])
+
+  useEffect(() => {
     // setSongId(selectedSong)
-    fetchCurrentTracks();
-    fetchCurrentLrcs();
+    const switchTrack = async () => {
+      await fetchCurrentTracks(true);
+      fetchCurrentLrcs();
+    }
+    switchTrack();
+
   }, [selectedSong]);
+
+  
+
+  useEffect(() => {
+    setSearchParams({...Object.fromEntries(searchParams), trackId: selectedTrack})
+  }, [selectedTrack])
   
   useEffect(() => {
     if (user) {

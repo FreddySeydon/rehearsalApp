@@ -21,7 +21,6 @@ const PlayerPage = () => {
     }, [searchParams])
 
 
-
   return (
     <div style={{width: '90vw', overflow: 'hidden', paddingTop: 100}}>
         {

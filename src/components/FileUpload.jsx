@@ -1,23 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
-import {
   collection,
-  addDoc,
   getDocs,
-  doc,
-  setDoc,
-  getDoc,
   query,
   where
 } from "firebase/firestore";
 import { db } from "../../utils/firebase";
-import { fetchFile, toBlobURL } from "@ffmpeg/util";
-import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { Link } from "react-router-dom";
 import {
   DndContext,
@@ -43,9 +31,7 @@ import loadingSpinner from "../assets/img/loading.gif";
 import FileUploadDropZone from "./FileUploadDropZone";
 import "./FileUpload.css"
 import DragHandleIcon from "../assets/img/drag-handle.svg"
-import {v4 as uuidv4} from 'uuid';
 import { useUser } from "../context/UserContext";
-import { fetchAlbumsList } from "../../utils/databaseOperations";
 import { useMediaQuery } from "react-responsive";
 
 const SortableItem = ({ id, children }) => {
@@ -105,14 +91,11 @@ const FileUpload = () => {
   const [uploadedPercentage, setUploadedPercentage] = useState(null);
   const [uploadedTracks, setUploadedTracks] = useState([]);
   const [existingSongNumbers, setExistingSongNumbers] = useState([])
-  const [info, setInfo] = useState('')
-  const ffmpegRef = useRef(new FFmpeg());
+  const [info, setInfo] = useState('');
   const inputFileRef = useRef(null);
 
   //Auth
   const {user, authLoading} = useUser();
-
-  //Check Stoarge Limit
 
 
   //Responsive
@@ -211,19 +194,6 @@ const FileUpload = () => {
     let formatted = input.toLowerCase();
     formatted = formatted.replace(/[\s-]+/g, "_");
     return formatted;
-  };
-
-  const loadFFmpeg = async () => {
-    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
-    const ffmpeg = ffmpegRef.current;
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(
-        `${baseURL}/ffmpeg-core.wasm`,
-        "application/wasm"
-      ),
-    });
-    setLoaded(true);
   };
 
   const sortSongsList = (songsList) => {
@@ -370,35 +340,6 @@ const FileUpload = () => {
 
   const handleTrackNameChange = (fileName, newName) => {
     setTrackNames((prev) => ({ ...prev, [fileName]: newName }));
-  };
-
-  // const handleTrackNumberChange = (index, newNumber) => {
-  //   const updatedTrackNumbers = [...trackNumbers];
-  //   updatedTrackNumbers[index] = newNumber;
-  //   setTrackNumbers(updatedTrackNumbers);
-  // };
-
-  const compressFile = async (file) => {
-    const ext = file.name.split(".").pop().toLowerCase();
-    if (true) {
-      return file;
-    }
-    await loadFFmpeg();
-    const ffmpeg = ffmpegRef.current;
-    const fileName = file.name;
-    ffmpeg.writeFile(fileName, await fetchFile(file));
-    await ffmpeg.exec(["-i", fileName, "-b:a", "64k", "output.mp3"]);
-
-    const data = await ffmpeg.readFile("output.mp3");
-    const compressedFile = new Blob([data.buffer], { type: "audio/mp3" });
-
-    ffmpeg.FS("unlink", fileName);
-    ffmpeg.FS("unlink", "output.mp3");
-
-    return new File(
-      [compressedFile],
-      fileName.replace(/\.[^/.]+$/, "") + "_compressed.mp3"
-    );
   };
 
   const handleUpload = async () => {

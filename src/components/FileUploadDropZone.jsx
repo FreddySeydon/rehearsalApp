@@ -14,7 +14,7 @@ const FileUploadDropZone = ({setSelectedFiles, selectedFiles, initializeTrackNam
       }
     }, [setSelectedFiles, selectedFiles])
 
-    const {acceptedFiles, getRootProps, getInputProps} = useDropzone({onDrop});
+    const {acceptedFiles, getRootProps, getInputProps} = useDropzone({onDrop, accept: {'audio/*' : [".mp3", ".aac", ".m4a", ".wav", ".ogg", ".oga", ".opus", ".weba", ".webm"]}});
   
     return (
       <section className="container" style={{maxWidth: isTabletOrMobile ? '100%' : '25rem', cursor: 'pointer'}}>
