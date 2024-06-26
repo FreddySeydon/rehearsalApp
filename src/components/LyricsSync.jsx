@@ -347,11 +347,17 @@ const LyricsSync = ({
 
   // useEffect(() => {
   //   const scrollToCurrentLine = () => {
-  //     const currentLine = document.getElementById(`line-${currentLineIndex}`);
-  //     if (currentLine) {
-  //       currentLineRef.current = currentLine;
-  //       currentLineRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  //       currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // const currentLine = document.getElementById(`line-${currentLineIndex}`);
+      // const lyricssync = document.getElementById(`lyricsdisplay`);
+      // if (lyricssync) {
+        // currentLineRef.current = currentLine;
+        // const yOffset = 40
+        // const y = lyricssync.getBoundingClientRect().top + yOffset
+        // console.log("y:",y)
+        // isTabletOrMobile ? window.scrollTo({top: lyricssync, behavior: 'smooth'}) : null
+        // currentLineRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        // currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // lyricssync.scrollIntoView()
   //     }
   //   };
   //   scrollToCurrentLine();
@@ -395,7 +401,7 @@ const LyricsSync = ({
         </div>
 
     <div id='lyricssync'  style={{display: editing ? "none" : 'flex', flexDirection: "column"}}>
-      <div className='lyricsdisplay' ref={lyricsRef} style={{overflowY: 'scroll', scrollbarWidth: 'none'}}>
+      <div id='lyricsdisplay' className='lyricsdisplay' ref={lyricsRef} style={{overflowY: 'scroll', scrollbarWidth: 'none'}}>
         {lines.map((line, index) => (
           <OneSyncLine key={index} index={index} line={line} currentLineIndex={currentLineIndex} timestamps={timestamps} handleEditTimestamp={handleEditTimestamp} goToLyricsPosition={goToLyricsPosition}  />
         ))}
