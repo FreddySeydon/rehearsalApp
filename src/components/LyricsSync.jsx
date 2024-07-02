@@ -62,19 +62,40 @@ const LyricsSync = ({
     const newLyrics = e.target.value;
     const newLines = newLyrics.split('\n');
     setLyrics(newLyrics);
-    setLines(newLines);
-
-    // Adjust timestamps based on changes in lines
+  
     setTimestamps((prevTimestamps) => {
       const newTimestamps = [];
-      newLines.forEach((line, index) => {
-        if (index < prevTimestamps.length) {
-          newTimestamps.push(prevTimestamps[index]);
+      const prevLines = lines;
+  
+      for (let i = 0; i < newLines.length; i++) {
+        if (i < prevTimestamps.length) {
+          if (newLines[i] !== prevLines[i]) {
+            // Line has changed, update the line text
+            newTimestamps.push({ ...prevTimestamps[i], line: newLines[i].trim() });
+          } else {
+            // Line has not changed, keep the existing timestamp
+            newTimestamps.push(prevTimestamps[i]);
+          }
+        } else {
+          // New line added, inherit time from previous timestamp
+          const inheritedTime = i > 0 ? prevTimestamps[i - 1].time : '00:00.00';
+          newTimestamps.push({ time: inheritedTime, line: newLines[i].trim() });
         }
-      });
+      }
+  
+      // If lines are deleted, keep the existing timestamps up to the new length
+      if (newLines.length < prevTimestamps.length) {
+        return newTimestamps.slice(0, newLines.length);
+      }
+  
       return newTimestamps;
     });
+  
+    setLines(newLines);
   };
+  
+  
+  
 
   const initializeLyrics = () => {
     if (existingLyrics) {      
@@ -290,13 +311,20 @@ const LyricsSync = ({
 
   }
 
+  useEffect(() => {
+    console.log("Timestamps: ", timestamps)
+  }, [timestamps])
+
   const handleSaveLyrics = async () => {
     handlePause()
     setIsSaving(true);
     const currentTimestamps = handleUnsyncedLines();
+    console.log("Current Timestamps:",currentTimestamps);
     const fullySynced = currentTimestamps ? false : true;
     const usedTimestamps = currentTimestamps ? currentTimestamps : timestamps
+    console.log("Used Timestamps:",usedTimestamps);
     const lrcContent = usedTimestamps.map(({ time, line }) => `[${time}]${line}`).join('\n');
+    console.log("LRC Content: ", lrcContent);
     const blob = new Blob([lrcContent], { type: 'text/plain' });
     const thisSong = songs.find((song) => selectedSong === song.id);
     const thisTrack = thisSong?.tracks?.find((track) => selectedTrack === track.id);
@@ -377,9 +405,10 @@ const LyricsSync = ({
   return (
     <>
     {isSaving ? 
-      <div>
+      <div style={{marginTop: 300}}>
+      <LoadingSpinner />
       Saving...
-      </div> : doneSaving ? <div> <p>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}} onClick={handleContinueEditing}>Continue Editing</button> </div> </div> : error ? <div><p>There was an error saving your lyrics</p><button onClick={() => setError('')}>Try again</button></div>  :
+      </div> : doneSaving ? <div style={{marginTop: 300}}> <p style={{fontSize: "x-large"}}>Lyrics saved successfully!</p> <div style={{display: "flex", flexDirection: "column", gap: 5, width: "100%"}}> <Link to={`/player?albumId=${selectedAlbum}&songId=${selectedSong}&trackId=${selectedTrack}`}> <button className='glass' style={{width: "100%"}}>Go to Song</button></Link>  <button className='glasstransparent' style={{width: "100%", color: "white"}} onClick={handleContinueEditing}>Continue Editing</button> </div> </div> : error ? <div><p>There was an error saving your lyrics</p><button onClick={() => setError('')}>Try again</button></div>  :
     lyricsLoading ? <LoadingSpinner /> :
     <div className="lyricsWrapper" style={{ width: '100%'}}>
         <div id='lyricsinput' style={{display: editing ? "flex" : "none", flexDirection: "column" }}>

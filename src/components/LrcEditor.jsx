@@ -357,8 +357,9 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   </div>
                 </div>
               </div>
-              <div className='glasstransparent' style={{padding: 10, width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '50%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginTop: isTabletOrMobile ? 5 : 0 }}>
+              <div className='glasstransparent' style={{padding: 10, width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '50%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginTop: isTabletOrMobile ? 5 : 0, minHeight: 800 }}>
                 <h3 style={{ marginBottom:  0, marginTop: 5 }}>Lyrics</h3>
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
                 <LyricsSync
                   statePlayers={statePlayers}
                   globalSeek={globalSeek}
@@ -385,6 +386,8 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   noTrackLrc={noTrackLrc}
                   playersLoaded={playersLoaded}
                 />
+                </div>
+                <div></div>
               </div>
             </div>
           )}

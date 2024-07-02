@@ -108,7 +108,7 @@ export const updateLrc = async (newFile, albumId, songId, trackId, trackName, us
     }
 
     // Step 2: Upload the new file to Firebase Storage
-    const newFileName = `${songId}_${trackName}_track-${trackId}_v${version}.lrc`;
+    const newFileName = `${songId}_${trackName}_track-${trackId}_v${version}_user-${user.uid}.lrc`;
     const storageRef = ref(
       storage,
       `sounds/${albumId}/${songId}/${newFileName}`
