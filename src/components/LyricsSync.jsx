@@ -67,8 +67,16 @@ const LyricsSync = ({
       const newTimestamps = [];
       const prevLines = lines;
   
+      console.log("Prev timestamps:", prevTimestamps);
+      console.log("New lines:", newLines);
+  
       for (let i = 0; i < newLines.length; i++) {
         if (i < prevTimestamps.length) {
+          if (!prevTimestamps[i]) {
+            console.warn(`Undefined timestamp at index ${i}`);
+            continue;
+          }
+  
           if (newLines[i] !== prevLines[i]) {
             // Line has changed, update the line text
             newTimestamps.push({ ...prevTimestamps[i], line: newLines[i].trim() });
@@ -77,9 +85,8 @@ const LyricsSync = ({
             newTimestamps.push(prevTimestamps[i]);
           }
         } else {
-          // New line added, inherit time from previous timestamp
-          const inheritedTime = i > 0 ? prevTimestamps[i - 1].time : '00:00.00';
-          newTimestamps.push({ time: inheritedTime, line: newLines[i].trim() });
+          // New line added, no timestamp set initially
+          newTimestamps.push({ time: null, line: newLines[i].trim() });
         }
       }
   
@@ -88,11 +95,15 @@ const LyricsSync = ({
         return newTimestamps.slice(0, newLines.length);
       }
   
+      console.log("New timestamps:", newTimestamps);
       return newTimestamps;
     });
   
     setLines(newLines);
   };
+  
+  
+  
   
   
   
@@ -137,6 +148,7 @@ const LyricsSync = ({
       setTimestamps([]);
     }
   }
+  
 
   useEffect(() => {
     initializeLyrics();
