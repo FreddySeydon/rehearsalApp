@@ -357,7 +357,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   </div>
                 </div>
               </div>
-              <div className='glasstransparent' style={{padding: 10, width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '50%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginTop: isTabletOrMobile ? 5 : 0, minHeight: 800 }}>
+              <div className='glasstransparent' style={{padding: 10, width: isTabletOrMobile ? '100%' : hideMixer ? '100%' : '50%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', marginTop: isTabletOrMobile ? 5 : 0}}>
                 <h3 style={{ marginBottom:  0, marginTop: 5 }}>Lyrics</h3>
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
                 <LyricsSync
@@ -385,6 +385,7 @@ const LrcEditor = ({albumId, songId, trackId, searchParams, setSearchParams}) =>
                   fetchAlbums={fetchAlbums}
                   noTrackLrc={noTrackLrc}
                   playersLoaded={playersLoaded}
+                  setHideSelects={setHideSelects}
                 />
                 </div>
                 <div></div>

@@ -18,6 +18,7 @@ import { formatTimeMilliseconds } from '../../utils/lrcParser';
 import resetIcon from '../assets/img/reset.svg'
 import loadingIcon from '../assets/img/loading.gif'
 import OneSyncLine from './OneSyncLine';
+import iconSave from "../assets/img/save.svg"
 
 const LyricsSync = ({
   statePlayers,
@@ -43,7 +44,8 @@ const LyricsSync = ({
   currentTrackLrc,
   fetchAlbums,
   noTrackLrc,
-  playersLoaded
+  playersLoaded,
+  setHideSelects
 }) => {
   const [lyrics, setLyrics] = useState('');
   const [lines, setLines] = useState([]);
@@ -66,9 +68,7 @@ const LyricsSync = ({
     setTimestamps((prevTimestamps) => {
       const newTimestamps = [];
       const prevLines = lines;
-  
-      console.log("Prev timestamps:", prevTimestamps);
-      console.log("New lines:", newLines);
+
   
       for (let i = 0; i < newLines.length; i++) {
         if (i < prevTimestamps.length) {
@@ -95,7 +95,6 @@ const LyricsSync = ({
         return newTimestamps.slice(0, newLines.length);
       }
   
-      console.log("New timestamps:", newTimestamps);
       return newTimestamps;
     });
   
@@ -313,6 +312,8 @@ const LyricsSync = ({
     }
     setInfo('');
     setEditing(false);
+    setHideSelects(true);
+    
   }
 
   const handleStartEditing = () => {
@@ -323,20 +324,17 @@ const LyricsSync = ({
 
   }
 
-  useEffect(() => {
-    console.log("Timestamps: ", timestamps)
-  }, [timestamps])
+  // useEffect(() => {
+  //   console.log("Timestamps: ", timestamps)
+  // }, [timestamps])
 
   const handleSaveLyrics = async () => {
     handlePause()
     setIsSaving(true);
     const currentTimestamps = handleUnsyncedLines();
-    console.log("Current Timestamps:",currentTimestamps);
     const fullySynced = currentTimestamps ? false : true;
     const usedTimestamps = currentTimestamps ? currentTimestamps : timestamps
-    console.log("Used Timestamps:",usedTimestamps);
     const lrcContent = usedTimestamps.map(({ time, line }) => `[${time}]${line}`).join('\n');
-    console.log("LRC Content: ", lrcContent);
     const blob = new Blob([lrcContent], { type: 'text/plain' });
     const thisSong = songs.find((song) => selectedSong === song.id);
     const thisTrack = thisSong?.tracks?.find((track) => selectedTrack === track.id);
@@ -441,7 +439,7 @@ const LyricsSync = ({
     </Link>
         </div>
 
-    <div id='lyricssync'  style={{display: editing ? "none" : 'flex', flexDirection: "column"}}>
+    <div id='lyricssync'  style={{display: editing ? "none" : 'flex', flexDirection: "column", height: 650}}>
       <div id='lyricsdisplay' className='lyricsdisplay' ref={lyricsRef} style={{overflowY: 'scroll', scrollbarWidth: 'none'}}>
         {lines.map((line, index) => (
           <OneSyncLine key={index} index={index} line={line} currentLineIndex={currentLineIndex} timestamps={timestamps} handleEditTimestamp={handleEditTimestamp} goToLyricsPosition={goToLyricsPosition}  />
@@ -492,10 +490,9 @@ const LyricsSync = ({
                     </div>
                     </div>
                     <div style={{display: "flex", flexDirection: 'column', alignItems: "center", justifyContent: "center", gap: 10}}>
-                  <button onClick={handleSaveLyrics} className='glass' style={{width: 200, height: "50%", marginLeft: 10}}>Save Lyrics</button>
                   {/* <button onClick={handlePreview}>Preview</button> */}
                   <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 5}}>
-                  <button onClick={handleStartEditing} style={{backgroundColor: "transparent", borderWidth: 3, padding: 0}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
+                  <button onClick={handleStartEditing} style={{backgroundColor: "transparent", borderWidth: 3, padding: 2}}><img src={iconEdit} alt="Edit" style={{ width: "4.5rem", marginBottom: 6}} /></button>
                   <button onClick={handleReset} style={{backgroundColor: "transparent", borderWidth: 3, margin: 0, padding: 5}}> <img src={resetIcon} alt="Reset Sync" style={{ width: "3.5rem", marginBottom: 6}} /> </button>
       {lines.length === timestamps.length ? <button
         onClick={() => {
@@ -517,6 +514,7 @@ const LyricsSync = ({
         >
         <img src={iconDownload} alt="Download LRC" style={{ width: "3.5rem", marginBottom: 6}} />
       </button> : null}
+        <button onClick={handleSaveLyrics} style={{backgroundColor: 'transparent', borderWidth: 3, padding: 5}}> <img src={iconSave} alt="Save Lyrics" style={{ width: "3.5rem", marginBottom: 6}} /> </button>
                   </div>
                     </div>
                 </div>
