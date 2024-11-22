@@ -91,6 +91,7 @@ const FileUpload = () => {
   const [uploadedPercentage, setUploadedPercentage] = useState(null);
   const [uploadedTracks, setUploadedTracks] = useState([]);
   const [existingSongNumbers, setExistingSongNumbers] = useState([])
+  const [initialExistingSongNumbers, setInitialExistingSongNumbers] = useState([])
   const [info, setInfo] = useState('');
   const inputFileRef = useRef(null);
 
@@ -150,8 +151,16 @@ const FileUpload = () => {
   }, []);
 
   useEffect(() => {
+    console.log("INITIALSONGUNBER: ",initialExistingSongNumbers)
     if (!userAlbumName) {
       setAlbumUploadName(selectedAlbum);
+      setExistingSongNumbers(initialExistingSongNumbers);
+    }
+    if(userAlbumName){
+      if(existingSongNumbers.length !== 0){
+        setInitialExistingSongNumbers(existingSongNumbers);
+      }
+      setExistingSongNumbers([]);
     }
   }, [userAlbumName, albumUploadName]);
 
