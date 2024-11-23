@@ -71,10 +71,12 @@ const FileUpload = () => {
   const [songName, setSongName] = useState("New Song");
   const [songUploadName, setSongUploadName] = useState("newsong");
   const [albumName, setAlbumName] = useState("New Album");
+  const [initialAlbumName, setInitialAlbumName] = useState("")
   const [albumUploadName, setAlbumUploadName] = useState("newalbum");
   const [userAlbumName, setUserAlbumName] = useState("");
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedAlbumData, setSelectedAlbumData] = useState(null);
+  const [makeAlbumPublic, setMakeAlbumPublic] = useState(false);
   const [existingAlbums, setExistingAlbums] = useState([]);
   const [songNumber, setSongNumber] = useState(1);
   const [selectedAlbumNextSongNumber, setSelectedAlbumNextSongNumber] =
@@ -151,15 +153,20 @@ const FileUpload = () => {
   }, []);
 
   useEffect(() => {
-    console.log("INITIALSONGUNBER: ",initialExistingSongNumbers)
     if (!userAlbumName) {
       setAlbumUploadName(selectedAlbum);
       setExistingSongNumbers(initialExistingSongNumbers);
+      if(initialAlbumName){
+
+        setAlbumName(initialAlbumName)
+      }
     }
     if(userAlbumName){
       if(existingSongNumbers.length !== 0){
         setInitialExistingSongNumbers(existingSongNumbers);
+        setInitialAlbumName(albumName);
       }
+      setAlbumName(userAlbumName);
       setExistingSongNumbers([]);
     }
   }, [userAlbumName, albumUploadName]);
@@ -302,6 +309,7 @@ const FileUpload = () => {
             const currentAlbum = albumsList.find(
               (album) => album.id === JSON.parse(lastUploadAlbum)
             );
+            // TODO: handle what happens when local storage album doesn't exist
             if(currentAlbum){
               setSelectedAlbum(JSON.parse(lastUploadAlbum));
               setAlbumUploadName(JSON.parse(lastUploadAlbum));
@@ -384,6 +392,7 @@ const FileUpload = () => {
       formData.append('songName', songName);
       formData.append('albumName', albumName);
       formData.append('songNumber', songNumber);
+      formData.append('makeAlbumPublic', makeAlbumPublic);
   
       const idToken = await user.getIdToken();
 
@@ -421,7 +430,7 @@ const FileUpload = () => {
       setUploadStarted(false);
     }
   };
-  
+  console.log(makeAlbumPublic)
   
 
   const handleAlbumChange = (e) => {
@@ -525,6 +534,10 @@ const FileUpload = () => {
                   className="glass inputbox"
                   maxLength={90}
                 />
+                {userAlbumName ? <div>
+                  <label htmlFor="makePublic">Make Album Public? </label>
+                  <input type="checkbox" checked={makeAlbumPublic} name="makePublic" id="makePublic" onChange={() => setMakeAlbumPublic(!makeAlbumPublic)} style={{width: 20, height: 20, textAlign: "center"}} />
+                </div> : null}
                 <label htmlFor="SongName" style={{ marginTop: 10, fontSize: "large", display: "flex", flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', maxWidth: 400, overflow: 'hidden', whiteSpace: 'pre-wrap' }}>
                   <p style={{ margin: 0 }}>Song Name: </p>
                   <b style={{ display: 'flex', flexWrap: 'wrap', maxWidth: 400, justifyContent: 'center' }}> {songName}</b>
