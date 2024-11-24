@@ -19,6 +19,10 @@ import { UserProvider } from './context/UserContext.jsx'
 import { authLoader } from './loaders/authLoader.js'
 import { useMediaQuery } from 'react-responsive'
 
+//TODO: integrate the database operation with the databaseOperations.js
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../utils/firebase.js'
+
 function NavbarWrapper(){
   const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
@@ -120,6 +124,28 @@ const router = createBrowserRouter([
     {
       path: "/login",
       element: <LoginPage />,
+      errorElement: <ErrorPage />
+    },
+    {
+      path: "/public/player",
+      element: <PlayerPage />,
+      // loader: async ({ request }) => {
+      //   const url = new URL(request.url);
+      //   const albumId = url.searchParams.get("albumId");
+      //   const songId = url.searchParams.get("songId");
+      //   const trackId = url.searchParams.get("trackId");
+    
+      //   // Fetch the song's metadata from Firestore
+      //   const docRef = doc(db, "albums", albumId, "songs", songId);
+      //   const docSnap = await getDoc(docRef);
+    
+      //   if (!docSnap.exists() || !docSnap.data().sharedWith.includes("public")) {
+      //     throw new Response("Unauthorized", { status: 401 });
+      //   }
+      //   const isPublic=true;
+    
+      //   return { albumId, songId, trackId, isPublic };
+      // },
       errorElement: <ErrorPage />
     }
 ])

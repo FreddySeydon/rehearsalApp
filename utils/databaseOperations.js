@@ -255,3 +255,16 @@ export const fetchSongsList = async (user, albumId) => {
       });
       return songsList
 }
+
+export const verifyPublicAccess = async (isPublic) => {
+  if (isPublic) {
+    const docRef = doc(db, "albums", albumId, "songs", songId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists() || !docSnap.data().sharedWith.includes("public")) {
+      console.log("This track is not public. Redirecting to login.");
+      return false
+    }
+    return true
+  }
+};

@@ -12,8 +12,10 @@ import { useUser } from "./context/UserContext";
 import { fetchAlbumsList } from "../utils/databaseOperations";
 import { fetchSongsList } from "../utils/databaseOperations";
 import { sortArrayByNumberKey } from "../utils/utils";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../utils/firebase";
 
-const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
+const App = ({ albumId, songId, trackId, searchParams, setSearchParams, isPublic }) => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
   const [selectedTrack, setSelectedTrack] = useState("");
@@ -53,7 +55,42 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
   const [seekUpdateInterval, setSeekUpdateInterval] = useState(null);
   const [noAlbums, setNoAlbums] = useState(false);
 
+  const storage = getStorage();
+
+
+  const fetchPublicTracks = async () => {
+    // Skip user-specific operations and fetch only public data
+    console.log("fetchPublichTracks invoked")
+    try {
+      console.log("PublicFetchVars: ", "AlbumId", albumId, "SongId", songId, "trackId", trackId)
+      const songRef = doc(db, "albums", albumId, "songs", songId);
+      const songSnap = await getDoc(songRef);
+
+      if (songSnap.exists()) {
+        const songData = songSnap.data();
+        setSongs([songData]);
+        const tracks = songData.tracks;
+        const currentSourcesArray = await Promise.all(
+          tracks.map(async (track) => {
+            const httpsReference = ref(storage, track.src);
+            const blob = await getBlob(httpsReference);
+            const blobURL = URL.createObjectURL(blob);
+            return { ...track, src: blobURL };
+          })
+        );
+        setCurrentSources(currentSourcesArray);
+        setSelectedTrack(trackId);
+        setBlobsReady(true);
+      }
+    } catch (error) {
+      console.error("Error fetching public tracks:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchAlbums = async () => {
+    console.log("Fetch albums invoked")
     try {
       const albumsList = await fetchAlbumsList(user);
       setAlbums(albumsList);
@@ -99,6 +136,7 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
   };
 
   const fetchSongs = async (albumId) => {
+    console.log("fetchSongs invoked")
     if (!albumId) return;
     setLoading(true);
     try {
@@ -256,6 +294,8 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
     setBlobsReady(false);
   }, [currentSources]);
 
+  console.log("selectedSong: ",selectedSong)
+
   useEffect(() => {
     if(blobsReady){
       setTimeout(() => {
@@ -279,12 +319,21 @@ const App = ({ albumId, songId, trackId, searchParams, setSearchParams }) => {
   useEffect(() => {
     setSearchParams({...Object.fromEntries(searchParams), trackId: selectedTrack})
   }, [selectedTrack])
+
   
   useEffect(() => {
     if (user) {
       fetchAlbums();
     }
   }, [user]);
+
+console.log("isPublic: ",isPublic)
+
+  useEffect(() => {
+    if(isPublic){
+      fetchPublicTracks();
+    }
+  }, [isPublic, albumId, songId, trackId])
 
   useEffect(() => {
     if (selectedAlbum) {
